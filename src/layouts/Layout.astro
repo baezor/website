@@ -1,0 +1,72 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION } from "../const";
+import "@/css/styles.css";
+import BaseHead from "@/components/BaseHead.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+// Define the title and description props
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      type="text/partytown"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-RF5DSQ769W"></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-RF5DSQ769W");
+    </script>
+    <BaseHead title={title} description={description} />
+
+    <!-- Add sitemap reference -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Meta theme color for mobile browsers -->
+    <meta
+      name="theme-color"
+      content="#000000"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+  </head>
+  <body>
+    <div class="site-wrapper">
+      <Header />
+
+      <slot />
+
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style>
+  .site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex: 1;
+  }
+</style>

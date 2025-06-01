@@ -1,0 +1,383 @@
+---
+import DarkLightThemeSwitch from "@/components/DarkLightThemeSwitch.astro";
+import { Icon } from "astro-icon/components";
+import { SITE_TITLE } from "@/const";
+
+// Get the current URL path to highlight active links
+const { pathname } = Astro.url;
+const isActive = (path: string) => {
+  if (path === "/") {
+    return pathname === path;
+  }
+  return pathname.startsWith(path);
+};
+---
+
+<header>
+  <div class="header-container">
+    <div class="logo">
+      <a href="/" aria-label="Home">{SITE_TITLE}</a>
+    </div>
+
+    <button
+      class="mobile-nav-toggle"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      aria-label="Toggle menu"
+    >
+      <span class="sr-only">Menu</span>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </button>
+
+    <nav id="primary-navigation" class="primary-navigation">
+      <ul class="nav-list">
+        <li>
+          <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
+        </li>
+        <li>
+          <a href="/blog/" class={isActive("/blog") ? "active" : ""}>Blog</a>
+        </li>
+        <li>
+          <a href="/contact/" class={isActive("/contact") ? "active" : ""}
+            >Contact</a
+          >
+        </li>
+        <li class="theme-switch">
+          <DarkLightThemeSwitch />
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Hamburger menu functionality
+  function setupMobileNav() {
+    const navToggle = document.querySelector(".mobile-nav-toggle");
+    const primaryNav = document.querySelector(".primary-navigation");
+
+    if (navToggle && primaryNav) {
+      // Remove existing event listeners (to prevent duplicates)
+      const navToggleClone = navToggle.cloneNode(true);
+      if (navToggle.parentNode) {
+        navToggle.parentNode.replaceChild(navToggleClone, navToggle);
+      }
+
+      // Create backdrop element
+      let backdrop = document.querySelector(".nav-backdrop");
+      if (!backdrop) {
+        backdrop = document.createElement("div");
+        backdrop.classList.add("nav-backdrop");
+        document.body.appendChild(backdrop);
+      }
+
+      // Add event listeners for both click and touch
+      const toggleMenu = () => {
+        const isExpanded =
+          navToggleClone.getAttribute("aria-expanded") === "true";
+        primaryNav.classList.toggle("show");
+        navToggleClone.setAttribute(
+          "aria-expanded",
+          isExpanded ? "false" : "true"
+        );
+
+        // Toggle backdrop
+        if (isExpanded) {
+          backdrop.classList.remove("visible");
+          document.body.classList.remove("menu-open");
+        } else {
+          backdrop.classList.add("visible");
+          document.body.classList.add("menu-open");
+        }
+      };
+
+      navToggleClone.addEventListener("click", toggleMenu);
+      navToggleClone.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        toggleMenu();
+      });
+
+      // Close menu when clicking outside
+      const closeIfOutside = (e: Event) => {
+        const target = e.target as HTMLElement;
+        if (
+          primaryNav.classList.contains("show") &&
+          !primaryNav.contains(target) &&
+          !navToggleClone.contains(target)
+        ) {
+          primaryNav.classList.remove("show");
+          navToggleClone.setAttribute("aria-expanded", "false");
+          backdrop.classList.remove("visible");
+          document.body.classList.remove("menu-open");
+        }
+      };
+
+      document.addEventListener("click", closeIfOutside);
+      document.addEventListener("touchend", closeIfOutside);
+
+      // Close menu when Escape key is pressed
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && primaryNav.classList.contains("show")) {
+          primaryNav.classList.remove("show");
+          navToggleClone.setAttribute("aria-expanded", "false");
+          backdrop.classList.remove("visible");
+          document.body.classList.remove("menu-open");
+        }
+      });
+
+      // Close menu when clicking on a link inside the menu
+      primaryNav.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          primaryNav.classList.remove("show");
+          navToggleClone.setAttribute("aria-expanded", "false");
+          backdrop.classList.remove("visible");
+          document.body.classList.remove("menu-open");
+        });
+      });
+
+      // Close menu when clicking on backdrop
+      backdrop.addEventListener("click", () => {
+        primaryNav.classList.remove("show");
+        navToggleClone.setAttribute("aria-expanded", "false");
+        backdrop.classList.remove("visible");
+        document.body.classList.remove("menu-open");
+      });
+    }
+  }
+
+  // Run on initial load
+  document.addEventListener("DOMContentLoaded", setupMobileNav);
+
+  // Also run when Astro handles page navigation
+  document.addEventListener("astro:page-load", setupMobileNav);
+  document.addEventListener("astro:after-swap", setupMobileNav);
+</script>
+
+<style>
+  header {
+    padding: 1rem;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  :global(.dark) header {
+    background-color: rgba(24, 24, 27, 0.85);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .header-container {
+    max-width: 1100px;
+    width: 100%;
+    justify-content: space-between;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo a {
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: var(--main-color);
+    letter-spacing: -0.02em;
+  }
+
+  :global(.dark) .logo a {
+    color: var(--secundary-color);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Navigation styles */
+  .primary-navigation {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-list a {
+    position: relative;
+    text-decoration: none;
+    color: var(--main-color);
+    font-weight: 500;
+    padding: 0.25rem 0;
+    transition: color 0.2s ease;
+  }
+
+  :global(.dark) .nav-list a {
+    color: var(--secundary-color);
+  }
+
+  .nav-list a::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--button-flat);
+    transition: width 0.2s ease;
+  }
+
+  .nav-list a:hover::after,
+  .nav-list a.active::after {
+    width: 100%;
+  }
+
+  .theme-switch {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+  }
+
+  /* Hamburger menu */
+  .mobile-nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1010; /* Higher than the nav */
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+  }
+
+  .bar {
+    width: 100%;
+    height: 2px;
+    background-color: var(--main-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  :global(.dark) .bar {
+    background-color: var(--secundary-color);
+  }
+
+  /* Mobile navigation */
+  @media (max-width: 768px) {
+    .logo a {
+      font-size: 1.15rem;
+    }
+
+    .mobile-nav-toggle {
+      display: block;
+    }
+
+    .primary-navigation {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 260px;
+      background-color: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 5rem 2rem 2rem;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      overflow-y: auto; /* Allow scrolling if menu is too tall */
+    }
+
+    :global(.dark) .primary-navigation {
+      background-color: rgba(24, 24, 27, 0.97);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .primary-navigation.show {
+      transform: translateX(0);
+    }
+
+    .nav-list {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    /* Transform hamburger to X when menu is open */
+    .mobile-nav-toggle[aria-expanded="true"] .bar:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .mobile-nav-toggle[aria-expanded="true"] .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-nav-toggle[aria-expanded="true"] .bar:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .theme-switch {
+      margin-top: 1rem;
+      margin-left: 0;
+    }
+  }
+
+  /* Backdrop for mobile menu */
+  .nav-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 990; /* Below the nav but above everything else */
+  }
+
+  .nav-backdrop.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Prevent body scrolling when menu is open */
+  :global(body.menu-open) {
+    overflow: hidden;
+  }
+</style>

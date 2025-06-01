@@ -1,0 +1,82 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ProfilePicture from "@/components/ProfilePicture.astro";
+import Links from "@/components/Links.astro";
+import { userData } from "../data";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../const";
+
+const userName = userData[0].userName;
+const userDesc = userData[0].userDesc;
+---
+
+<Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <main id="main-content">
+    <article class="profile-container">
+      <header>
+        <ProfilePicture />
+      </header>
+      <section aria-labelledby="about-heading">
+        <h2 id="about-heading" class="visually-hidden">About {userName}</h2>
+        <p class="bio">
+          Hi human (or AI bot). I'm an Angel, a developer and entrepreneur based
+          in Cancun, Mexico. Connect with me through any of the platforms below.
+        </p>
+      </section>
+      <Links />
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .profile-container {
+    max-width: 584px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+    text-align: center;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .bio {
+    text-align: center;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    color: var(--text-color);
+  }
+
+  .bio a {
+    color: white;
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+
+  .bio a:hover {
+    color: #ff6b61;
+  }
+
+  /* Improve mobile experience */
+  @media (max-width: 640px) {
+    .profile-container {
+      padding: 0 12px;
+    }
+
+    .bio {
+      font-size: 1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import { userData } from "../data";
+const profilePhoto = userData[0].userPic;
+const userName = userData[0].userName;
+const userDesc = userData[0].userDesc;
+---
+
+<div class="profile-top" itemscope itemtype="https://schema.org/Person">
+  <div class="mb-4">
+    <Image
+      id="profile-picture"
+      width="96"
+      height="96"
+      src={profilePhoto}
+      alt={`Profile photo of ${userName}`}
+      loading="eager"
+      itemprop="image"
+      fetchpriority="high"
+      format="avif"
+      quality={80}
+    />
+  </div>
+  <h1 class="profile-name" itemprop="name">{userName}</h1>
+  <h2 class="profile-subtitle" itemprop="description">{userDesc}</h2>
+</div>
+
+<style>
+  .profile-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .profile-name {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  .profile-subtitle {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
+  #profile-picture {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    display: block;
+    object-fit: contain;
+    object-position: initial;
+    filter: none;
+  }
+</style>

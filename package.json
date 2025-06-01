@@ -1,0 +1,36 @@
+{
+  "name": "@baezor/website",
+  "type": "module",
+  "version": "0.0.2",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/partytown": "^2.1.1",
+    "@astrojs/react": "^3.3.2",
+    "@astrojs/rss": "^4.0.5",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "astro": "^4.7.1",
+    "astro-icon": "^1.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "description": "```sh npm create astro@latest -- --template basics ```",
+  "main": "index.astro",
+  "keywords": [
+    "astro",
+    "baezor",
+    "website"
+  ],
+  "author": "baezor",
+  "license": "MIT",
+  "devDependencies": {
+    "@iconify-json/mdi": "^1.1.66",
+    "@iconify-json/simple-icons": "^1.2.29"
+  }
+}

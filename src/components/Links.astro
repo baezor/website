@@ -1,0 +1,113 @@
+---
+import { links } from "../data";
+---
+
+<section class="links-container" aria-label="Social Media Links">
+  <h2 class="visually-hidden">Connect with Angel Romero Baez</h2>
+  <nav aria-label="Social media profiles">
+    <ul class="links-list">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.url}
+              class="link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit Angel Romero Baez on ${link.label.replace("Follow me on ", "").replace("Check out my ", "").replace("Add me to your network on ", "")}`}
+            >
+              <span>{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</section>
+
+<style>
+  .links-container {
+    margin-top: 32px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .small {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 16px;
+    font-weight: 500;
+    a {
+      color: var(--text-color);
+      text-decoration: underline;
+    }
+  }
+
+  .link {
+    text-align: center;
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 16px;
+    justify-content: center;
+    align-items: center;
+    hyphens: auto;
+    white-space: normal;
+    padding: 1rem 2rem;
+    width: 100%;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    border-radius: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding-left: 66px;
+    padding-right: 66px;
+    appearance: none;
+    min-height: 64px;
+    transition:
+      transform 0.15s cubic-bezier(0, 0.2, 0.5, 3),
+      background-color 0.2s ease;
+
+    &:hover {
+      transform: scale(1.02);
+      background-color: rgb(0 0 0 / 0.8);
+    }
+    &:active {
+      transform: scale(1.02);
+      background-color: rgb(0 0 0 / 0.8);
+    }
+    &:focus-visible {
+      outline: 3px solid #4d90fe;
+      outline-offset: 2px;
+    }
+  }
+
+  :global(.dark) .link {
+    background: rgba(0, 0, 0, 1);
+    border: solid 2px rgba(0, 0, 0, 1);
+    color: white;
+  }
+  :global(.dark) .link:hover {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+  }
+</style>

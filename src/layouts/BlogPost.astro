@@ -1,0 +1,413 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
+import Layout from "./Layout.astro";
+
+type Props = {
+  entry: CollectionEntry<"blog">;
+};
+
+const { entry } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage } = entry.data;
+
+// Format date for display
+const formattedPublishDate = pubDate.toLocaleDateString("en-us", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout title={title} description={description}>
+  <main>
+    <article class="blog-post">
+      <header class="blog-header">
+        {
+          heroImage && (
+            <div class="hero-image-container">
+              <img src={heroImage} alt={title} class="hero-image" />
+            </div>
+          )
+        }
+        <div class="container">
+          <h1 class="post-title">{title}</h1>
+          <div class="post-meta">
+            <time datetime={pubDate.toISOString()}>{formattedPublishDate}</time>
+            {
+              updatedDate && (
+                <div class="updated-date">
+                  Updated:{" "}
+                  <time datetime={updatedDate.toISOString()}>
+                    {formattedUpdatedDate}
+                  </time>
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="prose">
+          <slot />
+        </div>
+      </div>
+
+      <footer class="post-footer container">
+        <div class="post-nav">
+          <a href="/blog/" class="back-link">← Back to all posts</a>
+        </div>
+      </footer>
+    </article>
+  </main>
+</Layout>
+
+<style is:global>
+  /* Global styles for dark mode compatibility */
+  :root {
+    --prose-headings: var(--text-bold-color, #111827);
+    --prose-body: var(--main-color);
+    --prose-links: var(--button-flat);
+    --prose-links-hover: var(--button-hover);
+    --prose-borders: rgba(0, 0, 0, 0.1);
+    --prose-captions: var(--text-secondary, #6b7280);
+    --prose-code-bg: rgba(0, 0, 0, 0.05);
+    --prose-code-text: var(--text-bold-color, #111827);
+    --prose-pre-bg: rgb(31, 41, 55);
+    --prose-pre-text: rgb(229, 231, 235);
+    --prose-blockquote: var(--text-secondary, #6b7280);
+  }
+
+  .dark {
+    --prose-headings: var(--secundary-color);
+    --prose-body: var(--secundary-color);
+    --prose-borders: rgba(255, 255, 255, 0.1);
+    --prose-captions: rgba(255, 255, 255, 0.7);
+    --prose-code-bg: rgba(255, 255, 255, 0.1);
+    --prose-code-text: var(--secundary-color);
+    --prose-blockquote: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: 65ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Blog post layout */
+  .blog-post {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Header and hero image */
+  .blog-header {
+    margin-bottom: 3rem;
+  }
+
+  .hero-image-container {
+    width: 100%;
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-image {
+    max-width: 1200px;
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  .post-title {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 1rem;
+    color: var(--prose-headings);
+  }
+
+  .post-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--prose-captions);
+    margin-bottom: 1.5rem;
+  }
+
+  .updated-date {
+    font-style: italic;
+  }
+
+  /* Post footer */
+  .post-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--prose-borders);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--prose-links);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--prose-links-hover);
+    text-decoration: underline;
+  }
+
+  /* Typography styles inspired by Tailwind Typography */
+  .prose {
+    color: var(--prose-body);
+    max-width: 65ch;
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  .prose p,
+  .prose ul,
+  .prose ol,
+  .prose blockquote {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+
+  .prose h1 {
+    font-size: 2.25rem;
+    margin-top: 0;
+    margin-bottom: 0.8888889em;
+    line-height: 1.1111111;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--prose-headings);
+  }
+
+  .prose h2 {
+    font-size: 1.5rem;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    line-height: 1.3333333;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--prose-headings);
+    border-bottom: 1px solid var(--prose-borders);
+    padding-bottom: 0.5rem;
+  }
+
+  .prose h3 {
+    font-size: 1.25rem;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--prose-headings);
+  }
+
+  .prose h4 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--prose-headings);
+  }
+
+  /* Lists */
+  .prose ul {
+    list-style-type: disc;
+    padding-left: 1.625em;
+  }
+
+  .prose ol {
+    list-style-type: decimal;
+    padding-left: 1.625em;
+  }
+
+  .prose li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 0.375em;
+  }
+
+  .prose li::marker {
+    color: var(--prose-captions);
+  }
+
+  /* Links */
+  .prose a {
+    color: var(--prose-links);
+    text-decoration: underline;
+    font-weight: 500;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .prose a:hover {
+    color: var(--prose-links-hover);
+  }
+
+  /* Blockquotes */
+  .prose blockquote {
+    font-style: italic;
+    color: var(--prose-blockquote);
+    border-left: 4px solid var(--prose-links);
+    padding-left: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .prose blockquote p {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  /* Code blocks */
+  .prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875em;
+    font-weight: 600;
+    color: var(--prose-code-text);
+    background-color: var(--prose-code-bg);
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+  }
+
+  .prose pre {
+    color: var(--prose-pre-text);
+    background-color: var(--prose-pre-bg);
+    overflow-x: auto;
+    font-weight: 400;
+    font-size: 0.875em;
+    line-height: 1.7142857;
+    margin-top: 1.7142857em;
+    margin-bottom: 1.7142857em;
+    border-radius: 0.375rem;
+    padding: 1.25rem;
+  }
+
+  .prose pre code {
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 0;
+    padding: 0;
+    font-weight: inherit;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+  }
+
+  /* Tables */
+  .prose table {
+    width: 100%;
+    table-layout: auto;
+    text-align: left;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    font-size: 0.875em;
+    line-height: 1.7142857;
+    border-collapse: collapse;
+  }
+
+  .prose thead {
+    border-bottom: 1px solid var(--prose-borders);
+  }
+
+  .prose thead th {
+    padding-right: 0.5714286em;
+    padding-bottom: 0.5714286em;
+    padding-left: 0.5714286em;
+    font-weight: 600;
+    vertical-align: bottom;
+    color: var(--prose-headings);
+  }
+
+  .prose tbody tr {
+    border-bottom: 1px solid var(--prose-borders);
+  }
+
+  .prose tbody tr:last-child {
+    border-bottom-width: 0;
+  }
+
+  .prose tbody td {
+    padding-top: 0.5714286em;
+    padding-right: 0.5714286em;
+    padding-bottom: 0.5714286em;
+    padding-left: 0.5714286em;
+    vertical-align: top;
+  }
+
+  /* Images */
+  .prose img {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    border-radius: 0.375rem;
+  }
+
+  .prose figure {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+
+  .prose figure > * {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .prose figcaption {
+    color: var(--prose-captions);
+    font-size: 0.875em;
+    line-height: 1.4285714;
+    margin-top: 0.8571429em;
+    text-align: center;
+  }
+
+  /* Horizontal rule */
+  .prose hr {
+    margin-top: 3em;
+    margin-bottom: 3em;
+    border: 0;
+    border-top: 1px solid var(--prose-borders);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .post-title {
+      font-size: 2rem;
+    }
+
+    .prose {
+      font-size: 1rem;
+    }
+
+    .prose h1 {
+      font-size: 1.875rem;
+    }
+
+    .prose h2 {
+      font-size: 1.375rem;
+    }
+
+    .prose h3 {
+      font-size: 1.125rem;
+    }
+  }
+</style>

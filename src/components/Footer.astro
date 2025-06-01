@@ -1,0 +1,160 @@
+---
+import { Icon } from "astro-icon/components";
+import { socialLinks } from "../data/index";
+import { SITE_TITLE } from "../const";
+
+// Define SVG icon for TikTok
+const tiktokIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="currentColor">
+  <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+</svg>`;
+---
+
+<footer>
+  <div class="footer-container">
+    <div class="social-icons">
+      {
+        socialLinks.map((link) => (
+          <a 
+            href={link.url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            aria-label={`Visit ${link.label}`}
+            class="social-icon"
+          >
+            {link.icon === "simple-icons:tiktok" ? (
+              <span class="custom-icon" set:html={tiktokIcon} />
+            ) : (
+              link.icon && <Icon name={link.icon} />
+            )}
+            <span class="sr-only">{link.label}</span>
+          </a>
+        ))
+      }
+    </div>
+    <div class="footer-content">
+      <p>&copy; {new Date().getFullYear()} {SITE_TITLE}. All rights reserved.</p>
+      <p><a href="/blog">Blog</a> | <a href="/rss.xml">RSS</a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 2rem 1rem;
+    margin-top: auto;
+    width: 100%;
+    background-color: var(--secundary-color);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) footer {
+    background-color: var(--bg-color-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .social-icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .social-icon {
+    color: var(--main-color);
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.dark) .social-icon {
+    color: var(--secundary-color);
+  }
+
+  .social-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  /* Custom icons styling */
+  .custom-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .custom-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .social-icon:hover {
+    color: var(--button-flat);
+    transform: translateY(-2px);
+  }
+
+  .social-icon:active {
+    color: var(--button-active);
+  }
+
+  .footer-content {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--main-color);
+    opacity: 0.8;
+  }
+
+  :global(.dark) .footer-content {
+    color: var(--secundary-color);
+  }
+
+  .footer-content a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-content a:hover {
+    color: var(--button-flat);
+    text-decoration: underline;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  @media (max-width: 480px) {
+    .footer-content {
+      font-size: 0.8rem;
+    }
+    
+    .social-icon svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    
+    .custom-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+</style>
