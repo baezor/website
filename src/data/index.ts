@@ -1,9 +1,9 @@
 const userData = [
   {
-    userName: "Angel Baez",
-    userDesc: "Software developer and entrepreneur",
-    userPic: "/angelbaez-headshot.jpg",
-    userPicDark: "/angelbaez-headshot.jpg",
+    userName: "Angel Romero Baez",
+    userDesc: "Web developer and entrepreneur",
+    userPic: "/angelbaez-headshot.webp",
+    userPicDark: "/angelbaez-headshot.webp",
   },
 ];
 
@@ -22,17 +22,7 @@ const links = [
     label: "Check out my GitHub",
     url: "https://github.com/baezor/",
     icon: "simple-icons:github",
-  },
-  {
-    label: "Follow me on Instagram",
-    url: "https://www.instagram.com/baez0r/",
-    icon: "simple-icons:instagram",
-  },
-  {
-    label: "Follow me on X",
-    url: "https://x.com/baezor/",
-    icon: "simple-icons:x",
-  },
+  }
 ];
 
 const socialLinks = [
