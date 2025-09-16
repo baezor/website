@@ -1,6 +1,6 @@
 const userData = [
   {
-    userName: "Angel Romero Baez",
+    userName: "Angel Baez",
     userDesc: "Web developer and entrepreneur",
     userPic: "/angelbaez-headshot.webp",
     userPicDark: "/angelbaez-headshot.webp",
@@ -30,6 +30,11 @@ const socialLinks = [
     label: "LinkedIn",
     url: "https://www.linkedin.com/in/angelromerobaez",
     icon: "simple-icons:linkedin",
+  },
+  {
+    label: "Facebook",
+    url: "https://www.facebook.com/baezor/",
+    icon: "simple-icons:facebook",
   },
   {
     label: "GitHub",

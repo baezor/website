@@ -161,7 +161,7 @@ const isActive = (path: string) => {
   header {
     width: 100%;
     position: fixed;
-    top: 10px;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
@@ -171,24 +171,12 @@ const isActive = (path: string) => {
     align-items: center;
   }
 
-  :global(.dark) header {
-    background-color: rgba(24, 24, 27, 0.85);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-
   .header-container {
-    -webkit-backdrop-filter: blur(10px);
     align-items: center;
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 9999px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: space-between;
-    justify-content: space-between;
     margin: 0 auto;
-    padding: 0.75rem 1.5rem;
+    padding: 0;
     width: calc(100% - 32px);
   }
 
