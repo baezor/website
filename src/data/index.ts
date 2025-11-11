@@ -1,7 +1,7 @@
 const userData = [
   {
     userName: "Angel Baez",
-    userDesc: "Web developer and entrepreneur",
+    userDesc: "Software engineer and entrepreneur",
     userPic: "/angelbaez-headshot.webp",
     userPicDark: "/angelbaez-headshot.webp",
   },
@@ -22,7 +22,7 @@ const links = [
     label: "Check out my GitHub",
     url: "https://github.com/baezor/",
     icon: "simple-icons:github",
-  }
+  },
 ];
 
 const socialLinks = [
