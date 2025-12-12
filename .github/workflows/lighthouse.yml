@@ -1,0 +1,25 @@
+name: Lighthouse CI
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Cloudflare Pages deployment
+        uses: WalshyDev/cf-pages-await@v1
+        id: cf-pages
+        with:
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          project: baezor
+
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: ${{ steps.cf-pages.outputs.url }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
