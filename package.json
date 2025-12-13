@@ -1,13 +1,14 @@
 {
   "name": "@baezor/website",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
@@ -31,7 +32,10 @@
   "author": "baezor",
   "license": "MIT",
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@iconify-json/mdi": "^1.1.66",
-    "@iconify-json/simple-icons": "^1.2.29"
+    "@iconify-json/simple-icons": "^1.2.29",
+    "husky": "^9.1.7"
   }
 }

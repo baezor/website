@@ -69,29 +69,19 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
 </Layout>
 
 <style is:global>
-  /* Global styles for dark mode compatibility */
+  /* Prose variables - inherit from core palette via CSS variable swap */
   :root {
-    --prose-headings: var(--text-bold-color, #111827);
-    --prose-body: var(--main-color);
-    --prose-links: var(--button-flat);
-    --prose-links-hover: var(--button-hover);
-    --prose-borders: rgba(0, 0, 0, 0.1);
-    --prose-captions: var(--text-secondary, #6b7280);
-    --prose-code-bg: rgba(0, 0, 0, 0.05);
-    --prose-code-text: var(--text-bold-color, #111827);
-    --prose-pre-bg: rgb(31, 41, 55);
-    --prose-pre-text: rgb(229, 231, 235);
-    --prose-blockquote: var(--text-secondary, #6b7280);
-  }
-
-  .dark {
-    --prose-headings: var(--secundary-color);
-    --prose-body: var(--secundary-color);
-    --prose-borders: rgba(255, 255, 255, 0.1);
-    --prose-captions: rgba(255, 255, 255, 0.7);
-    --prose-code-bg: rgba(255, 255, 255, 0.1);
-    --prose-code-text: var(--secundary-color);
-    --prose-blockquote: rgba(255, 255, 255, 0.7);
+    --prose-headings: var(--color-text);
+    --prose-body: var(--color-text);
+    --prose-links: var(--color-accent);
+    --prose-links-hover: var(--color-accent-hover);
+    --prose-borders: color-mix(in srgb, var(--color-text) 10%, transparent);
+    --prose-captions: var(--color-text-muted);
+    --prose-code-bg: color-mix(in srgb, var(--color-text) 5%, transparent);
+    --prose-code-text: var(--color-text);
+    --prose-pre-bg: #1a1a19;
+    --prose-pre-text: #F0EFEA;
+    --prose-blockquote: var(--color-text-muted);
   }
 
   /* Container */
@@ -127,7 +117,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
     max-height: 500px;
     object-fit: cover;
     border-radius: 0.375rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--color-text) 5%, transparent);
   }
 
   .post-title {

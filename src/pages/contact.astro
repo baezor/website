@@ -92,15 +92,11 @@ import { SITE_TITLE } from "@/const";
   }
 
   .contact-method {
-    background-color: var(--secundary-color);
+    background-color: var(--color-bg-elevated);
     padding: 2rem;
     border-radius: 0.5rem;
     text-align: center;
     transition: transform 0.2s ease;
-  }
-
-  :global(.dark) .contact-method {
-    background-color: rgba(255, 255, 255, 0.05);
   }
 
   .contact-method:hover {
@@ -111,7 +107,7 @@ import { SITE_TITLE } from "@/const";
     width: 3rem;
     height: 3rem;
     margin: 0 auto 1rem;
-    color: var(--button-flat);
+    color: var(--color-accent);
   }
 
   .contact-method h2 {
@@ -125,15 +121,11 @@ import { SITE_TITLE } from "@/const";
   }
 
   .contact-link {
-    color: var(--button-flat);
+    color: var(--color-accent);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
     display: inline-block;
-  }
-
-  :global(.dark) .contact-link {
-    color: white;
   }
 
   .contact-link:hover {
