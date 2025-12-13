@@ -11,8 +11,8 @@ interface Props {
 const {
   title,
   description,
-  image = "../img/Logo1.png",
-  keywords = "Angel Baez, Angel Romero Baez, angel-baez.com, Software Engineer, Developer, Entrepreneur, Cancun, Mexico, baezor, Web Developer"
+  image = "/favicon.png",
+  keywords = "Angel Baez, angel-baez.com, Software Engineer, Developer, Entrepreneur, Cancun, Mexico, baezor, Web Developer"
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
@@ -21,7 +21,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 <!-- Essential Meta Tags -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/../../img/astro.png" />
+<link rel="icon" type="image/png" href="/favicon.png" />
 <meta name="generator" content={Astro.generator} />
 
 <!-- SEO Meta Tags -->
@@ -31,6 +31,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 <meta name="description" content={description} />
 <meta name="keywords" content={keywords} />
 <meta name="author" content="Angel Baez" />
+<meta name="robots" content="index, follow" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
@@ -68,13 +69,11 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
       "addressCountry": "Mexico"
     },
     "sameAs": [
-      "https://www.linkedin.com/in/baezor/",
+      "https://www.linkedin.com/in/angelromerobaez",
       "https://github.com/baezor/",
       "https://www.instagram.com/baez0r/",
       "https://www.facebook.com/baezor/",
-      "https://x.com/baezor/",
-      "https://www.threads.net/@baez0r",
-      "https://www.tiktok.com/@angelbaezor"
+      "https://x.com/baezor/"
     ],
     "knowsLanguage": ["en", "es"]
   }

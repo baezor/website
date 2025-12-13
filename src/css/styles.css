@@ -7,6 +7,10 @@
   --color-text-muted: #828179;
   --color-bg: #F0EFEA;
   --color-bg-elevated: #FFFFFF;
+
+  /* Typography */
+  --font-heading: "Space Grotesk Variable", system-ui, sans-serif;
+  --font-body: "Source Serif 4 Variable", Georgia, serif;
 }
 
 .dark {
@@ -41,9 +45,9 @@ img {
   object-fit: cover;
 }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -54,6 +58,17 @@ body {
   -webkit-tap-highlight-color: transparent;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+button, .button {
+  font-family: var(--font-heading);
+  font-weight: 600;
 }
 
 main {

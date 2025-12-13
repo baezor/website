@@ -10,7 +10,8 @@ export default defineConfig({
     react(),
     icon({
       include: {
-        mdi: ["linkedin", "github", "twitter", "email", "instagram", "rss"],
+        mdi: ["weather-night", "white-balance-sunny"],
+        "simple-icons": ["linkedin", "github", "x", "instagram", "facebook", "rss", "gmail"],
       },
     }),
     partytown({

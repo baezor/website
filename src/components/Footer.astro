@@ -7,16 +7,26 @@ import { SITE_TITLE } from "../const";
 
 <footer>
   <div class="footer-container">
+    <nav class="social-icons" aria-label="Social media links">
+      {socialLinks.map((link) => (
+        <a
+          href={link.url}
+          class="social-icon"
+          target={link.url.startsWith("/") ? undefined : "_blank"}
+          rel={link.url.startsWith("/") ? undefined : "noopener noreferrer"}
+          aria-label={link.label}
+        >
+          <Icon name={link.icon} />
+          <span class="sr-only">{link.label}</span>
+        </a>
+      ))}
+    </nav>
     <div class="footer-content">
       <p>&copy; {new Date().getFullYear()} {SITE_TITLE}</p>
       <p>
         <a href="/blog">Blog</a>
         |
-        <a href="/rss.xml">RSS</a>
-        |
-        <a href="https://facebook.com/baezor" target="_blank" rel="noopener noreferrer">Facebook</a>
-        |
-        <a href="https://www.instagram.com/baez0r/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="/contact">Contact</a>
       </p>
     </div>
   </div>
