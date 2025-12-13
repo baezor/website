@@ -55,3 +55,21 @@ This project uses GitFlow branching model.
 1. `git checkout -b release/v1.x.x` from `develop`
 2. Final testing and version bumps
 3. Merge to `main` (tag with version) and back to `develop`
+
+## Commit Convention
+
+Commits are validated using commitlint. Format: `<type>: <description>`
+
+**Types**:
+- `feat` - New feature
+- `fix` - Bug fix
+- `hotfix` - Urgent production fix
+- `release` - Release commit
+- `docs` - Documentation
+- `style` - Formatting (no code change)
+- `refactor` - Code restructuring
+- `perf` - Performance improvement
+- `test` - Adding tests
+- `chore` - Maintenance
+- `ci` - CI/CD changes
+- `build` - Build system
