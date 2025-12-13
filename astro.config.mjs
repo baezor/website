@@ -1,13 +1,14 @@
 import { defineConfig } from "astro/config";
-import react from "@astrojs/react";
 import icon from "astro-icon";
 import partytown from "@astrojs/partytown";
 import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
+  build: {
+    inlineStylesheets: "always",
+  },
   integrations: [
-    react(),
     icon({
       include: {
         mdi: ["weather-night", "white-balance-sunny"],
