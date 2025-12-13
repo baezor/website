@@ -29,14 +29,29 @@ This is an Astro-based personal website with React integration, featuring a blog
 
 **Blog posts**: Add markdown files to `src/content/blog/` with required frontmatter (title, description, pubDate)
 
-## Workflow
+## Workflow (GitFlow)
 
-All changes should go through a pull request:
+This project uses GitFlow branching model.
 
-1. Create a feature branch: `git checkout -b <type>/<description>` (e.g., `feat/new-feature`, `fix/bug-name`, `perf/optimization`)
-2. Make changes and commit
-3. Push and create PR: `git push -u origin <branch>` then `gh pr create`
-4. Lighthouse CI runs automatically on PRs and posts Core Web Vitals scores as a comment
-5. After approval, merge and delete the branch
+**Branches**:
+- `main` - Production-ready code, deployed to live site
+- `develop` - Integration branch for features, PRs target this branch
 
-**Branch naming**: `feat/`, `fix/`, `perf/`, `chore/`, `ci/`
+**Branch types**:
+- `feature/*` - New features, branch from `develop`, merge back to `develop`
+- `release/*` - Release prep, branch from `develop`, merge to `main` and `develop`
+- `hotfix/*` - Urgent production fixes, branch from `main`, merge to `main` and `develop`
+
+**Feature workflow**:
+1. `git checkout develop && git pull`
+2. `git checkout -b feature/<name>`
+3. Make changes and commit
+4. `git push -u origin feature/<name>`
+5. `gh pr create --base develop`
+6. Lighthouse CI runs and posts Core Web Vitals scores
+7. After approval, merge to `develop` and delete branch
+
+**Release workflow**:
+1. `git checkout -b release/v1.x.x` from `develop`
+2. Final testing and version bumps
+3. Merge to `main` (tag with version) and back to `develop`
