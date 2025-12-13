@@ -11,7 +11,7 @@ export default defineConfig({
   integrations: [
     icon({
       include: {
-        mdi: ["weather-night", "white-balance-sunny"],
+        mdi: ["weather-night", "white-balance-sunny", "linkedin"],
         "simple-icons": ["linkedin", "github", "x", "instagram", "facebook", "rss", "gmail"],
       },
     }),
