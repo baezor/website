@@ -12,17 +12,12 @@
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
-    "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/source-serif-4": "^5.2.9",
     "@fontsource-variable/space-grotesk": "^5.2.10",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
     "astro": "^5.16.5",
-    "astro-icon": "^1.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "astro-icon": "^1.1.0"
   },
   "description": "```sh npm create astro@latest -- --template basics ```",
   "main": "index.astro",
