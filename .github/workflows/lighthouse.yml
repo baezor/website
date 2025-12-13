@@ -25,6 +25,7 @@ jobs:
         uses: treosh/lighthouse-ci-action@v11
         with:
           urls: ${{ steps.cf-pages.outputs.url }}
+          configPath: ./lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true
 
