@@ -1,9 +1,11 @@
+import profileImage from "../assets/angelbaez-headshot.webp";
+
 const userData = [
   {
     userName: "Angel Baez",
     userDesc: "Software engineer and entrepreneur",
-    userPic: "/angelbaez-headshot.webp",
-    userPicDark: "/angelbaez-headshot.webp",
+    userPic: profileImage,
+    userPicDark: profileImage,
   },
 ];
 
