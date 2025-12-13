@@ -17,8 +17,10 @@ import { links } from "../data";
               rel="noopener noreferrer"
               aria-label={`Visit Angel Baez on ${link.label.replace("Follow me on ", "").replace("Check out my ", "").replace("Add me to your network on ", "")}`}
             >
-              <Icon name={link.icon} class="link-icon" />
-              <span>{link.label}</span>
+              <span class="icon-circle">
+                <Icon name={link.icon} class="link-icon" />
+              </span>
+              <span class="link-text">{link.label}</span>
             </a>
           </li>
         ))
@@ -62,15 +64,11 @@ import { links } from "../data";
   }
 
   .link {
-    text-align: center;
+    position: relative;
     display: flex;
-    gap: 0.75rem;
     margin-bottom: 16px;
-    justify-content: center;
     align-items: center;
-    hyphens: auto;
-    white-space: normal;
-    padding: 1rem 2rem;
+    padding: 0.875rem 1.5rem 0.875rem 3.5rem;
     width: 100%;
     background-color: var(--color-text);
     color: var(--color-bg);
@@ -80,19 +78,33 @@ import { links } from "../data";
     letter-spacing: 0.5px;
     text-decoration: none;
     border-radius: 9999px;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    padding-left: 2rem;
-    padding-right: 2rem;
     appearance: none;
     transition:
       transform 0.15s cubic-bezier(0, 0.2, 0.5, 3),
       background-color 0.2s ease;
 
+    .icon-circle {
+      position: absolute;
+      left: 0.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      background-color: var(--color-bg);
+      border-radius: 50%;
+    }
+
     .link-icon {
-      width: 1.25rem;
-      height: 1.25rem;
-      flex-shrink: 0;
+      width: 1.125rem;
+      height: 1.125rem;
+      color: var(--color-text);
+    }
+
+    .link-text {
+      flex: 1;
+      text-align: center;
+      padding-right: 2rem;
     }
 
     &:hover {
