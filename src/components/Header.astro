@@ -184,12 +184,8 @@ const isActive = (path: string) => {
     font-weight: 700;
     font-size: 1.25rem;
     text-decoration: none;
-    color: var(--main-color);
+    color: var(--color-text);
     letter-spacing: -0.02em;
-  }
-
-  :global(.dark) .logo a {
-    color: var(--secundary-color);
   }
 
   .sr-only {
@@ -222,14 +218,10 @@ const isActive = (path: string) => {
   .nav-list a {
     position: relative;
     text-decoration: none;
-    color: var(--main-color);
+    color: var(--color-text);
     font-weight: 500;
     padding: 0.25rem 0;
     transition: color 0.2s ease;
-  }
-
-  :global(.dark) .nav-list a {
-    color: var(--secundary-color);
   }
 
   .nav-list a::after {
@@ -239,7 +231,7 @@ const isActive = (path: string) => {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--button-flat);
+    background-color: var(--color-accent);
     transition: width 0.2s ease;
   }
 
@@ -275,13 +267,9 @@ const isActive = (path: string) => {
   .bar {
     width: 100%;
     height: 2px;
-    background-color: var(--main-color);
+    background-color: var(--color-text);
     border-radius: 2px;
     transition: all 0.3s ease;
-  }
-
-  :global(.dark) .bar {
-    background-color: var(--secundary-color);
   }
 
   /* Mobile navigation */
@@ -300,20 +288,15 @@ const isActive = (path: string) => {
       right: 0;
       height: 100vh;
       width: 260px;
-      background-color: rgba(255, 255, 255, 0.97);
+      background-color: color-mix(in srgb, var(--color-bg) 97%, transparent);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       transform: translateX(100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       padding: 5rem 2rem 2rem;
-      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+      box-shadow: -5px 0 15px color-mix(in srgb, var(--color-text) 5%, transparent);
       z-index: 1000;
-      overflow-y: auto; /* Allow scrolling if menu is too tall */
-    }
-
-    :global(.dark) .primary-navigation {
-      background-color: rgba(24, 24, 27, 0.97);
-      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
     }
 
     .primary-navigation.show {
@@ -352,12 +335,12 @@ const isActive = (path: string) => {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: color-mix(in srgb, var(--color-text) 50%, transparent);
     backdrop-filter: blur(3px);
     display: none;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 990; /* Below the nav but above everything else */
+    z-index: 990;
   }
 
   .nav-backdrop.visible {
