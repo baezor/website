@@ -12,7 +12,7 @@ const userData = [
 const links = [
   {
     label: "Prepa IN's Blog (Spanish)",
-    url: "https://prepain.mx/blog/author/angel/",
+    url: "https://prepain.mx/angel/",
     icon: "simple-icons:rss",
   },
   {
