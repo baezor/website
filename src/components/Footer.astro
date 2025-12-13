@@ -27,13 +27,8 @@ import { SITE_TITLE } from "../const";
     padding: 2rem 1rem;
     margin-top: auto;
     width: 100%;
-    background-color: var(--secundary-color);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  :global(.dark) footer {
-    background-color: var(--bg-color-dark);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--color-bg);
+    border-top: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
   }
 
   .footer-container {
@@ -53,23 +48,18 @@ import { SITE_TITLE } from "../const";
   }
 
   .social-icon {
-    color: var(--main-color);
+    color: var(--color-text);
     transition: color 0.2s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  :global(.dark) .social-icon {
-    color: var(--secundary-color);
-  }
-
   .social-icon svg {
     width: 1.5rem;
     height: 1.5rem;
   }
-  
-  /* Custom icons styling */
+
   .custom-icon {
     display: inline-flex;
     align-items: center;
@@ -77,30 +67,26 @@ import { SITE_TITLE } from "../const";
     width: 1.5rem;
     height: 1.5rem;
   }
-  
+
   .custom-icon svg {
     width: 100%;
     height: 100%;
   }
 
   .social-icon:hover {
-    color: var(--button-flat);
+    color: var(--color-accent);
     transform: translateY(-2px);
   }
 
   .social-icon:active {
-    color: var(--button-active);
+    color: var(--color-accent-active);
   }
 
   .footer-content {
     text-align: center;
     font-size: 0.9rem;
-    color: var(--main-color);
+    color: var(--color-text);
     opacity: 0.8;
-  }
-
-  :global(.dark) .footer-content {
-    color: var(--secundary-color);
   }
 
   .footer-content a {
@@ -110,7 +96,7 @@ import { SITE_TITLE } from "../const";
   }
 
   .footer-content a:hover {
-    color: var(--button-flat);
+    color: var(--color-accent);
     text-decoration: underline;
   }
 
