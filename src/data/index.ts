@@ -18,7 +18,7 @@ const links = [
   {
     label: "Add me to your network on LinkedIn",
     url: "https://www.linkedin.com/in/angelromerobaez",
-    icon: "mdi:linkedin",
+    icon: "simple-icons:linkedin",
   },
   {
     label: "Check out my GitHub",
