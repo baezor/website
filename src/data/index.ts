@@ -54,11 +54,6 @@ const socialLinks = [
     icon: "simple-icons:x",
   },
   {
-    label: "TikTok",
-    url: "https://www.tiktok.com/@angelbaezor",
-    icon: "simple-icons:tiktok",
-  },
-  {
     label: "RSS Feed",
     url: "/rss.xml",
     icon: "simple-icons:rss",
