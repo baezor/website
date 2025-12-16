@@ -8,7 +8,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
@@ -33,6 +36,7 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@iconify-json/mdi": "^1.1.66",
     "@iconify-json/simple-icons": "^1.2.29",
+    "@playwright/test": "^1.57.0",
     "husky": "^9.1.7"
   }
 }

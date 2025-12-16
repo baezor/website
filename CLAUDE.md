@@ -6,15 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 1. **Always start from `develop` branch** - Never branch from or commit to `main` directly
 2. **Run `npm run build` before committing** - Verify no build errors
-3. **Every change needs a PR** - No direct pushes to `develop` or `main`
-4. **Images go in `src/assets/`** - Not `public/`, to enable Astro optimization
-5. **Use path aliases** - Import with `@/components/*` not relative paths
+3. **Run `npm run test:visual` before committing UI changes** - Update snapshots if changes are intentional
+4. **Every change needs a PR** - No direct pushes to `develop` or `main`
+5. **Images go in `src/assets/`** - Not `public/`, to enable Astro optimization
+6. **Use path aliases** - Import with `@/components/*` not relative paths
 
 ## Commands
 
 - `npm run dev` or `npm start` - Start development server
 - `npm run build` - Generate production build
 - `npm run preview` - Preview production build locally
+- `npm run test:visual` - Run visual regression tests
+- `npm run test:visual:update` - Update baseline snapshots
+- `npm run test:visual:ui` - Interactive Playwright UI mode
 
 ## Architecture
 
@@ -53,11 +57,14 @@ This project uses GitFlow branching model.
 **Feature workflow**:
 1. `git checkout develop && git pull`
 2. `git checkout -b feature/<name>`
-3. Make changes and commit
-4. `git push -u origin feature/<name>`
-5. `gh pr create --base develop`
-6. Lighthouse CI runs and posts Core Web Vitals scores
-7. After approval, merge to `develop` and delete branch
+3. Make changes
+4. Run `npm run build` to verify no build errors
+5. Run `npm run test:visual` - if intentional visual changes, run `npm run test:visual:update`
+6. Commit changes (include updated snapshots if any)
+7. `git push -u origin feature/<name>`
+8. `gh pr create --base develop`
+9. Lighthouse CI and Visual Regression tests run on PR
+10. After approval, merge to `develop` and delete branch
 
 **Release workflow**:
 1. `git checkout -b release/v1.x.x` from `develop`
@@ -93,6 +100,7 @@ Commits are validated using commitlint. Format: `<type>: <description>`
 
 - **Hosting**: Cloudflare Pages (auto-deploys on push)
 - **Lighthouse CI**: Runs on PRs, posts scores as comment
+- **Visual Regression**: Playwright tests run on PRs, posts results as comment
 - **Preview URLs**: Each PR gets a preview deployment
 
 ## Common Tasks
