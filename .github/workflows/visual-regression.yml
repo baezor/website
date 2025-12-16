@@ -36,10 +36,10 @@ jobs:
 
       - name: Run Visual Regression Tests
         id: visual-tests
-        run: npx playwright test --reporter=list
+        run: |
+          npx playwright test --reporter=list || echo "TESTS_FAILED=true" >> $GITHUB_ENV
         env:
           PLAYWRIGHT_BASE_URL: ${{ steps.cf-pages.outputs.url }}
-        continue-on-error: true
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -51,11 +51,12 @@ jobs:
 
       - name: Upload screenshot diffs
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: screenshot-diffs
           path: test-results/
           retention-days: 30
+          if-no-files-found: ignore
 
       - name: Post results as comment
         uses: actions/github-script@v7
@@ -63,7 +64,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const testsPassed = '${{ steps.visual-tests.outcome }}' === 'success';
+            const testsPassed = '${{ env.TESTS_FAILED }}' !== 'true';
             const previewUrl = '${{ steps.cf-pages.outputs.url }}';
 
             let body = `## 📸 Visual Regression Test Results\n\n`;
@@ -92,5 +93,5 @@ jobs:
             });
 
       - name: Fail if tests failed
-        if: steps.visual-tests.outcome == 'failure'
+        if: env.TESTS_FAILED == 'true'
         run: exit 1
