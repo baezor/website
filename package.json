@@ -1,14 +1,17 @@
 {
   "name": "@baezor/website",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
@@ -16,6 +19,7 @@
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/source-serif-4": "^5.2.9",
     "@fontsource-variable/space-grotesk": "^5.2.10",
+    "@zachleat/snow-fall": "^1.0.3",
     "astro": "^5.16.5",
     "astro-icon": "^1.1.0"
   },
@@ -33,6 +37,7 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@iconify-json/mdi": "^1.1.66",
     "@iconify-json/simple-icons": "^1.2.29",
+    "@playwright/test": "^1.57.0",
     "husky": "^9.1.7"
   }
 }
