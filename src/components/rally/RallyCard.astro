@@ -1,0 +1,18 @@
+---
+import type { RallyCard } from "@/data/rally-cards";
+
+interface Props {
+  card: RallyCard;
+}
+
+const { card } = Astro.props;
+---
+
+<article class:list={["card", { final: card.isFinal }]} data-card-id={card.id}>
+  <div class="decoration">{card.decoration}</div>
+  <h1>{card.title}</h1>
+  <div class="card-content" set:html={card.content} />
+  <div class="signature" set:html={card.signature} />
+  {card.isFinal && <div class="final-heart">{"\u2764\uFE0F"}</div>}
+  <slot />
+</article>
