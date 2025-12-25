@@ -1,0 +1,54 @@
+---
+interface Props {
+  isIntro?: boolean;
+}
+
+const { isIntro = false } = Astro.props;
+---
+
+{
+  isIntro ? (
+    <>
+      <button class="start-btn" id="start-btn">
+        ¡Comenzar el Rally! {"\u{1F381}"}
+      </button>
+      <div id="code-section" class="code-section hidden">
+        <label for="code-input">Ingresa el código del regalo:</label>
+        <div class="code-input-wrapper">
+          <input
+            type="text"
+            class="code-input"
+            id="code-input"
+            placeholder="CÓDIGO"
+            maxlength="15"
+            autocomplete="off"
+            aria-describedby="error-msg"
+          />
+          <button class="code-btn" id="verify-btn" type="button">
+            Verificar
+          </button>
+        </div>
+        <div id="error-msg" class="error-msg hidden" role="alert" aria-live="polite" />
+      </div>
+    </>
+  ) : (
+    <div class="code-section">
+      <label for="code-input">Ingresa el código del siguiente regalo:</label>
+      <div class="code-input-wrapper">
+        <input
+          type="text"
+          class="code-input"
+          id="code-input"
+          placeholder="CÓDIGO"
+          maxlength="15"
+          autocomplete="off"
+          aria-describedby="error-msg"
+        />
+        <button class="code-btn" id="verify-btn" type="button">
+          Verificar
+        </button>
+      </div>
+      <div id="error-msg" class="error-msg hidden" role="alert" aria-live="polite" />
+    </div>
+  )
+}

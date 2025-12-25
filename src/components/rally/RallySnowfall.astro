@@ -1,0 +1,30 @@
+---
+interface Props {
+  count?: number;
+}
+
+const { count = 50 } = Astro.props;
+const snowflakeChars = ["\u2744", "\u2745", "\u2746", "\u2726", "\u2727"];
+
+// Generate snowflake data at build time
+const snowflakes = Array.from({ length: count }, () => ({
+  char: snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)],
+  left: `${Math.random() * 100}%`,
+  duration: `${Math.random() * 10 + 8}s`,
+  delay: `${Math.random() * 10}s`,
+  fontSize: `${Math.random() * 0.8 + 0.5}rem`,
+}));
+---
+
+<div class="snowflakes" aria-hidden="true">
+  {
+    snowflakes.map((flake) => (
+      <span
+        class="snowflake"
+        style={`left: ${flake.left}; animation-duration: ${flake.duration}; animation-delay: ${flake.delay}; font-size: ${flake.fontSize};`}
+      >
+        {flake.char}
+      </span>
+    ))
+  }
+</div>
