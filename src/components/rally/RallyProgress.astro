@@ -1,0 +1,26 @@
+---
+interface Props {
+  total: number;
+  current: number;
+}
+
+const { total, current } = Astro.props;
+---
+
+<nav class="progress" id="progress" aria-label="Progreso del rally">
+  {
+    Array.from({ length: total }, (_, i) => (
+      <div
+        class:list={[
+          "progress-dot",
+          { completed: i < current, active: i === current },
+        ]}
+        role="progressbar"
+        aria-valuenow={current + 1}
+        aria-valuemin={1}
+        aria-valuemax={total}
+        aria-label={`Tarjeta ${i + 1} de ${total}`}
+      />
+    ))
+  }
+</nav>

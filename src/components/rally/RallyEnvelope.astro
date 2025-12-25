@@ -1,0 +1,16 @@
+---
+interface Props {
+  id?: string;
+}
+
+const { id = "envelope" } = Astro.props;
+---
+
+<div class="envelope-wrapper" id={`${id}-wrapper`}>
+  <div class="envelope envelope-enter" id={id} aria-label="Sobre con carta">
+    <div class="envelope-body"></div>
+    <div class="envelope-pocket"></div>
+    <div class="envelope-letter"></div>
+    <div class="envelope-flap"></div>
+  </div>
+</div>

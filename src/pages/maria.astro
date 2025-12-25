@@ -1,0 +1,235 @@
+---
+import "@fontsource-variable/quicksand";
+import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cormorant-garamond/400-italic.css";
+import "@fontsource/cormorant-garamond/600.css";
+import "@/css/rally.css";
+
+import { rallyCards } from "@/data/rally-cards";
+import RallySnowfall from "@/components/rally/RallySnowfall.astro";
+import RallyProgress from "@/components/rally/RallyProgress.astro";
+import RallyCard from "@/components/rally/RallyCard.astro";
+import RallyCodeInput from "@/components/rally/RallyCodeInput.astro";
+
+import { SITE_URL } from "@/const";
+
+const pageTitle = "Rally Navideño - Kin el Aluxe";
+const pageDescription =
+  "Un rally navideño especial con 12 lecciones sobre el amor y la generosidad humana.";
+const canonicalURL = new URL("/maria", SITE_URL);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:locale" content="es_MX" />
+
+    <!-- Prevent indexing (private page) -->
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <RallySnowfall count={50} />
+
+    <main class="container">
+      <RallyProgress total={rallyCards.length} current={0} />
+      <div id="card-container">
+        <RallyCard card={rallyCards[0]}>
+          <RallyCodeInput isIntro={true} />
+        </RallyCard>
+      </div>
+    </main>
+
+    <script is:inline define:vars={{ cards: rallyCards }}>
+      let currentCard = 0;
+
+      function renderProgress() {
+        const progress = document.getElementById("progress");
+        if (!progress) return;
+
+        progress.innerHTML = "";
+        for (let i = 0; i < cards.length; i++) {
+          const dot = document.createElement("div");
+          dot.className = "progress-dot";
+          dot.setAttribute("role", "progressbar");
+          dot.setAttribute("aria-valuenow", String(currentCard + 1));
+          dot.setAttribute("aria-valuemin", "1");
+          dot.setAttribute("aria-valuemax", String(cards.length));
+          dot.setAttribute("aria-label", `Tarjeta ${i + 1} de ${cards.length}`);
+          if (i < currentCard) dot.classList.add("completed");
+          if (i === currentCard) dot.classList.add("active");
+          progress.appendChild(dot);
+        }
+      }
+
+      function renderCard() {
+        const container = document.getElementById("card-container");
+        if (!container) return;
+
+        const card = cards[currentCard];
+
+        let cardClass = "card card-reveal";
+        if (card.isFinal) cardClass += " final";
+
+        let html = `
+          <article class="${cardClass}" data-card-id="${card.id}">
+            <div class="decoration">${card.decoration}</div>
+            <h1>${card.title}</h1>
+            <div class="card-content">${card.content}</div>
+            <div class="signature">${card.signature}</div>
+        `;
+
+        if (card.isFinal) {
+          html += `<div class="final-heart">\u2764\uFE0F</div>`;
+        } else if (card.isIntro) {
+          html += `
+            <button class="start-btn" id="start-btn">\u00A1Comenzar el Rally! \u{1F381}</button>
+            <div id="code-section" class="code-section hidden">
+              <label for="code-input">Ingresa el código del regalo:</label>
+              <div class="code-input-wrapper">
+                <input type="text" class="code-input" id="code-input" placeholder="CÓDIGO" maxlength="15" autocomplete="off" aria-describedby="error-msg">
+                <button class="code-btn" id="verify-btn" type="button">Verificar</button>
+              </div>
+              <div id="error-msg" class="error-msg hidden" role="alert" aria-live="polite"></div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="code-section">
+              <label for="code-input">Ingresa el código del siguiente regalo:</label>
+              <div class="code-input-wrapper">
+                <input type="text" class="code-input" id="code-input" placeholder="CÓDIGO" maxlength="15" autocomplete="off" aria-describedby="error-msg">
+                <button class="code-btn" id="verify-btn" type="button">Verificar</button>
+              </div>
+              <div id="error-msg" class="error-msg hidden" role="alert" aria-live="polite"></div>
+            </div>
+          `;
+        }
+
+        html += "</article>";
+        container.innerHTML = html;
+
+        // Attach event listeners
+        attachEventListeners();
+
+        // Focus on input if present and visible
+        setTimeout(() => {
+          const input = document.getElementById("code-input");
+          if (input && !input.closest(".hidden")) {
+            input.focus();
+          }
+        }, 100);
+      }
+
+      function attachEventListeners() {
+        const startBtn = document.getElementById("start-btn");
+        const verifyBtn = document.getElementById("verify-btn");
+        const codeInput = document.getElementById("code-input");
+
+        if (startBtn) {
+          startBtn.addEventListener("click", showCodeInput);
+        }
+
+        if (verifyBtn) {
+          verifyBtn.addEventListener("click", checkCode);
+        }
+
+        if (codeInput) {
+          codeInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              checkCode();
+            }
+          });
+        }
+      }
+
+      function showCodeInput() {
+        const startBtn = document.getElementById("start-btn");
+        const codeSection = document.getElementById("code-section");
+        const codeInput = document.getElementById("code-input");
+
+        if (startBtn) startBtn.classList.add("hidden");
+        if (codeSection) codeSection.classList.remove("hidden");
+        if (codeInput) codeInput.focus();
+      }
+
+      function showEnvelope() {
+        const container = document.getElementById("card-container");
+        if (!container) return;
+
+        container.innerHTML = `
+          <div class="envelope-wrapper" id="envelope-wrapper">
+            <div class="envelope envelope-enter" id="envelope" aria-label="Sobre con carta">
+              <div class="envelope-body"></div>
+              <div class="envelope-pocket"></div>
+              <div class="envelope-letter"></div>
+              <div class="envelope-flap"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      function openEnvelope() {
+        const envelope = document.getElementById("envelope");
+        if (envelope) {
+          envelope.classList.add("open");
+        }
+      }
+
+      function checkCode() {
+        const input = document.getElementById("code-input");
+        const errorMsg = document.getElementById("error-msg");
+
+        if (!input || !errorMsg) return;
+
+        const enteredCode = input.value.trim().toUpperCase();
+        const expectedCode = cards[currentCard].nextCode;
+
+        if (enteredCode === expectedCode) {
+          currentCard++;
+          renderProgress();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+
+          // Show envelope animation sequence
+          showEnvelope();
+
+          // Open envelope after it appears
+          setTimeout(() => {
+            openEnvelope();
+          }, 1000);
+
+          // Reveal the card after envelope animation completes
+          setTimeout(() => {
+            renderCard();
+          }, 3500);
+        } else {
+          errorMsg.textContent =
+            "\u00A1Ese código no es correcto! Sigue buscando... \u{1F50D}";
+          errorMsg.classList.remove("hidden");
+          input.value = "";
+          input.focus();
+
+          setTimeout(() => {
+            errorMsg.classList.add("hidden");
+          }, 3000);
+        }
+      }
+
+      // Initialize
+      attachEventListeners();
+    </script>
+  </body>
+</html>
