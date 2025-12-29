@@ -6,7 +6,6 @@ import "@fontsource/cormorant-garamond/600.css";
 import "@/css/rally.css";
 
 import { rallyCards } from "@/data/rally-cards";
-import RallySnowfall from "@/components/rally/RallySnowfall.astro";
 import RallyProgress from "@/components/rally/RallyProgress.astro";
 import RallyCard from "@/components/rally/RallyCard.astro";
 import RallyCodeInput from "@/components/rally/RallyCodeInput.astro";
@@ -42,8 +41,6 @@ const canonicalURL = new URL("/maria", SITE_URL);
     <meta name="robots" content="noindex, nofollow" />
   </head>
   <body>
-    <RallySnowfall count={50} />
-
     <main class="container">
       <RallyProgress total={rallyCards.length} current={0} />
       <div id="card-container">

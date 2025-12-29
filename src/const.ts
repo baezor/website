@@ -4,4 +4,4 @@ export const SITE_DESCRIPTION =
 export const SITE_URL = "https://angel-baez.com";
 
 // Seasonal features - set to true to enable snowfall effect
-export const ENABLE_SNOWFALL = true;
+export const ENABLE_SNOWFALL = false;
