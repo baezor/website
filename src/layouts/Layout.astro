@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION, ENABLE_SNOWFALL } from "../const";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../const";
 import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/source-serif-4";
 import "@fontsource-variable/source-serif-4/wght-italic.css";
@@ -7,7 +7,6 @@ import "@/css/styles.css";
 import BaseHead from "@/components/BaseHead.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import SnowFall from "@/components/SnowFall.astro";
 
 // Define the title and description props
 interface Props {
@@ -55,7 +54,6 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
     </script>
   </head>
   <body>
-    {ENABLE_SNOWFALL && <SnowFall />}
     <div class="site-wrapper">
       <Header />
 
