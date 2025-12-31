@@ -8,7 +8,7 @@ type Props = {
 };
 
 const { entry } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, categories, metaDescription, keywords, contentType } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType } = entry.data;
 
 // Format date for display
 const formattedPublishDate = pubDate.toLocaleDateString("en-us", {
@@ -49,13 +49,22 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
                 </div>
               )
             }
-            {categories && categories.length > 0 && (
-              <div class="post-categories">
-                {categories.map((category) => (
-                  <span class="category-badge">{category}</span>
-                ))}
-              </div>
-            )}
+            <div class="post-taxonomy">
+              {categories && categories.length > 0 && (
+                <div class="post-categories">
+                  {categories.map((category) => (
+                    <a href={`/category/${category}/`} class="category-badge">{category}</a>
+                  ))}
+                </div>
+              )}
+              {tags && tags.length > 0 && (
+                <div class="post-tags">
+                  {tags.map((tag) => (
+                    <a href={`/tag/${tag}/`} class="tag-badge">#{tag}</a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -178,11 +187,18 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
     font-style: italic;
   }
 
-  .post-categories {
+  .post-taxonomy {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .post-categories,
+  .post-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 0.75rem;
   }
 
   .category-badge {
@@ -194,6 +210,29 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
     font-weight: 500;
     text-transform: lowercase;
     font-style: normal;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .category-badge:hover {
+    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+
+  .tag-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
+    color: var(--color-text);
+    border-radius: 0.25rem;
+    font-weight: 500;
+    text-transform: lowercase;
+    font-style: normal;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .tag-badge:hover {
+    background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
   }
 
   /* Post footer */
