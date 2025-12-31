@@ -1,23 +1,63 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
+import { SITE_TITLE } from "@/const";
 
-// Get all blog posts and sort by publication date
-const posts = await getCollection("blog");
-const sortedPosts = posts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+// Generate static paths for all categories
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  // Collect all unique categories
+  const categories = new Set<string>();
+  posts.forEach((post) => {
+    if (post.data.categories) {
+      post.data.categories.forEach((category) => categories.add(category));
+    }
+  });
+
+  // Generate a path for each category
+  return Array.from(categories).map((category) => {
+    const categoryPosts = posts
+      .filter((post) => post.data.categories?.includes(category))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { category },
+      props: { posts: categoryPosts, category },
+    };
+  });
+}
+
+const { posts, category } = Astro.props;
+
+// Format category for display (capitalize first letter of each word)
+const formatCategory = (cat: string) => {
+  return cat
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+const displayCategory = formatCategory(category);
+const pageTitle = `${displayCategory} Posts | ${SITE_TITLE}`;
+const description = `All blog posts in the ${displayCategory} category`;
 ---
 
-<Layout title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-  <main class="blog-container">
-    <h1>Blog</h1>
-    <p class="description">Latest articles and updates</p>
+<Layout title={pageTitle} description={description}>
+  <main class="category-archive">
+    <div class="archive-header">
+      <nav class="breadcrumb">
+        <a href="/blog/">Blog</a>
+        <span class="separator">/</span>
+        <span class="current">Category: {displayCategory}</span>
+      </nav>
+      <h1>Category: {displayCategory}</h1>
+      <p class="post-count">{posts.length} {posts.length === 1 ? "post" : "posts"}</p>
+    </div>
 
     <section class="blog-posts">
       {
-        sortedPosts.map((post) => (
+        posts.map((post) => (
           <article class="post-card">
             {post.data.heroImage && (
               <div class="post-image">
@@ -39,8 +79,10 @@ const sortedPosts = posts.sort(
               </h2>
               {post.data.categories && post.data.categories.length > 0 && (
                 <div class="post-categories">
-                  {post.data.categories.map((category) => (
-                    <a href={`/category/${category}/`} class="category-badge">{category}</a>
+                  {post.data.categories.map((cat) => (
+                    <a href={`/category/${cat}/`} class="category-badge">
+                      {cat}
+                    </a>
                   ))}
                 </div>
               )}
@@ -57,19 +99,47 @@ const sortedPosts = posts.sort(
 </Layout>
 
 <style>
-  .blog-container {
+  .category-archive {
     max-width: 1000px;
     margin: 0 auto;
     padding: 6rem 1rem 4rem 1rem;
   }
 
-  h1 {
-    margin-bottom: 0.5rem;
+  .archive-header {
+    margin-bottom: 3rem;
   }
 
-  .description {
+  .breadcrumb {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
     color: var(--color-text-muted);
-    margin-bottom: 3rem;
+  }
+
+  .breadcrumb a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb .separator {
+    margin: 0 0.5rem;
+  }
+
+  .breadcrumb .current {
+    color: var(--color-text);
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+  }
+
+  .post-count {
+    color: var(--color-text-muted);
+    font-size: 1rem;
   }
 
   .blog-posts {
@@ -166,6 +236,10 @@ const sortedPosts = posts.sort(
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
     .blog-posts {
       grid-template-columns: 1fr;
     }
