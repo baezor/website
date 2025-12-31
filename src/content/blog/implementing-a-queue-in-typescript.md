@@ -34,7 +34,7 @@ export default class Queue<T> {
 
   constructor() {
     this.head = this.tail = undefined;
-    this.lenght = 0;
+    this.length = 0;
   }
   enqueue(item: T): void {
     const node = { value: item } as Node<T>;
