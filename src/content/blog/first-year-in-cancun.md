@@ -1,8 +1,21 @@
 ---
-title: "First year in Cancun"
+title: "First Year in Cancun"
 description: "About new beginnings"
 pubDate: 2025-03-19T00:00:00.000Z
 heroImage: "/img/cover-cancun.jpg"
+categories:
+  - personal
+  - mexico
+  - cancun
+metaDescription: "Reflecting on my first year in Cancun - trading city life for quiet mornings by the sea. A journey of personal growth and new beginnings."
+keywords:
+  - personal development
+  - life lessons
+  - mexico
+  - cancun
+  - new beginnings
+  - expat life
+contentType: "personal-essay"
 ---
 
 A year ago, I moved to Cancun, México. My girlfriend and I moved there to start a new chapter in our lives, and also it has been a year of personal growth and self-discovery.

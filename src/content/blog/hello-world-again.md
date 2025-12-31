@@ -1,9 +1,16 @@
 ---
-title: "Hello world again!"
+title: "Hello World Again!"
 description: "I've decided to start writing again. But this time I'm taking it seriously."
 pubDate: 2024-07-02T11:00:00.000Z
 categories:
   - announcement
+metaDescription: "Starting fresh with intentional writing. Covering tech problems, personal growth, and daily reflections to help others and improve focus."
+keywords:
+  - blogging
+  - personal development
+  - writing
+  - new beginnings
+contentType: "personal-essay"
 ---
 
 ## Hi, again.

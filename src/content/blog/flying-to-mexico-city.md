@@ -4,6 +4,14 @@ description: "I truly enjoy flying"
 pubDate: 2024-07-18T04:06:08.000Z
 categories:
   - personal
+metaDescription: "Airport reflections and family visits. Finding balance between work and life while maintaining daily writing practice."
+keywords:
+  - personal
+  - travel
+  - work life balance
+  - family
+  - mexico
+contentType: "personal-essay"
 ---
 
 I like to be at the airport at least a couple of hours earlier to sit in the lounge, grab a cup of coffee and write some code or finish work.

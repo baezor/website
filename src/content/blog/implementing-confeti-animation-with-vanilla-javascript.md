@@ -1,13 +1,23 @@
 ---
-title: "Implementing Confeti Animation with Vanilla JavaScript"
+title: "Implementing Confetti Animation with Vanilla JavaScript"
 description: "Creating a confetti animation effect using vanilla JavaScript."
 pubDate: 2024-07-08T10:00:00.000Z
 categories:
   - javascript
   - animation
+metaDescription: "Learn how to create a confetti animation effect using vanilla JavaScript and HTML5 Canvas. Includes full implementation with physics and color customization."
+keywords:
+  - javascript
+  - animation
+  - canvas
+  - html5
+  - web development
+contentType: "technical-tutorial"
 ---
 
 I've always been fascinated by the confetti animations that pop up on websites during celebrations or special events. They add a touch of fun and excitement to the user experience. So, I decided to create my own confetti animation using vanilla JavaScript.
+
+For testing visual changes like this animation, check out my guide on [Visual Regression Testing with Playwright](/blog/visual-regression-testing-with-playwright/).
 
 Here's my implementation:
 

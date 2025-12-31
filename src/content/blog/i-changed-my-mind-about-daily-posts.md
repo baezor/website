@@ -1,9 +1,17 @@
 ---
-title: "I changed my mind about daily posts"
+title: "I Changed My Mind About Daily Posts"
 description: "I changed my mind about daily posts"
 pubDate: 2024-08-19T10:00:00.000Z
 categories:
   - personal
+metaDescription: "Shifting from daily to weekly posts for higher quality content. Learning to adapt goals when life gets unpredictable."
+keywords:
+  - personal development
+  - writing
+  - blogging
+  - goals
+  - adaptability
+contentType: "personal-essay"
 ---
 
 Jesus, I stopped writing an entire month!
@@ -19,3 +27,5 @@ Projects, meetings, code, decisions, emergencies, house maintenance, the list is
 See you next week!
 
 A.
+
+*Related: [Progress is Not Linear](/blog/progress-is-not-linear/) - Learning to be compassionate with yourself when things don't go as planned.*

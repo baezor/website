@@ -1,11 +1,21 @@
 ---
-title: "Using Levenshtein Distance and Python to Find Similar Names and Avoid Duplicates"
+title: "Using Levenshtein Distance and Python to Find Similar Names"
 description: "A Python script to find similar names using the Levenshtein distance algorithm."
 pubDate: 2024-07-09T10:00:00.000Z
 categories:
   - python
   - algorithms
   - prepain
+metaDescription: "Learn to detect duplicate names with Levenshtein distance in Python. Uses FuzzyWuzzy and Pandas to find similar strings and avoid duplicates."
+keywords:
+  - python
+  - levenshtein distance
+  - algorithms
+  - string matching
+  - data cleaning
+  - fuzzywuzzy
+  - pandas
+contentType: "technical-tutorial"
 ---
 
 The other day, a colleague from our [Prepa IN](https://prepain.mx/) team needed help with a tough task involving a hefty report. He had to spot rows with similar names, some of which were misspelled but actually referred to the same person. Like, there would be _"Angel Baez"_ in one row and _"Angel Báez"_ in another. Identifying these differences was hard, especially with 3000 names to go through - definitely not a one-person job.

@@ -6,6 +6,15 @@ categories:
   - testing
   - playwright
   - typescript
+metaDescription: "Implement visual regression testing with Playwright. Learn to catch UI bugs, configure snapshot testing, and integrate into CI/CD workflows."
+keywords:
+  - playwright
+  - visual regression testing
+  - typescript
+  - testing
+  - snapshot testing
+  - UI testing
+contentType: "technical-tutorial"
 ---
 
 ## Introduction

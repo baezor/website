@@ -8,7 +8,7 @@ type Props = {
 };
 
 const { entry } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, categories } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, categories, metaDescription, keywords, contentType } = entry.data;
 
 // Format date for display
 const formattedPublishDate = pubDate.toLocaleDateString("en-us", {
@@ -24,7 +24,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
 });
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={metaDescription || description} keywords={keywords}>
   <main>
     <article class="blog-post">
       <header class="blog-header">
@@ -73,6 +73,34 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
       </footer>
     </article>
   </main>
+
+  <!-- BlogPosting Structured Data -->
+  <script is:inline define:vars={{
+    headline: title,
+    desc: metaDescription || description,
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate || pubDate).toISOString(),
+    postKeywords: keywords
+  }} type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": headline,
+      "description": desc,
+      "datePublished": datePublished,
+      "dateModified": dateModified,
+      "author": {
+        "@type": "Person",
+        "name": "Angel Baez",
+        "url": "https://angel-baez.com"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Angel Baez"
+      },
+      "keywords": postKeywords ? postKeywords.join(", ") : undefined
+    }
+  </script>
 </Layout>
 
 <style is:global>
