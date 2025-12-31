@@ -37,6 +37,13 @@ const sortedPosts = posts.sort(
               <h2 class="post-title">
                 <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
               </h2>
+              {post.data.categories && post.data.categories.length > 0 && (
+                <div class="post-categories">
+                  {post.data.categories.map((category) => (
+                    <span class="category-badge">{category}</span>
+                  ))}
+                </div>
+              )}
               <p class="post-description">{post.data.description}</p>
               <a href={`/blog/${post.slug}/`} class="read-more">
                 Read more →
@@ -132,6 +139,23 @@ const sortedPosts = posts.sort(
 
   .read-more:hover {
     text-decoration: underline;
+  }
+
+  .post-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+
+  .category-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent);
+    border-radius: 1rem;
+    font-weight: 500;
+    text-transform: lowercase;
   }
 
   /* Responsive adjustments */
