@@ -1,9 +1,18 @@
 ---
-title: "A personal tool I use to deal with changes in life"
+title: "A Tool for Dealing with Life Changes"
 description: "A personal tool I use to deal with changes in life"
 pubDate: 2024-07-12T10:00:00.000Z
 categories:
   - personal
+metaDescription: "The Pain-Choose Reminder: a mental tool for navigating life changes. Compare your past and present pain to stay motivated during hard transitions."
+keywords:
+  - personal development
+  - life changes
+  - mental tools
+  - motivation
+  - resilience
+  - decision making
+contentType: "personal-essay"
 ---
 
 Today, I want to talk to those currently going through a change in life. Life changes are hard; feeling sad, tired, dumb, doubtful—or a combination of them all—is normal and okay. So cut yourself some slack.
@@ -36,6 +45,8 @@ If you’re in the middle you might find you want to take a few more minutes wit
 
 It helps to remind oneself why one’s decision came about—why that change—every time one is in pain.
 
-This post might need a bit more work and structure, but it’s all I can write for today.
+This post might need a bit more work and structure, but it's all I can write for today.
 
 See you tomorrow.
+
+*You might also find helpful: [First Year in Cancun](/blog/first-year-in-cancun/) - Reflections on navigating a major life change.*

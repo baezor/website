@@ -5,6 +5,15 @@ pubDate: 2024-07-10T10:00:00.000Z
 categories:
   - jekyll
   - bash
+metaDescription: "Create a custom Bash script to automate Jekyll post creation. Includes title slugification, frontmatter generation, and file naming automation."
+keywords:
+  - jekyll
+  - bash
+  - automation
+  - static site
+  - blogging
+  - shell scripting
+contentType: "technical-tutorial"
 ---
 
 I wrote a bash script to automate the creation of new posts on Jekyll.

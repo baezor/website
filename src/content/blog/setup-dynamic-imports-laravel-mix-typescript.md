@@ -6,6 +6,15 @@ categories:
   - webpack
   - laravel-mix
   - typescript
+metaDescription: "Learn to configure dynamic imports in Laravel Mix with TypeScript. Includes Babel setup, webpack config, and module-based architecture patterns."
+keywords:
+  - webpack
+  - laravel mix
+  - typescript
+  - dynamic imports
+  - code splitting
+  - performance optimization
+contentType: "technical-tutorial"
 ---
 
 ## Introduction

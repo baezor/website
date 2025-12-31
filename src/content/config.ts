@@ -9,6 +9,9 @@ const blogCollection = defineCollection({
     updatedDate: z.date().optional(),
     heroImage: z.string().optional(),
     categories: z.array(z.string()).optional(),
+    metaDescription: z.string().max(160).optional(),
+    keywords: z.array(z.string()).optional(),
+    contentType: z.enum(['technical-tutorial', 'algorithm', 'personal-essay', 'project-showcase']).optional(),
   }),
 });
 

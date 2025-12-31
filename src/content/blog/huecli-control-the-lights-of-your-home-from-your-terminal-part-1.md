@@ -1,5 +1,5 @@
 ---
-title: "Hue-CLI Control the lights of your home from your terminal Part 1"
+title: "Hue-CLI: Control Philips Hue Lights from Your Terminal"
 description: "Launching a CLI tool to control your Phillips Hue devices."
 pubDate: 2024-07-15T10:00:00.000Z
 categories:
@@ -7,6 +7,15 @@ categories:
   - hue-cli
   - phillips-hue
   - typescript
+metaDescription: "Building Hue-CLI: A TypeScript command-line tool to control Philips Hue smart lights. Part 1 covers bridge connection and device management."
+keywords:
+  - philips hue
+  - cli tool
+  - typescript
+  - home automation
+  - smart lights
+  - command line
+contentType: "project-showcase"
 ---
 
 Three years ago, I had a personal need. I wanted to control the lights in my studio from the terminal. Three years just flew by
