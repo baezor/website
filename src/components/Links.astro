@@ -1,11 +1,19 @@
 ---
 import { Icon } from "astro-icon/components";
 import { links } from "../data";
+import { useTranslations, type Language } from "@/i18n/utils";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
-<section class="links-container" aria-label="Social Media Links">
-  <h2 class="visually-hidden">Connect with Angel Baez</h2>
-  <nav aria-label="Social media profiles">
+<section class="links-container" aria-label={t('footer.socialLinks')}>
+  <h2 class="visually-hidden">{t('links.aria.connect')}</h2>
+  <nav aria-label={t('links.aria.social')}>
     <ul class="links-list">
       {
         links.map((link) => (
@@ -15,12 +23,12 @@ import { links } from "../data";
               class="link"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Visit Angel Baez on ${link.label.replace("Follow me on ", "").replace("Check out my ", "").replace("Add me to your network on ", "")}`}
+              aria-label={t(link.ariaKey)}
             >
               <span class="icon-circle">
                 <Icon name={link.icon} class="link-icon" />
               </span>
-              <span class="link-text">{link.label}</span>
+              <span class="link-text">{t(link.labelKey)}</span>
             </a>
           </li>
         ))

@@ -1,7 +1,13 @@
 ---
 import DarkLightThemeSwitch from "@/components/DarkLightThemeSwitch.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { Icon } from "astro-icon/components";
 import { SITE_TITLE } from "@/const";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Get the current URL path to highlight active links
 const { pathname } = Astro.url;
@@ -16,16 +22,16 @@ const isActive = (path: string) => {
 <header>
   <div class="header-container">
     <div class="logo">
-      <a href="/" aria-label="Home">{SITE_TITLE}</a>
+      <a href={getRelativeLocaleUrl(lang, '')} aria-label={t('nav.aria.home')}>{SITE_TITLE[lang]}</a>
     </div>
 
     <button
       class="mobile-nav-toggle"
       aria-controls="primary-navigation"
       aria-expanded="false"
-      aria-label="Toggle menu"
+      aria-label={t('nav.aria.toggle')}
     >
-      <span class="sr-only">Menu</span>
+      <span class="sr-only">{t('nav.menu')}</span>
       <div class="hamburger">
         <span class="bar"></span>
         <span class="bar"></span>
@@ -36,15 +42,18 @@ const isActive = (path: string) => {
     <nav id="primary-navigation" class="primary-navigation">
       <ul class="nav-list">
         <li>
-          <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
+          <a href={getRelativeLocaleUrl(lang, '')} class={isActive("/") || isActive("/es") ? "active" : ""}>{t('nav.home')}</a>
         </li>
         <li>
-          <a href="/blog/" class={isActive("/blog") ? "active" : ""}>Blog</a>
+          <a href={getRelativeLocaleUrl(lang, 'blog')} class={isActive("/blog") || isActive("/es/blog") ? "active" : ""}>{t('nav.blog')}</a>
         </li>
         <li>
-          <a href="/contact/" class={isActive("/contact") ? "active" : ""}
-            >Contact</a
+          <a href={getRelativeLocaleUrl(lang, 'contact')} class={isActive("/contact") || isActive("/es/contact") ? "active" : ""}
+            >{t('nav.contact')}</a
           >
+        </li>
+        <li class="lang-switch">
+          <LanguageSwitcher />
         </li>
         <li class="theme-switch">
           <DarkLightThemeSwitch />
@@ -242,6 +251,11 @@ const isActive = (path: string) => {
     width: 100%;
   }
 
+  .lang-switch {
+    display: flex;
+    align-items: center;
+  }
+
   .theme-switch {
     display: flex;
     align-items: center;
@@ -322,6 +336,10 @@ const isActive = (path: string) => {
 
     .mobile-nav-toggle[aria-expanded="true"] .bar:nth-child(3) {
       transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .lang-switch {
+      margin-left: 0;
     }
 
     .theme-switch {

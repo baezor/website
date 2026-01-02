@@ -2,10 +2,13 @@
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { SITE_TITLE } from "@/const";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
+import { getRelativeLocaleUrl } from "astro:i18n";
 
 // Generate static paths for all tags
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("blog", ({ data }) => data.lang === 'en');
 
   // Collect all unique tags
   const tags = new Set<string>();
@@ -30,6 +33,10 @@ export async function getStaticPaths() {
 
 const { posts, tag } = Astro.props;
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const locale = locales[lang];
+
 // Format tag for display (capitalize first letter of each word)
 const formatTag = (t: string) => {
   return t
@@ -39,7 +46,7 @@ const formatTag = (t: string) => {
 };
 
 const displayTag = formatTag(tag);
-const pageTitle = `${displayTag} Posts | ${SITE_TITLE}`;
+const pageTitle = `${displayTag} Posts | ${SITE_TITLE[lang]}`;
 const description = `All blog posts tagged with ${displayTag}`;
 ---
 
@@ -47,12 +54,12 @@ const description = `All blog posts tagged with ${displayTag}`;
   <main class="tag-archive">
     <div class="archive-header">
       <nav class="breadcrumb">
-        <a href="/blog/">Blog</a>
-        <span class="separator">/</span>
-        <span class="current">Tag: {displayTag}</span>
+        <a href={getRelativeLocaleUrl(lang, 'blog')}>{t('breadcrumb.blog')}</a>
+        <span class="separator">{t('breadcrumb.separator')}</span>
+        <span class="current">{t('tag.title', { tag: displayTag })}</span>
       </nav>
-      <h1>Tag: {displayTag}</h1>
-      <p class="post-count">{posts.length} {posts.length === 1 ? "post" : "posts"}</p>
+      <h1>{t('tag.title', { tag: displayTag })}</h1>
+      <p class="post-count">{posts.length} {posts.length === 1 ? t('blog.post') : t('blog.posts')}</p>
     </div>
 
     <section class="blog-posts">
@@ -61,27 +68,27 @@ const description = `All blog posts tagged with ${displayTag}`;
           <article class="post-card">
             {post.data.heroImage && (
               <div class="post-image">
-                <a href={`/blog/${post.slug}/`}>
+                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>
                   <img src={post.data.heroImage} alt={post.data.title} />
                 </a>
               </div>
             )}
             <div class="post-content">
               <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString("en-us", {
+                {post.data.pubDate.toLocaleDateString(locale, {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
                 })}
               </time>
               <h2 class="post-title">
-                <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>{post.data.title}</a>
               </h2>
               <div class="post-meta">
                 {post.data.categories && post.data.categories.length > 0 && (
                   <div class="post-categories">
                     {post.data.categories.map((cat) => (
-                      <a href={`/category/${cat}/`} class="category-badge">
+                      <a href={getRelativeLocaleUrl(lang, `category/${cat}`)} class="category-badge">
                         {cat}
                       </a>
                     ))}
@@ -90,7 +97,7 @@ const description = `All blog posts tagged with ${displayTag}`;
                 {post.data.tags && post.data.tags.length > 0 && (
                   <div class="post-tags">
                     {post.data.tags.map((t) => (
-                      <a href={`/tag/${t}/`} class="tag-badge">
+                      <a href={getRelativeLocaleUrl(lang, `tag/${t}`)} class="tag-badge">
                         #{t}
                       </a>
                     ))}
@@ -98,8 +105,8 @@ const description = `All blog posts tagged with ${displayTag}`;
                 )}
               </div>
               <p class="post-description">{post.data.description}</p>
-              <a href={`/blog/${post.slug}/`} class="read-more">
-                Read more →
+              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more">
+                {t('blog.readMore')}
               </a>
             </div>
           </article>
