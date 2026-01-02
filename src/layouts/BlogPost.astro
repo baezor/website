@@ -2,22 +2,28 @@
 import type { CollectionEntry } from "astro:content";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
 import Layout from "./Layout.astro";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { getRelativeLocaleUrl } from "astro:i18n";
 
 type Props = {
   entry: CollectionEntry<"blog">;
 };
 
 const { entry } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType, lang } = entry.data;
 
-// Format date for display
-const formattedPublishDate = pubDate.toLocaleDateString("en-us", {
+const currentLang = lang || 'en';
+const t = useTranslations(currentLang);
+
+// Format date for display with correct locale
+const locale = currentLang === 'es' ? 'es-MX' : 'en-US';
+const formattedPublishDate = pubDate.toLocaleDateString(locale, {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
 
-const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
+const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
   year: "numeric",
   month: "long",
   day: "numeric",
@@ -42,7 +48,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
             {
               updatedDate && (
                 <div class="updated-date">
-                  Updated:{" "}
+                  {t('blog.updated')}{" "}
                   <time datetime={updatedDate.toISOString()}>
                     {formattedUpdatedDate}
                   </time>
@@ -53,14 +59,14 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
               {categories && categories.length > 0 && (
                 <div class="post-categories">
                   {categories.map((category) => (
-                    <a href={`/category/${category}/`} class="category-badge">{category}</a>
+                    <a href={getRelativeLocaleUrl(currentLang, `category/${category}`)} class="category-badge">{category}</a>
                   ))}
                 </div>
               )}
               {tags && tags.length > 0 && (
                 <div class="post-tags">
                   {tags.map((tag) => (
-                    <a href={`/tag/${tag}/`} class="tag-badge">#{tag}</a>
+                    <a href={getRelativeLocaleUrl(currentLang, `tag/${tag}`)} class="tag-badge">#{tag}</a>
                   ))}
                 </div>
               )}
@@ -77,7 +83,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-us", {
 
       <footer class="post-footer container">
         <div class="post-nav">
-          <a href="/blog/" class="back-link">← Back to all posts</a>
+          <a href={getRelativeLocaleUrl(currentLang, 'blog')} class="back-link">{t('blog.backToAll')}</a>
         </div>
       </footer>
     </article>

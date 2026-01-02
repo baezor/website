@@ -8,6 +8,13 @@ export default defineConfig({
   build: {
     inlineStylesheets: "always",
   },
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     icon({
       include: {
@@ -20,7 +27,15 @@ export default defineConfig({
         forward: ["dataLayer.push"],
       },
     }),
-    sitemap(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en-US',
+          es: 'es-MX',
+        },
+      },
+    }),
   ],
   site: "https://angel-baez.com/",
   prefetch: true,

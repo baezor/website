@@ -2,8 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import ProfilePicture from "@/components/ProfilePicture.astro";
 import Links from "@/components/Links.astro";
-import { userData } from "../data";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../const";
+import { userData } from "../../data";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../../const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 const userName = userData[0].userName;

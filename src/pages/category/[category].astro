@@ -2,10 +2,12 @@
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { SITE_TITLE } from "@/const";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { getRelativeLocaleUrl } from "astro:i18n";
 
 // Generate static paths for all categories
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("blog", ({ data }) => data.lang === 'en');
 
   // Collect all unique categories
   const categories = new Set<string>();
@@ -30,6 +32,9 @@ export async function getStaticPaths() {
 
 const { posts, category } = Astro.props;
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 // Format category for display (capitalize first letter of each word)
 const formatCategory = (cat: string) => {
   return cat
@@ -39,7 +44,7 @@ const formatCategory = (cat: string) => {
 };
 
 const displayCategory = formatCategory(category);
-const pageTitle = `${displayCategory} Posts | ${SITE_TITLE}`;
+const pageTitle = `${displayCategory} Posts | ${SITE_TITLE[lang]}`;
 const description = `All blog posts in the ${displayCategory} category`;
 ---
 
@@ -47,12 +52,12 @@ const description = `All blog posts in the ${displayCategory} category`;
   <main class="category-archive">
     <div class="archive-header">
       <nav class="breadcrumb">
-        <a href="/blog/">Blog</a>
-        <span class="separator">/</span>
-        <span class="current">Category: {displayCategory}</span>
+        <a href={getRelativeLocaleUrl(lang, 'blog')}>{t('breadcrumb.blog')}</a>
+        <span class="separator">{t('breadcrumb.separator')}</span>
+        <span class="current">{t('category.title', { category: displayCategory })}</span>
       </nav>
-      <h1>Category: {displayCategory}</h1>
-      <p class="post-count">{posts.length} {posts.length === 1 ? "post" : "posts"}</p>
+      <h1>{t('category.title', { category: displayCategory })}</h1>
+      <p class="post-count">{posts.length} {posts.length === 1 ? t('blog.post') : t('blog.posts')}</p>
     </div>
 
     <section class="blog-posts">
@@ -61,34 +66,34 @@ const description = `All blog posts in the ${displayCategory} category`;
           <article class="post-card">
             {post.data.heroImage && (
               <div class="post-image">
-                <a href={`/blog/${post.slug}/`}>
+                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>
                   <img src={post.data.heroImage} alt={post.data.title} />
                 </a>
               </div>
             )}
             <div class="post-content">
               <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString("en-us", {
+                {post.data.pubDate.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
                 })}
               </time>
               <h2 class="post-title">
-                <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>{post.data.title}</a>
               </h2>
               {post.data.categories && post.data.categories.length > 0 && (
                 <div class="post-categories">
                   {post.data.categories.map((cat) => (
-                    <a href={`/category/${cat}/`} class="category-badge">
+                    <a href={getRelativeLocaleUrl(lang, `category/${cat}`)} class="category-badge">
                       {cat}
                     </a>
                   ))}
                 </div>
               )}
               <p class="post-description">{post.data.description}</p>
-              <a href={`/blog/${post.slug}/`} class="read-more">
-                Read more →
+              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more">
+                {t('blog.readMore')}
               </a>
             </div>
           </article>

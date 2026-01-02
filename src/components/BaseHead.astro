@@ -1,11 +1,13 @@
 ---
 import { SITE_URL } from "../const";
+import type { Language } from "@/i18n/ui";
 
 interface Props {
   title: string;
   description: string;
   image?: string;
   keywords?: string[];
+  lang: Language;
 }
 
 const defaultKeywords = ["Angel Baez", "angel-baez.com", "Software Engineer", "Developer", "Entrepreneur", "Cancun", "Mexico", "baezor", "Web Developer"];
@@ -14,7 +16,8 @@ const {
   title,
   description,
   image = "/favicon.png",
-  keywords
+  keywords,
+  lang
 } = Astro.props;
 
 // Merge post-specific keywords with defaults
@@ -24,6 +27,11 @@ const allKeywords = keywords && keywords.length > 0
 const keywordsString = allKeywords.join(", ");
 
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+
+// Generate alternate URLs for hreflang
+const pathname = Astro.url.pathname;
+const enUrl = new URL(pathname.replace(/^\/es/, ''), SITE_URL);
+const esUrl = new URL(pathname.startsWith('/es') ? pathname : `/es${pathname}`, SITE_URL);
 ---
 
 <!-- Essential Meta Tags -->
@@ -34,6 +42,9 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 
 <!-- SEO Meta Tags -->
 <link rel="canonical" href={canonicalURL} />
+<link rel="alternate" hreflang="en" href={enUrl} />
+<link rel="alternate" hreflang="es-MX" href={esUrl} />
+<link rel="alternate" hreflang="x-default" href={enUrl} />
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
@@ -48,7 +59,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image, SITE_URL)} />
 <meta property="og:site_name" content="Angel Baez" />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={lang === 'es' ? 'es_MX' : 'en_US'} />
 
 <!-- X (formerly Twitter) -->
 <meta property="twitter:card" content="summary_large_image" />
