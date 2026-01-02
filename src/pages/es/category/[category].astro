@@ -8,7 +8,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 
 // Generate static paths for all categories
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => data.lang === 'en');
+  const posts = await getCollection("blog", ({ data }) => data.lang === 'es');
 
   // Collect all unique categories
   const categories = new Set<string>();

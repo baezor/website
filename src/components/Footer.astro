@@ -2,12 +2,17 @@
 import { Icon } from "astro-icon/components";
 import { socialLinks } from "../data/index";
 import { SITE_TITLE } from "../const";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <footer>
   <div class="footer-container">
-    <nav class="social-icons" aria-label="Social media links">
+    <nav class="social-icons" aria-label={t('footer.socialLinks')}>
       {socialLinks.map((link) => (
         <a
           href={link.url}
@@ -21,12 +26,15 @@ import { SITE_TITLE } from "../const";
         </a>
       ))}
     </nav>
+    <div class="footer-lang-switcher">
+      <LanguageSwitcher />
+    </div>
     <div class="footer-content">
-      <p>&copy; {new Date().getFullYear()} {SITE_TITLE}</p>
+      <p>&copy; {new Date().getFullYear()} {SITE_TITLE[lang]}</p>
       <p>
-        <a href="/blog">Blog</a>
+        <a href={getRelativeLocaleUrl(lang, 'blog')}>{t('nav.blog')}</a>
         |
-        <a href="/contact">Contact</a>
+        <a href={getRelativeLocaleUrl(lang, 'contact')}>{t('nav.contact')}</a>
       </p>
     </div>
   </div>
@@ -90,6 +98,10 @@ import { SITE_TITLE } from "../const";
 
   .social-icon:active {
     color: var(--color-accent-active);
+  }
+
+  .footer-lang-switcher {
+    margin-top: 0.5rem;
   }
 
   .footer-content {

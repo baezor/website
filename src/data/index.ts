@@ -1,4 +1,5 @@
 import profileImage from "../assets/angelbaez-headshot.webp";
+import type { UiKey } from "@/i18n/ui";
 
 const userData = [
   {
@@ -9,19 +10,27 @@ const userData = [
   },
 ];
 
-const links = [
+const links: Array<{
+  labelKey: UiKey;
+  ariaKey: UiKey;
+  url: string;
+  icon: string;
+}> = [
   {
-    label: "Prepa IN's Blog (Spanish)",
+    labelKey: "links.prepain.label",
+    ariaKey: "links.prepain.aria",
     url: "https://prepain.mx/angel/",
     icon: "simple-icons:rss",
   },
   {
-    label: "Add me to your network on LinkedIn",
+    labelKey: "links.linkedin.label",
+    ariaKey: "links.linkedin.aria",
     url: "https://www.linkedin.com/in/angelromerobaez",
     icon: "simple-icons:linkedin",
   },
   {
-    label: "Check out my GitHub",
+    labelKey: "links.github.label",
+    ariaKey: "links.github.aria",
     url: "https://github.com/baezor/",
     icon: "simple-icons:github",
   },

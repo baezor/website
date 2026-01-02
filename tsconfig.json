@@ -10,7 +10,8 @@
       "@/pages/*": ["./src/pages/*"],
       "@/data/*": ["./src/data/*"],
       "@/components/*": ["./src/components/*"],
-      "@/const": ["./src/const.ts"]
+      "@/const": ["./src/const.ts"],
+      "@/i18n/*": ["./src/i18n/*"]
     }
   }
 }

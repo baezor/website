@@ -13,6 +13,7 @@ const blogCollection = defineCollection({
     metaDescription: z.string().max(160).optional(),
     keywords: z.array(z.string()).optional(),
     contentType: z.enum(['technical-tutorial', 'algorithm', 'personal-essay', 'project-showcase']).optional(),
+    lang: z.enum(['en', 'es']).default('en'),
   }),
 });
 
