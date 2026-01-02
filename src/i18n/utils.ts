@@ -3,7 +3,9 @@ import { ui, defaultLang, type Language as Lang, type UiKey } from './ui';
 export type Language = Lang;
 
 export function getLangFromUrl(url: URL): Language {
-  const [, lang] = url.pathname.split('/');
+  // Normalize pathname by removing trailing slash
+  const pathname = url.pathname.replace(/\/$/, '');
+  const [, lang] = pathname.split('/');
   if (lang === 'es') return 'es';
   return defaultLang;
 }
@@ -15,7 +17,8 @@ export function useTranslations(lang: Language) {
     // Simple template replacement for {param} placeholders
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        translation = translation.replace(`{${key}}`, String(value));
+        // Use replaceAll to replace all occurrences of the placeholder
+        translation = translation.replaceAll(`{${key}}`, String(value));
       });
     }
 

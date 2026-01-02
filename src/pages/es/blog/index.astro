@@ -3,10 +3,12 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const locale = locales[lang];
 
 // Get all blog posts for current language and sort by publication date
 const posts = await getCollection("blog", ({ data }) => data.lang === lang);
@@ -33,7 +35,7 @@ const sortedPosts = posts.sort(
             )}
             <div class="post-content">
               <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', {
+                {post.data.pubDate.toLocaleDateString(locale, {
                   year: "numeric",
                   month: "short",
                   day: "numeric",

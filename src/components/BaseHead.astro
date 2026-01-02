@@ -30,8 +30,14 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 
 // Generate alternate URLs for hreflang
 const pathname = Astro.url.pathname;
-const enUrl = new URL(pathname.replace(/^\/es/, ''), SITE_URL);
-const esUrl = new URL(pathname.startsWith('/es') ? pathname : `/es${pathname}`, SITE_URL);
+// Remove /es/ prefix or /es exactly, but not paths like /estimate
+const enPath = pathname.replace(/^\/es\//, '/').replace(/^\/es$/, '/');
+const enUrl = new URL(enPath, SITE_URL);
+// Add /es prefix, checking for /es/ or /es exactly to avoid double prefixing
+const esPath = (pathname.startsWith('/es/') || pathname === '/es')
+  ? pathname
+  : pathname === '/' ? '/es/' : `/es${pathname}`;
+const esUrl = new URL(esPath, SITE_URL);
 ---
 
 <!-- Essential Meta Tags -->

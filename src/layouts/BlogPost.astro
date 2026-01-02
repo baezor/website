@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
 import Layout from "./Layout.astro";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 type Props = {
@@ -16,7 +17,7 @@ const currentLang = lang || 'en';
 const t = useTranslations(currentLang);
 
 // Format date for display with correct locale
-const locale = currentLang === 'es' ? 'es-MX' : 'en-US';
+const locale = locales[currentLang];
 const formattedPublishDate = pubDate.toLocaleDateString(locale, {
   year: "numeric",
   month: "long",

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { SITE_TITLE } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 // Generate static paths for all categories
@@ -34,6 +35,7 @@ const { posts, category } = Astro.props;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const locale = locales[lang];
 
 // Format category for display (capitalize first letter of each word)
 const formatCategory = (cat: string) => {
@@ -73,7 +75,7 @@ const description = `All blog posts in the ${displayCategory} category`;
             )}
             <div class="post-content">
               <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', {
+                {post.data.pubDate.toLocaleDateString(locale, {
                   year: "numeric",
                   month: "short",
                   day: "numeric",

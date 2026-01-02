@@ -7,6 +7,12 @@ export type Language = keyof typeof languages;
 
 export const defaultLang: Language = 'en';
 
+// Locale codes for date formatting and other locale-specific operations
+export const locales = {
+  en: 'en-US',
+  es: 'es-MX',
+} as const;
+
 export const ui = {
   'nav.home': {
     en: 'Home',
