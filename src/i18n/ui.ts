@@ -160,6 +160,30 @@ export const ui = {
     en: 'Go back home',
     es: 'Volver al inicio',
   },
+  'links.prepain.label': {
+    en: 'Prepa IN\'s Blog (Spanish)',
+    es: 'Blog de Prepa IN (Español)',
+  },
+  'links.prepain.aria': {
+    en: 'Visit Angel Baez on Prepa IN\'s Blog',
+    es: 'Visita a Angel Baez en el Blog de Prepa IN',
+  },
+  'links.linkedin.label': {
+    en: 'Add me to your network on LinkedIn',
+    es: 'Agrégame a tu red en LinkedIn',
+  },
+  'links.linkedin.aria': {
+    en: 'Visit Angel Baez on LinkedIn',
+    es: 'Visita a Angel Baez en LinkedIn',
+  },
+  'links.github.label': {
+    en: 'Check out my GitHub',
+    es: 'Revisa mi GitHub',
+  },
+  'links.github.aria': {
+    en: 'Visit Angel Baez on GitHub',
+    es: 'Visita a Angel Baez en GitHub',
+  },
 } as const;
 
 export type UiKey = keyof typeof ui;
