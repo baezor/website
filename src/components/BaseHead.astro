@@ -1,6 +1,7 @@
 ---
 import { SITE_URL } from "../const";
 import type { Language } from "@/i18n/ui";
+import { getLocalizedUrl } from "@/i18n/utils";
 
 interface Props {
   title: string;
@@ -28,16 +29,9 @@ const keywordsString = allKeywords.join(", ");
 
 const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 
-// Generate alternate URLs for hreflang
-const pathname = Astro.url.pathname;
-// Remove /es/ prefix or /es exactly, but not paths like /estimate
-const enPath = pathname.replace(/^\/es\//, '/').replace(/^\/es$/, '/');
-const enUrl = new URL(enPath, SITE_URL);
-// Add /es prefix, checking for /es/ or /es exactly to avoid double prefixing
-const esPath = (pathname.startsWith('/es/') || pathname === '/es')
-  ? pathname
-  : pathname === '/' ? '/es/' : `/es${pathname}`;
-const esUrl = new URL(esPath, SITE_URL);
+// Generate alternate URLs for hreflang using centralized utility
+const enUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'en'), SITE_URL);
+const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 ---
 
 <!-- Essential Meta Tags -->
