@@ -26,6 +26,10 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const locale = locales[lang];
 
+// Development logging helper
+const isDev = import.meta.env.DEV;
+const log = (...args: any[]) => isDev && console.log(...args);
+
 // Challenge configuration
 const CHALLENGE_YEAR = 2026;
 const CHALLENGE_GOAL_KM = 2026;
@@ -42,11 +46,11 @@ try {
   const cachedData = await getCachedData(kvStore);
 
   if (cachedData) {
-    console.log('Using cached data');
+    log('Using cached data');
     challengeData = cachedData;
     isFromCache = true;
   } else {
-    console.log('Cache miss, fetching fresh data from Strava');
+    log('Cache miss, fetching fresh data from Strava');
 
     // Step 2: Check rate limits before making API call
     const rateLimit = await checkRateLimit(kvStore);
@@ -57,7 +61,7 @@ try {
       );
     }
 
-    console.log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
+    log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
 
     // Step 3: Increment rate limit counter BEFORE API call
     // (Strava counts failed requests against rate limits too)
@@ -71,7 +75,7 @@ try {
       CHALLENGE_YEAR
     );
 
-    console.log(`Fetched ${activities.length} running activities`);
+    log(`Fetched ${activities.length} running activities`);
 
     // Step 5: Process activities into challenge data
     challengeData = processActivities(activities, CHALLENGE_GOAL_KM, CHALLENGE_YEAR);
@@ -79,7 +83,7 @@ try {
     // Step 6: Cache the processed data
     await setCachedData(kvStore, challengeData);
 
-    console.log('Data processed and cached successfully');
+    log('Data processed and cached successfully');
   }
 } catch (error) {
   console.error('Error loading challenge data:', error);

@@ -7,19 +7,26 @@
 import type { APIRoute } from 'astro';
 import { invalidateCache } from '@/utils/kv-cache';
 
+// Development logging helper
+const isDev = import.meta.env.DEV;
+const log = (...args: any[]) => isDev && console.log(...args);
+
 /**
  * GET - Webhook verification
  * Strava sends this to verify the webhook endpoint
  */
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
   const mode = url.searchParams.get('hub.mode');
   const token = url.searchParams.get('hub.verify_token');
   const challenge = url.searchParams.get('hub.challenge');
 
+  // Get verify token from runtime environment
+  const verifyToken = locals.runtime?.env?.STRAVA_WEBHOOK_VERIFY_TOKEN;
+
   // Verify the webhook subscription
-  if (mode === 'subscribe' && token === import.meta.env.STRAVA_WEBHOOK_VERIFY_TOKEN) {
-    console.log('Webhook verified successfully');
+  if (mode === 'subscribe' && token === verifyToken) {
+    log('Webhook verified successfully');
 
     return new Response(
       JSON.stringify({ 'hub.challenge': challenge }),
@@ -44,7 +51,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const event = await request.json();
 
-    console.log('Received webhook event:', event);
+    log('Received webhook event:', event);
 
     // Event structure:
     // {
@@ -79,7 +86,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Only invalidate cache for activity events
     if (event.object_type === 'activity') {
-      console.log(`Activity ${event.aspect_type} event for activity ${event.object_id}`);
+      log(`Activity ${event.aspect_type} event for activity ${event.object_id}`);
 
       // Get KV namespace
       const kvStore = locals.runtime?.env?.KV_STRAVA_CACHE;
@@ -87,7 +94,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // Invalidate cache so next page load fetches fresh data
       await invalidateCache(kvStore);
 
-      console.log('Cache invalidated due to activity event');
+      log('Cache invalidated due to activity event');
     }
 
     return new Response('EVENT_RECEIVED', { status: 200 });

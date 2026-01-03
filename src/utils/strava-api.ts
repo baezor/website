@@ -35,7 +35,14 @@ export async function refreshAccessToken(
     throw new Error(`Failed to refresh Strava token: ${response.status} ${error}`);
   }
 
-  return await response.json();
+  const data = await response.json();
+
+  // Validate token response
+  if (!data || typeof data !== 'object' || !data.access_token || !data.refresh_token) {
+    throw new Error('Invalid token response from Strava API');
+  }
+
+  return data;
 }
 
 /**
@@ -66,7 +73,25 @@ export async function fetchActivitiesSinceDate(
     throw new Error(`Failed to fetch Strava activities: ${response.status} ${error}`);
   }
 
-  const activities: StravaActivity[] = await response.json();
+  const data = await response.json();
+
+  // Validate activities response
+  if (!Array.isArray(data)) {
+    throw new Error('Invalid activities response from Strava API - expected array');
+  }
+
+  // Validate each activity has required fields
+  const activities: StravaActivity[] = data.filter(activity => {
+    if (!activity || typeof activity !== 'object') {
+      console.warn('Skipping invalid activity object');
+      return false;
+    }
+    if (!activity.id || !activity.name || !activity.type || !activity.distance) {
+      console.warn('Skipping activity with missing required fields:', activity.id);
+      return false;
+    }
+    return true;
+  });
 
   // If we got a full page, there might be more activities
   if (activities.length === perPage) {
