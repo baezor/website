@@ -31,8 +31,7 @@ const CHALLENGE_YEAR = 2026;
 const CHALLENGE_GOAL_KM = 2026;
 
 // Get KV store from Cloudflare runtime
-const runtime = Astro.locals.runtime as any;
-const kvStore = runtime?.env?.KV_STRAVA_CACHE;
+const kvStore = Astro.locals.runtime?.env?.KV_STRAVA_CACHE;
 
 let challengeData: ChallengeData;
 let errorMessage: string | null = null;
@@ -60,7 +59,11 @@ try {
 
     console.log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
 
-    // Step 3: Fetch fresh data from Strava
+    // Step 3: Increment rate limit counter BEFORE API call
+    // (Strava counts failed requests against rate limits too)
+    await incrementRateLimit(kvStore);
+
+    // Step 4: Fetch fresh data from Strava
     const activities = await getRunningActivities(
       import.meta.env.STRAVA_CLIENT_ID,
       import.meta.env.STRAVA_CLIENT_SECRET,
@@ -69,9 +72,6 @@ try {
     );
 
     console.log(`Fetched ${activities.length} running activities`);
-
-    // Step 4: Increment rate limit counter
-    await incrementRateLimit(kvStore);
 
     // Step 5: Process activities into challenge data
     challengeData = processActivities(activities, CHALLENGE_GOAL_KM, CHALLENGE_YEAR);

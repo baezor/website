@@ -62,8 +62,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.log(`Activity ${event.aspect_type} event for activity ${event.object_id}`);
 
       // Get KV namespace
-      const runtime = locals.runtime as any;
-      const kvStore = runtime?.env?.KV_STRAVA_CACHE;
+      const kvStore = locals.runtime?.env?.KV_STRAVA_CACHE;
 
       // Invalidate cache so next page load fetches fresh data
       await invalidateCache(kvStore);
