@@ -31,8 +31,10 @@ export async function refreshAccessToken(
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to refresh Strava token: ${response.status} ${error}`);
+    const errorText = await response.text();
+    // Sanitize error messages in production to avoid leaking sensitive information
+    const safeError = import.meta.env.DEV ? errorText : 'Authentication failed';
+    throw new Error(`Failed to refresh Strava token: ${response.status} ${safeError}`);
   }
 
   const data = await response.json();
@@ -69,8 +71,10 @@ export async function fetchActivitiesSinceDate(
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to fetch Strava activities: ${response.status} ${error}`);
+    const errorText = await response.text();
+    // Sanitize error messages in production to avoid leaking sensitive information
+    const safeError = import.meta.env.DEV ? errorText : 'Request failed';
+    throw new Error(`Failed to fetch Strava activities: ${response.status} ${safeError}`);
   }
 
   const data = await response.json();
@@ -87,7 +91,7 @@ export async function fetchActivitiesSinceDate(
       return false;
     }
     if (!activity.id || !activity.name || !activity.type || !activity.distance) {
-      console.warn('Skipping activity with missing required fields:', activity.id);
+      console.warn('Skipping activity with missing required fields:', activity.id || 'unknown');
       return false;
     }
     return true;

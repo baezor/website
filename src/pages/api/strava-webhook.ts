@@ -12,6 +12,24 @@ const isDev = import.meta.env.DEV;
 const log = (...args: any[]) => isDev && console.log(...args);
 
 /**
+ * Constant-time string comparison to prevent timing attacks
+ */
+function timingSafeEqual(a: string | null, b: string | null): boolean {
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+
+  const encoder = new TextEncoder();
+  const bufferA = encoder.encode(a);
+  const bufferB = encoder.encode(b);
+
+  let result = 0;
+  for (let i = 0; i < bufferA.length; i++) {
+    result |= bufferA[i] ^ bufferB[i];
+  }
+  return result === 0;
+}
+
+/**
  * GET - Webhook verification
  * Strava sends this to verify the webhook endpoint
  */
@@ -24,8 +42,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
   // Get verify token from runtime environment
   const verifyToken = locals.runtime?.env?.STRAVA_WEBHOOK_VERIFY_TOKEN;
 
-  // Verify the webhook subscription
-  if (mode === 'subscribe' && token === verifyToken) {
+  // Verify the webhook subscription using constant-time comparison
+  if (mode === 'subscribe' && timingSafeEqual(token, verifyToken)) {
     log('Webhook verified successfully');
 
     return new Response(

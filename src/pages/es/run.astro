@@ -63,24 +63,33 @@ try {
 
     log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
 
-    // Step 3: Increment rate limit counter BEFORE API call
+    // Step 3: Validate environment variables before making API call
+    const clientId = Astro.locals.runtime?.env?.STRAVA_CLIENT_ID;
+    const clientSecret = Astro.locals.runtime?.env?.STRAVA_CLIENT_SECRET;
+    const refreshToken = Astro.locals.runtime?.env?.STRAVA_REFRESH_TOKEN;
+
+    if (!clientId || !clientSecret || !refreshToken) {
+      throw new Error('Missing required Strava API credentials. Please configure environment variables.');
+    }
+
+    // Step 4: Increment rate limit counter BEFORE API call
     // (Strava counts failed requests against rate limits too)
     await incrementRateLimit(kvStore);
 
-    // Step 4: Fetch fresh data from Strava
+    // Step 5: Fetch fresh data from Strava
     const activities = await getRunningActivities(
-      Astro.locals.runtime?.env?.STRAVA_CLIENT_ID,
-      Astro.locals.runtime?.env?.STRAVA_CLIENT_SECRET,
-      Astro.locals.runtime?.env?.STRAVA_REFRESH_TOKEN,
+      clientId,
+      clientSecret,
+      refreshToken,
       CHALLENGE_YEAR
     );
 
     log(`Fetched ${activities.length} running activities`);
 
-    // Step 5: Process activities into challenge data
+    // Step 6: Process activities into challenge data
     challengeData = processActivities(activities, CHALLENGE_GOAL_KM, CHALLENGE_YEAR);
 
-    // Step 6: Cache the processed data
+    // Step 7: Cache the processed data
     await setCachedData(kvStore, challengeData);
 
     log('Data processed and cached successfully');
