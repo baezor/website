@@ -50,80 +50,90 @@ export async function refreshAccessToken(
 
 /**
  * Fetch activities from Strava since a specific date
- * Handles pagination automatically
+ * Handles pagination automatically using iterative approach
  */
 export async function fetchActivitiesSinceDate(
   accessToken: string,
   startDate: Date,
-  page: number = 1,
   perPage: number = 200
 ): Promise<StravaActivity[]> {
+  const MAX_PAGES = 50; // Safety limit: 50 pages * 200/page = 10,000 activities max
   const startTimestamp = Math.floor(startDate.getTime() / 1000);
+  const allActivities: StravaActivity[] = [];
 
-  const url = new URL(STRAVA_ACTIVITIES_URL);
-  url.searchParams.set('after', startTimestamp.toString());
-  url.searchParams.set('page', page.toString());
-  url.searchParams.set('per_page', perPage.toString());
+  let currentPage = 1;
+  let hasMorePages = true;
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-    },
-  });
+  while (hasMorePages && currentPage <= MAX_PAGES) {
+    const url = new URL(STRAVA_ACTIVITIES_URL);
+    url.searchParams.set('after', startTimestamp.toString());
+    url.searchParams.set('page', currentPage.toString());
+    url.searchParams.set('per_page', perPage.toString());
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    // Sanitize error messages in production to avoid leaking sensitive information
-    const safeError = import.meta.env.DEV ? errorText : 'Request failed';
-    throw new Error(`Failed to fetch Strava activities: ${response.status} ${safeError}`);
+    const response = await fetch(url.toString(), {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      // Sanitize error messages in production to avoid leaking sensitive information
+      const safeError = import.meta.env.DEV ? errorText : 'Request failed';
+      throw new Error(`Failed to fetch Strava activities: ${response.status} ${safeError}`);
+    }
+
+    const data = await response.json();
+
+    // Validate activities response
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid activities response from Strava API - expected array');
+    }
+
+    // Validate each activity has required fields
+    const validActivities: StravaActivity[] = data.filter(activity => {
+      if (!activity || typeof activity !== 'object') {
+        console.warn('Skipping invalid activity object');
+        return false;
+      }
+      if (!activity.id || !activity.name || !activity.type || !activity.distance) {
+        console.warn('Skipping activity with missing required fields:', activity.id || 'unknown');
+        return false;
+      }
+      // Validate distance is a valid number
+      if (typeof activity.distance !== 'number' || isNaN(activity.distance) || activity.distance < 0) {
+        console.warn('Skipping activity with invalid distance:', activity.id, activity.distance);
+        return false;
+      }
+      return true;
+    });
+
+    // Validate that filtering didn't remove all activities
+    // This could indicate an API schema change or data corruption
+    if (data.length > 0 && validActivities.length === 0) {
+      throw new Error(
+        `All ${data.length} activities failed validation - possible Strava API schema change. ` +
+        'Check activity data structure.'
+      );
+    }
+
+    allActivities.push(...validActivities);
+
+    // Check if there are more pages
+    // If we got fewer activities than requested, we've reached the end
+    hasMorePages = validActivities.length === perPage;
+    currentPage++;
   }
 
-  const data = await response.json();
-
-  // Validate activities response
-  if (!Array.isArray(data)) {
-    throw new Error('Invalid activities response from Strava API - expected array');
-  }
-
-  // Validate each activity has required fields
-  const activities: StravaActivity[] = data.filter(activity => {
-    if (!activity || typeof activity !== 'object') {
-      console.warn('Skipping invalid activity object');
-      return false;
-    }
-    if (!activity.id || !activity.name || !activity.type || !activity.distance) {
-      console.warn('Skipping activity with missing required fields:', activity.id || 'unknown');
-      return false;
-    }
-    // Validate distance is a valid number
-    if (typeof activity.distance !== 'number' || isNaN(activity.distance) || activity.distance < 0) {
-      console.warn('Skipping activity with invalid distance:', activity.id, activity.distance);
-      return false;
-    }
-    return true;
-  });
-
-  // Validate that filtering didn't remove all activities
-  // This could indicate an API schema change or data corruption
-  if (data.length > 0 && activities.length === 0) {
-    throw new Error(
-      `All ${data.length} activities failed validation - possible Strava API schema change. ` +
-      'Check activity data structure.'
+  // Warn if we hit the max page limit (unlikely but possible)
+  if (currentPage > MAX_PAGES) {
+    console.warn(
+      `Reached maximum page limit (${MAX_PAGES} pages). ` +
+      `Fetched ${allActivities.length} activities. Some activities may be missing.`
     );
   }
 
-  // If we got a full page, there might be more activities
-  if (activities.length === perPage) {
-    const nextActivities = await fetchActivitiesSinceDate(
-      accessToken,
-      startDate,
-      page + 1,
-      perPage
-    );
-    return [...activities, ...nextActivities];
-  }
-
-  return activities;
+  return allActivities;
 }
 
 /**
