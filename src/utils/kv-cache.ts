@@ -9,9 +9,10 @@ import type { ChallengeData, CacheData, RateLimitData } from '@/types/strava';
 const CACHE_KEY = 'strava-challenge-data';
 const RATE_LIMIT_KEY = 'strava-rate-limit';
 const CACHE_TTL_SECONDS = 86400; // 24 hours
-const RATE_LIMIT_WINDOW = 900; // 15 minutes in seconds
+const RATE_LIMIT_WINDOW_SECONDS = 900; // 15 minutes in seconds
 const MAX_REQUESTS_PER_WINDOW = 180; // Stay under 200/15min limit
 const MAX_REQUESTS_PER_DAY = 2000; // Strava's daily limit
+const MAX_STORED_TIMESTAMPS = 300; // Prevent unbounded array growth
 
 /**
  * Get cached challenge data from KV
@@ -115,8 +116,8 @@ export async function checkAndIncrementRateLimit(
 
   try {
     const now = Date.now();
-    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
-    const dayStart = now - (86400 * 1000);
+    const windowStart = now - (RATE_LIMIT_WINDOW_SECONDS * 1000);
+    const dayStart = now - (CACHE_TTL_SECONDS * 1000);
 
     // Get existing rate limit data
     let rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
@@ -129,12 +130,17 @@ export async function checkAndIncrementRateLimit(
     }
 
     // Clean old timestamps
-    const recentFifteenMin = rateLimitData.fifteenMin.filter(
+    let recentFifteenMin = rateLimitData.fifteenMin.filter(
       timestamp => timestamp > windowStart
     );
     const recentDaily = rateLimitData.daily.filter(
       timestamp => timestamp > dayStart
     );
+
+    // Limit array size to prevent unbounded growth under high load
+    if (recentFifteenMin.length > MAX_STORED_TIMESTAMPS) {
+      recentFifteenMin = recentFifteenMin.slice(-MAX_STORED_TIMESTAMPS);
+    }
 
     // Check if limits would be exceeded BEFORE incrementing
     const wouldExceedFifteenMin = recentFifteenMin.length >= MAX_REQUESTS_PER_WINDOW;
@@ -155,7 +161,7 @@ export async function checkAndIncrementRateLimit(
       fifteenMin: recentFifteenMin,
       daily: recentDaily,
     }), {
-      expirationTtl: 86400,
+      expirationTtl: CACHE_TTL_SECONDS,
     });
 
     const remaining = MAX_REQUESTS_PER_WINDOW - recentFifteenMin.length;

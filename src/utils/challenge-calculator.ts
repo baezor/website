@@ -4,6 +4,7 @@
  * Processes Strava activities into challenge statistics for display
  */
 
+import { CHALLENGE_CONFIG } from '@/const';
 import type {
   StravaActivity,
   ChallengeData,
@@ -124,8 +125,8 @@ function processActivityList(activities: StravaActivity[]): ProcessedActivity[] 
  */
 export function processActivities(
   activities: StravaActivity[],
-  goalKm: number = 2026,
-  challengeYear: number = 2026
+  goalKm: number = CHALLENGE_CONFIG.GOAL_KM,
+  challengeYear: number = CHALLENGE_CONFIG.YEAR
 ): ChallengeData {
   // Calculate total distance
   const totalKm = activities.reduce((sum, activity) => {
@@ -149,7 +150,7 @@ export function processActivities(
   const kmPerDayNeeded = remainingDays > 0 ? remainingKm / remainingDays : 0;
 
   // Calculate expected progress: where you SHOULD be by today
-  const expectedKmByToday = (daysElapsed / 365) * goalKm;
+  const expectedKmByToday = (daysElapsed / CHALLENGE_CONFIG.DAYS_IN_YEAR) * goalKm;
 
   // Calculate how many km ahead or behind schedule
   const aheadBehindKm = totalKm - expectedKmByToday;

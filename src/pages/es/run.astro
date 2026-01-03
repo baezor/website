@@ -20,6 +20,7 @@ import {
 import type { ChallengeData } from "@/types/strava";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import { locales } from "@/i18n/ui";
+import { CHALLENGE_CONFIG } from "@/const";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -30,8 +31,8 @@ const isDev = import.meta.env.DEV;
 const log = (...args: any[]) => isDev && console.log(...args);
 
 // Challenge configuration
-const CHALLENGE_YEAR = 2026;
-const CHALLENGE_GOAL_KM = 2026;
+const CHALLENGE_YEAR = CHALLENGE_CONFIG.YEAR;
+const CHALLENGE_GOAL_KM = CHALLENGE_CONFIG.GOAL_KM;
 
 // Get KV store from Cloudflare runtime
 const kvStore = Astro.locals.runtime?.env?.KV_STRAVA_CACHE;
@@ -87,12 +88,12 @@ try {
     goalKm: CHALLENGE_GOAL_KM,
     percentComplete: 0,
     remainingKm: CHALLENGE_GOAL_KM,
-    remainingDays: 365,
-    kmPerDayNeeded: 5.55,
+    remainingDays: CHALLENGE_CONFIG.DAYS_IN_YEAR,
+    kmPerDayNeeded: CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR,
     daysElapsed: 1,
     actualDailyAverage: 0,
-    expectedKmByToday: 5.55,
-    aheadBehindKm: -5.55,
+    expectedKmByToday: CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR,
+    aheadBehindKm: -(CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR),
     isOnTrack: false,
     activities: [],
     dailyStats: [],
@@ -129,9 +130,10 @@ function formatTimestamp(isoString: string): string {
       </header>
 
       {errorMessage && (
-        <div class="error-message">
+        <div class="error-message" data-error-state="true">
           <Icon name="mdi:alert-circle" class="error-icon" />
           <p>{errorMessage}</p>
+          <p class="error-hint">The data shown below is not real - please check back later.</p>
         </div>
       )}
 
@@ -259,6 +261,17 @@ function formatTimestamp(isoString: string): string {
 
   .error-message p {
     margin: 0;
+  }
+
+  .error-hint {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+
+  [data-error-state="true"] ~ section {
+    opacity: 0.5;
+    pointer-events: none;
   }
 
   .page-footer {

@@ -4,6 +4,7 @@
  * Handles OAuth token refresh and activity fetching from Strava API
  */
 
+import { CHALLENGE_CONFIG } from '@/const';
 import type { StravaTokenResponse, StravaActivity } from '@/types/strava';
 
 const STRAVA_TOKEN_URL = 'https://www.strava.com/oauth/token';
@@ -132,7 +133,7 @@ export async function getRunningActivities(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
-  challengeYear: number = 2026
+  challengeYear: number = CHALLENGE_CONFIG.YEAR
 ): Promise<StravaActivity[]> {
   try {
     // Step 1: Refresh access token
