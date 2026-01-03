@@ -12,6 +12,7 @@
       "@/components/*": ["./src/components/*"],
       "@/const": ["./src/const.ts"],
       "@/i18n/*": ["./src/i18n/*"],
+      "@/lib/*": ["./src/lib/*"],
       "@/utils/*": ["./src/utils/*"],
       "@/types/*": ["./src/types/*"]
     }

@@ -136,6 +136,77 @@ export async function checkRateLimit(
 }
 
 /**
+ * Atomically check and increment rate limit counter
+ *
+ * This combines the check and increment operations to prevent race conditions
+ * where multiple concurrent requests could bypass the rate limit.
+ *
+ * @returns Object with allowed flag and remaining requests
+ */
+export async function checkAndIncrementRateLimit(
+  kv: KVNamespace | undefined
+): Promise<{ allowed: boolean; remaining: number }> {
+  if (!kv) {
+    console.warn('KV namespace not available, cannot track rate limits');
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
+  }
+
+  try {
+    const now = Date.now();
+    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
+    const dayStart = now - (86400 * 1000);
+
+    // Get existing rate limit data
+    let rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
+
+    if (!rateLimitData) {
+      rateLimitData = {
+        fifteenMin: [],
+        daily: [],
+      };
+    }
+
+    // Clean old timestamps
+    const recentFifteenMin = rateLimitData.fifteenMin.filter(
+      timestamp => timestamp > windowStart
+    );
+    const recentDaily = rateLimitData.daily.filter(
+      timestamp => timestamp > dayStart
+    );
+
+    // Check if limits would be exceeded BEFORE incrementing
+    const wouldExceedFifteenMin = recentFifteenMin.length >= MAX_REQUESTS_PER_WINDOW;
+    const wouldExceedDaily = recentDaily.length >= MAX_REQUESTS_PER_DAY;
+
+    if (wouldExceedFifteenMin || wouldExceedDaily) {
+      // Don't increment - limit would be exceeded
+      const remaining = MAX_REQUESTS_PER_WINDOW - recentFifteenMin.length;
+      return { allowed: false, remaining: Math.max(0, remaining) };
+    }
+
+    // Increment atomically - add current request
+    recentFifteenMin.push(now);
+    recentDaily.push(now);
+
+    // Store updated rate limit data
+    await kv.put(RATE_LIMIT_KEY, JSON.stringify({
+      fifteenMin: recentFifteenMin,
+      daily: recentDaily,
+    }), {
+      expirationTtl: 86400,
+    });
+
+    const remaining = MAX_REQUESTS_PER_WINDOW - recentFifteenMin.length;
+
+    return { allowed: true, remaining: Math.max(0, remaining) };
+  } catch (error) {
+    console.error('Error in atomic rate limit check:', error);
+    // On error, allow the request but warn
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
+  }
+}
+
+/**
  * Increment rate limit counter
  */
 export async function incrementRateLimit(

@@ -9,13 +9,12 @@ import CalendarHeatmap from "@/components/CalendarHeatmap.astro";
 import RecentActivities from "@/components/RecentActivities.astro";
 import { Icon } from "astro-icon/components";
 
-import { getRunningActivities } from "@/utils/strava-api";
+import { fetchStravaData } from "@/lib/strava-server";
 import { processActivities } from "@/utils/challenge-calculator";
 import {
   getCachedData,
   setCachedData,
-  checkRateLimit,
-  incrementRateLimit,
+  checkAndIncrementRateLimit,
 } from "@/utils/kv-cache";
 
 import type { ChallengeData } from "@/types/strava";
@@ -52,8 +51,9 @@ try {
   } else {
     log('Cache miss, fetching fresh data from Strava');
 
-    // Step 2: Check rate limits before making API call
-    const rateLimit = await checkRateLimit(kvStore);
+    // Step 2: Atomically check and increment rate limit
+    // This prevents race conditions where concurrent requests could bypass limits
+    const rateLimit = await checkAndIncrementRateLimit(kvStore);
 
     if (!rateLimit.allowed) {
       throw new Error(
@@ -63,26 +63,9 @@ try {
 
     log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
 
-    // Step 3: Validate environment variables before making API call
-    const clientId = Astro.locals.runtime?.env?.STRAVA_CLIENT_ID;
-    const clientSecret = Astro.locals.runtime?.env?.STRAVA_CLIENT_SECRET;
-    const refreshToken = Astro.locals.runtime?.env?.STRAVA_REFRESH_TOKEN;
-
-    if (!clientId || !clientSecret || !refreshToken) {
-      throw new Error('Missing required Strava API credentials. Please configure environment variables.');
-    }
-
-    // Step 4: Increment rate limit counter BEFORE API call
-    // (Strava counts failed requests against rate limits too)
-    await incrementRateLimit(kvStore);
-
-    // Step 5: Fetch fresh data from Strava
-    const activities = await getRunningActivities(
-      clientId,
-      clientSecret,
-      refreshToken,
-      CHALLENGE_YEAR
-    );
+    // Step 3: Fetch fresh data from Strava using server-only wrapper
+    // Credentials are validated inside fetchStravaData to prevent client bundle exposure
+    const activities = await fetchStravaData(Astro.locals.runtime, CHALLENGE_YEAR);
 
     log(`Fetched ${activities.length} running activities`);
 

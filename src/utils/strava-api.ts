@@ -97,6 +97,15 @@ export async function fetchActivitiesSinceDate(
     return true;
   });
 
+  // Validate that filtering didn't remove all activities
+  // This could indicate an API schema change or data corruption
+  if (data.length > 0 && activities.length === 0) {
+    throw new Error(
+      `All ${data.length} activities failed validation - possible Strava API schema change. ` +
+      'Check activity data structure.'
+    );
+  }
+
   // If we got a full page, there might be more activities
   if (activities.length === perPage) {
     const nextActivities = await fetchActivitiesSinceDate(
