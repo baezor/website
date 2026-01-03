@@ -26,9 +26,14 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const locale = locales[lang];
 
-// Development logging helper
+// Development logging helper with proper log levels
 const isDev = import.meta.env.DEV;
-const log = (...args: any[]) => isDev && console.log(...args);
+const log = {
+  debug: (...args: any[]) => isDev && console.debug('[Strava]', ...args),
+  info: (...args: any[]) => isDev && console.info('[Strava]', ...args),
+  warn: (...args: any[]) => console.warn('[Strava]', ...args),
+  error: (...args: any[]) => console.error('[Strava]', ...args),
+};
 
 // Challenge configuration
 const CHALLENGE_YEAR = CHALLENGE_CONFIG.YEAR;
@@ -46,11 +51,11 @@ try {
   const cachedData = await getCachedData(kvStore);
 
   if (cachedData) {
-    log('Using cached data');
+    log.info('Using cached data');
     challengeData = cachedData;
     isFromCache = true;
   } else {
-    log('Cache miss, fetching fresh data from Strava');
+    log.info('Cache miss, fetching fresh data from Strava');
 
     // Step 2: Atomically check and increment rate limit
     // This prevents race conditions where concurrent requests could bypass limits
@@ -62,13 +67,13 @@ try {
       );
     }
 
-    log(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
+    log.debug(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
 
     // Step 3: Fetch fresh data from Strava using server-only wrapper
     // Credentials are validated inside fetchStravaData to prevent client bundle exposure
     const activities = await fetchStravaData(Astro.locals.runtime, CHALLENGE_YEAR);
 
-    log(`Fetched ${activities.length} running activities`);
+    log.info(`Fetched ${activities.length} running activities`);
 
     // Step 6: Process activities into challenge data
     challengeData = processActivities(activities, CHALLENGE_GOAL_KM, CHALLENGE_YEAR);
@@ -76,7 +81,7 @@ try {
     // Step 7: Cache the processed data
     await setCachedData(kvStore, challengeData);
 
-    log('Data processed and cached successfully');
+    log.info('Data processed and cached successfully');
   }
 } catch (error) {
   console.error('Error loading challenge data:', error);

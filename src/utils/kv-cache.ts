@@ -104,6 +104,26 @@ export async function invalidateCache(
  * This combines the check and increment operations to prevent race conditions
  * where multiple concurrent requests could bypass the rate limit.
  *
+ * IMPORTANT: KV Storage Limitations
+ * ================================
+ * Cloudflare KV is eventually-consistent and doesn't provide true
+ * atomic read-modify-write operations.
+ *
+ * Race Condition Scenario:
+ * - Request A reads counter at 179 requests
+ * - Request B reads counter at 179 requests (before A writes)
+ * - Both pass 179 < 180 check
+ * - Final result: 180 recorded (both allowed when only one should be)
+ *
+ * Mitigation Strategy:
+ * - 180 requests/15min vs Strava's 200/15min = 20-request buffer (10%)
+ * - Cache TTL reduces API calls by ~99%
+ * - Acceptable for personal website with low traffic
+ *
+ * Future Enhancement:
+ * - Migrate to Durable Objects for true atomicity
+ * - See: https://developers.cloudflare.com/durable-objects/
+ *
  * @returns Object with allowed flag and remaining requests
  */
 export async function checkAndIncrementRateLimit(
