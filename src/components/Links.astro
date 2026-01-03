@@ -16,22 +16,24 @@ const t = useTranslations(lang);
   <nav aria-label={t('links.aria.social')}>
     <ul class="links-list">
       {
-        links.map((link) => (
-          <li>
-            <a
-              href={link.url}
-              class="link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t(link.ariaKey)}
-            >
-              <span class="icon-circle">
-                <Icon name={link.icon} class="link-icon" />
-              </span>
-              <span class="link-text">{t(link.labelKey)}</span>
-            </a>
-          </li>
-        ))
+        links.map((link) => {
+          const isExternal = link.url.startsWith('http://') || link.url.startsWith('https://');
+          return (
+            <li>
+              <a
+                href={link.url}
+                class="link"
+                {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                aria-label={t(link.ariaKey)}
+              >
+                <span class="icon-circle">
+                  <Icon name={link.icon} class="link-icon" />
+                </span>
+                <span class="link-text">{t(link.labelKey)}</span>
+              </a>
+            </li>
+          );
+        })
       }
     </ul>
   </nav>

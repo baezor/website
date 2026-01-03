@@ -1,0 +1,348 @@
+---
+// Disable prerendering for this page to enable server-side rendering
+export const prerender = false;
+
+import Layout from "@/layouts/Layout.astro";
+import ProgressBar from "@/components/ProgressBar.astro";
+import ChallengeStats from "@/components/ChallengeStats.astro";
+import CalendarHeatmap from "@/components/CalendarHeatmap.astro";
+import RecentActivities from "@/components/RecentActivities.astro";
+import { Icon } from "astro-icon/components";
+
+import { fetchStravaData } from "@/lib/strava-server";
+import { processActivities } from "@/utils/challenge-calculator";
+import {
+  getCachedData,
+  setCachedData,
+  checkAndIncrementRateLimit,
+} from "@/utils/kv-cache";
+
+import type { ChallengeData } from "@/types/strava";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
+import { CHALLENGE_CONFIG } from "@/const";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const locale = locales[lang];
+
+// Development logging helper with proper log levels
+const isDev = import.meta.env.DEV;
+const log = {
+  debug: (...args: any[]) => isDev && console.debug('[Strava]', ...args),
+  info: (...args: any[]) => isDev && console.info('[Strava]', ...args),
+  warn: (...args: any[]) => console.warn('[Strava]', ...args),
+  error: (...args: any[]) => console.error('[Strava]', ...args),
+};
+
+// Challenge configuration
+const CHALLENGE_YEAR = CHALLENGE_CONFIG.YEAR;
+const CHALLENGE_GOAL_KM = CHALLENGE_CONFIG.GOAL_KM;
+
+// Get KV store from Cloudflare runtime
+const kvStore = Astro.locals.runtime?.env?.KV_STRAVA_CACHE;
+
+let challengeData: ChallengeData;
+let errorMessage: string | null = null;
+let isFromCache = false;
+
+try {
+  // Step 1: Try to get cached data
+  const cachedData = await getCachedData(kvStore);
+
+  if (cachedData) {
+    log.info('Using cached data');
+    challengeData = cachedData;
+    isFromCache = true;
+  } else {
+    log.info('Cache miss, fetching fresh data from Strava');
+
+    // Step 2: Atomically check and increment rate limit
+    // This prevents race conditions where concurrent requests could bypass limits
+    const rateLimit = await checkAndIncrementRateLimit(kvStore);
+
+    if (!rateLimit.allowed) {
+      throw new Error(
+        'Rate limit exceeded. Please try again in a few minutes.'
+      );
+    }
+
+    log.debug(`Rate limit OK. ${rateLimit.remaining} requests remaining.`);
+
+    // Step 3: Fetch fresh data from Strava using server-only wrapper
+    // Credentials are validated inside fetchStravaData to prevent client bundle exposure
+    const activities = await fetchStravaData(Astro.locals.runtime, CHALLENGE_YEAR);
+
+    log.info(`Fetched ${activities.length} running activities`);
+
+    // Step 6: Process activities into challenge data
+    challengeData = processActivities(activities, CHALLENGE_GOAL_KM, CHALLENGE_YEAR);
+
+    // Step 7: Cache the processed data
+    await setCachedData(kvStore, challengeData);
+
+    log.info('Data processed and cached successfully');
+  }
+} catch (error) {
+  console.error('Error loading challenge data:', error);
+  errorMessage = error instanceof Error ? error.message : t('run.error');
+
+  // Provide fallback empty data
+  challengeData = {
+    totalKm: 0,
+    goalKm: CHALLENGE_GOAL_KM,
+    percentComplete: 0,
+    remainingKm: CHALLENGE_GOAL_KM,
+    remainingDays: CHALLENGE_CONFIG.DAYS_IN_YEAR,
+    kmPerDayNeeded: CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR,
+    daysElapsed: 1,
+    actualDailyAverage: 0,
+    expectedKmByToday: CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR,
+    aheadBehindKm: -(CHALLENGE_GOAL_KM / CHALLENGE_CONFIG.DAYS_IN_YEAR),
+    isOnTrack: false,
+    activities: [],
+    dailyStats: [],
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
+// Format last updated timestamp
+function formatTimestamp(isoString: string): string {
+  const date = new Date(isoString);
+  return date.toLocaleString(locale, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: locale === 'en-US',
+  });
+}
+---
+
+<Layout
+  title={`${t('run.title')} | Angel Baez`}
+  description={t('run.description')}
+>
+  <main>
+    <div class="running-container">
+      <header class="page-header">
+        <Icon name="simple-icons:strava" class="strava-logo" />
+        <h1>{t('run.title')}</h1>
+        <p class="challenge-intro">
+          {t('run.intro')}
+        </p>
+      </header>
+
+      {errorMessage && (
+        <div class="error-message" data-error-state="true">
+          <Icon name="mdi:alert-circle" class="error-icon" />
+          <p>{errorMessage}</p>
+          <p class="error-hint">The data shown below is not real - please check back later.</p>
+        </div>
+      )}
+
+      <section aria-label="Progress Overview">
+        <ProgressBar
+          current={challengeData.totalKm}
+          goal={challengeData.goalKm}
+          percentComplete={challengeData.percentComplete}
+        />
+      </section>
+
+      <section aria-label="Challenge Statistics">
+        <ChallengeStats
+          totalKm={challengeData.totalKm}
+          remainingKm={challengeData.remainingKm}
+          remainingDays={challengeData.remainingDays}
+          kmPerDayNeeded={challengeData.kmPerDayNeeded}
+          actualDailyAverage={challengeData.actualDailyAverage}
+          expectedKmByToday={challengeData.expectedKmByToday}
+          aheadBehindKm={challengeData.aheadBehindKm}
+          isOnTrack={challengeData.isOnTrack}
+        />
+      </section>
+
+      <section aria-label="Activity Calendar">
+        <CalendarHeatmap
+          dailyStats={challengeData.dailyStats}
+          year={CHALLENGE_YEAR}
+        />
+      </section>
+
+      <section aria-label="Recent Activities">
+        <RecentActivities
+          activities={challengeData.activities}
+          limit={10}
+        />
+      </section>
+
+      <footer class="page-footer">
+        <p class="last-updated">
+          {isFromCache && (
+            <span class="cache-indicator">[{t('run.footer.cached')}]</span>
+          )}
+          {t('run.footer.lastUpdated')}: {formatTimestamp(challengeData.lastUpdated)}
+        </p>
+        <p class="powered-by">
+          {t('run.footer.poweredBy')}
+          <a
+            href="https://www.strava.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="strava-link"
+          >
+            <Icon name="simple-icons:strava" class="strava-icon-inline" />
+            Strava API
+          </a>
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .running-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .strava-logo {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    color: #FC4C02; /* Strava orange */
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent),
+      var(--color-accent-hover)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .challenge-intro {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: color-mix(in srgb, red 10%, var(--color-bg-elevated));
+    color: #dc2626;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid #dc2626;
+  }
+
+  .error-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .error-message p {
+    margin: 0;
+  }
+
+  .error-hint {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+
+  [data-error-state="true"] ~ section {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .page-footer {
+    text-align: center;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid
+      color-mix(in srgb, var(--color-text) 10%, transparent);
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .last-updated {
+    margin-bottom: 0.5rem;
+  }
+
+  .cache-indicator {
+    display: inline-block;
+    background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    color: var(--color-accent);
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+
+  .powered-by {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .strava-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #FC4C02;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+  }
+
+  .strava-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+
+  .strava-icon-inline {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .challenge-intro {
+      font-size: 1rem;
+    }
+
+    .strava-logo {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+</style>

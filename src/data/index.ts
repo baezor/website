@@ -17,6 +17,12 @@ const links: Array<{
   icon: string;
 }> = [
   {
+    labelKey: "links.run.label",
+    ariaKey: "links.run.aria",
+    url: "/run",
+    icon: "simple-icons:strava",
+  },
+  {
     labelKey: "links.prepain.label",
     ariaKey: "links.prepain.aria",
     url: "https://prepain.mx/angel/",

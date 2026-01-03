@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "jsx": "react-jsx",
     "jsxImportSource": "react",
+    "types": ["vitest/globals"],
     "paths": {
       "@/css/*": ["./src/css/*"],
       "@/layouts/*": ["./src/layouts/*"],
@@ -11,7 +12,10 @@
       "@/data/*": ["./src/data/*"],
       "@/components/*": ["./src/components/*"],
       "@/const": ["./src/const.ts"],
-      "@/i18n/*": ["./src/i18n/*"]
+      "@/i18n/*": ["./src/i18n/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["./src/types/*"]
     }
   }
 }

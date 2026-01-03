@@ -1,0 +1,256 @@
+---
+import type { DailyStats } from '@/types/strava';
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
+interface Props {
+  dailyStats: DailyStats[];
+  year: number;
+}
+
+const { dailyStats, year } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Create a map for quick lookup of daily stats
+const statsMap = new Map(dailyStats.map(stat => [stat.date, stat]));
+
+// Generate all days in the year
+const startDate = new Date(`${year}-01-01`);
+const endDate = new Date(`${year}-12-31`);
+const allDays: { date: string; distanceKm: number; dayOfWeek: number }[] = [];
+
+for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+  const dateStr = d.toISOString().split('T')[0];
+  const stat = statsMap.get(dateStr);
+  allDays.push({
+    date: dateStr,
+    distanceKm: stat?.distanceKm || 0,
+    dayOfWeek: d.getDay(), // 0 = Sunday, 6 = Saturday
+  });
+}
+
+// Get color intensity based on distance
+function getIntensityClass(distanceKm: number): string {
+  if (distanceKm === 0) return 'level-0';
+  if (distanceKm <= 5) return 'level-1';
+  if (distanceKm <= 10) return 'level-2';
+  if (distanceKm <= 15) return 'level-3';
+  return 'level-4';
+}
+
+// Group days by week
+const weeks: typeof allDays[][] = [];
+let currentWeek: typeof allDays = [];
+
+// Start from first day of year
+for (const day of allDays) {
+  if (currentWeek.length === 0 && day.dayOfWeek !== 0) {
+    // Pad start of first week
+    for (let i = 0; i < day.dayOfWeek; i++) {
+      currentWeek.push({ date: '', distanceKm: 0, dayOfWeek: i });
+    }
+  }
+
+  currentWeek.push(day);
+
+  if (day.dayOfWeek === 6 || day.date === allDays[allDays.length - 1].date) {
+    weeks.push(currentWeek);
+    currentWeek = [];
+  }
+}
+
+const months = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+---
+
+<div class="heatmap-container">
+  <h3 class="heatmap-title">{t('run.calendar.title')}</h3>
+
+  <div class="heatmap-wrapper">
+    <div class="heatmap">
+      <div class="weekday-labels">
+        <span class="weekday-label">{t('run.calendar.sun')}</span>
+        <span class="weekday-label">{t('run.calendar.mon')}</span>
+        <span class="weekday-label">{t('run.calendar.tue')}</span>
+        <span class="weekday-label">{t('run.calendar.wed')}</span>
+        <span class="weekday-label">{t('run.calendar.thu')}</span>
+        <span class="weekday-label">{t('run.calendar.fri')}</span>
+        <span class="weekday-label">{t('run.calendar.sat')}</span>
+      </div>
+
+      <div class="heatmap-grid">
+        {weeks.map(week => (
+          <div class="week-column">
+            {week.map(day => (
+              <div
+                class={`day-cell ${day.date ? getIntensityClass(day.distanceKm) : 'empty'}`}
+                data-date={day.date}
+                data-distance={day.distanceKm.toFixed(1)}
+                title={day.date ? `${day.date}: ${day.distanceKm.toFixed(1)} km` : ''}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Less</span>
+    <div class="legend-scale">
+      <div class="legend-cell level-0"></div>
+      <div class="legend-cell level-1"></div>
+      <div class="legend-cell level-2"></div>
+      <div class="legend-cell level-3"></div>
+      <div class="legend-cell level-4"></div>
+    </div>
+    <span class="legend-label">More</span>
+  </div>
+</div>
+
+<style>
+  .heatmap-container {
+    background-color: var(--color-bg-elevated);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .heatmap-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .heatmap-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .heatmap {
+    display: flex;
+    gap: 0.5rem;
+    min-width: fit-content;
+  }
+
+  .weekday-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-right: 0.5rem;
+  }
+
+  .weekday-label {
+    height: 12px;
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+  }
+
+  .heatmap-grid {
+    display: flex;
+    gap: 3px;
+  }
+
+  .week-column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .day-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .day-cell:hover {
+    transform: scale(1.3);
+    outline: 2px solid var(--color-accent);
+  }
+
+  .day-cell.empty {
+    opacity: 0;
+    cursor: default;
+  }
+
+  .day-cell.empty:hover {
+    transform: none;
+    outline: none;
+  }
+
+  /* Color levels */
+  .level-0 {
+    background-color: color-mix(in srgb, var(--color-text) 5%, transparent);
+  }
+
+  .level-1 {
+    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+
+  .level-2 {
+    background-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  .level-3 {
+    background-color: color-mix(in srgb, var(--color-accent) 75%, transparent);
+  }
+
+  .level-4 {
+    background-color: var(--color-accent);
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .legend-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .legend-scale {
+    display: flex;
+    gap: 3px;
+  }
+
+  .legend-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .heatmap-container {
+      padding: 1.5rem;
+    }
+
+    .heatmap-title {
+      font-size: 1.125rem;
+    }
+
+    .weekday-label {
+      font-size: 0.6rem;
+    }
+
+    .day-cell {
+      width: 10px;
+      height: 10px;
+    }
+
+    .legend-cell {
+      width: 10px;
+      height: 10px;
+    }
+  }
+</style>
