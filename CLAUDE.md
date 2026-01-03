@@ -16,6 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` or `npm start` - Start development server
 - `npm run build` - Generate production build
 - `npm run preview` - Preview production build locally
+- `npm test` - Run unit tests once
+- `npm run test:watch` - Run unit tests in watch mode
+- `npm run test:ui` - Interactive Vitest UI mode
+- `npm run test:coverage` - Generate coverage report
 - `npm run test:visual` - Run visual regression tests
 - `npm run test:visual:update` - Update baseline snapshots
 - `npm run test:visual:ui` - Interactive Playwright UI mode
