@@ -64,6 +64,11 @@ const socialLinks = [
     icon: "simple-icons:instagram",
   },
   {
+    label: "Strava",
+    url: "https://www.strava.com/athletes/22649377",
+    icon: "simple-icons:strava",
+  },
+  {
     label: "X / Twitter",
     url: "https://x.com/baezor/",
     icon: "simple-icons:x",
