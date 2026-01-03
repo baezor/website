@@ -11,7 +11,9 @@
       "@/data/*": ["./src/data/*"],
       "@/components/*": ["./src/components/*"],
       "@/const": ["./src/const.ts"],
-      "@/i18n/*": ["./src/i18n/*"]
+      "@/i18n/*": ["./src/i18n/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["./src/types/*"]
     }
   }
 }

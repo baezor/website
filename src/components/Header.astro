@@ -11,11 +11,19 @@ const t = useTranslations(lang);
 
 // Get the current URL path to highlight active links
 const { pathname } = Astro.url;
+
+// Normalize pathname by removing trailing slash (except for root)
+const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
+
 const isActive = (path: string) => {
-  if (path === "/") {
-    return pathname === path;
+  // Exact match for root paths
+  if (path === "/" || path === "/es") {
+    return normalizedPath === path;
   }
-  return pathname.startsWith(path);
+
+  // For other paths, check exact match or if it's a subpath
+  const normalizedTargetPath = path.replace(/\/$/, '');
+  return normalizedPath === normalizedTargetPath || normalizedPath.startsWith(normalizedTargetPath + '/');
 };
 ---
 
@@ -46,6 +54,9 @@ const isActive = (path: string) => {
         </li>
         <li>
           <a href={getRelativeLocaleUrl(lang, 'blog')} class={isActive("/blog") || isActive("/es/blog") ? "active" : ""}>{t('nav.blog')}</a>
+        </li>
+        <li>
+          <a href={getRelativeLocaleUrl(lang, 'run')} class={isActive("/run") || isActive("/es/run") ? "active" : ""}>{t('nav.run')}</a>
         </li>
         <li>
           <a href={getRelativeLocaleUrl(lang, 'contact')} class={isActive("/contact") || isActive("/es/contact") ? "active" : ""}

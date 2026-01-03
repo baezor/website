@@ -26,6 +26,10 @@ export const ui = {
     en: 'Contact',
     es: 'Contacto',
   },
+  'nav.run': {
+    en: 'Run',
+    es: 'Carrera',
+  },
   'nav.menu': {
     en: 'Menu',
     es: 'Menú',
@@ -189,6 +193,138 @@ export const ui = {
   'links.github.aria': {
     en: 'Visit Angel Baez on GitHub',
     es: 'Visita a Angel Baez en GitHub',
+  },
+  'links.run.label': {
+    en: '2026 KM Running Challenge',
+    es: 'corriendo 2026 km en 2026',
+  },
+  'links.run.aria': {
+    en: 'Track my 2026 KM running challenge progress',
+    es: 'Sigue mi progreso en el desafío de 2026 KM corriendo',
+  },
+  'run.title': {
+    en: '2026 KM Running Challenge',
+    es: 'Desafío de 2026 KM',
+  },
+  'run.description': {
+    en: 'Tracking my journey to run 2026 kilometers in 2026. Real-time progress powered by Strava.',
+    es: 'Siguiendo mi camino para correr 2026 kilómetros en 2026. Progreso en tiempo real con Strava.',
+  },
+  'run.intro': {
+    en: 'Tracking my journey to run 2026 kilometers in 2026. Data synced from Strava and updated in real-time via webhooks.',
+    es: 'Siguiendo mi camino para correr 2026 kilómetros en 2026. Datos sincronizados desde Strava y actualizados en tiempo real vía webhooks.',
+  },
+  'run.error': {
+    en: 'Unable to load challenge data. Please try again later.',
+    es: 'No se pueden cargar los datos del desafío. Por favor, intenta más tarde.',
+  },
+  'run.progress.label': {
+    en: 'Progress',
+    es: 'Progreso',
+  },
+  'run.progress.of': {
+    en: 'of',
+    es: 'de',
+  },
+  'run.progress.goal': {
+    en: 'goal',
+    es: 'meta',
+  },
+  'run.stats.totalDistance': {
+    en: 'Total Distance',
+    es: 'Distancia Total',
+  },
+  'run.stats.remaining': {
+    en: 'Remaining',
+    es: 'Restante',
+  },
+  'run.stats.daysLeft': {
+    en: 'Days Left',
+    es: 'Días Restantes',
+  },
+  'run.stats.paceNeeded': {
+    en: 'Pace Needed',
+    es: 'Ritmo Necesario',
+  },
+  'run.stats.currentAverage': {
+    en: 'Current Average',
+    es: 'Promedio Actual',
+  },
+  'run.stats.onTrack': {
+    en: 'On Track! ✓',
+    es: '¡En Camino! ✓',
+  },
+  'run.stats.behind': {
+    en: 'Behind Schedule ⚠',
+    es: 'Atrasado ⚠',
+  },
+  'run.stats.ahead': {
+    en: '{km} km ahead!',
+    es: '¡{km} km adelante!',
+  },
+  'run.stats.behindBy': {
+    en: '{km} km behind',
+    es: '{km} km atrás',
+  },
+  'run.activities.title': {
+    en: 'Recent Activities',
+    es: 'Actividades Recientes',
+  },
+  'run.activities.distance': {
+    en: 'Distance',
+    es: 'Distancia',
+  },
+  'run.activities.pace': {
+    en: 'Pace',
+    es: 'Ritmo',
+  },
+  'run.activities.noActivities': {
+    en: 'No activities yet. Get out there and start running!',
+    es: 'No hay actividades todavía. ¡Sal y empieza a correr!',
+  },
+  'run.calendar.title': {
+    en: 'Activity Calendar',
+    es: 'Calendario de Actividades',
+  },
+  'run.calendar.sun': {
+    en: 'Sun',
+    es: 'Dom',
+  },
+  'run.calendar.mon': {
+    en: 'Mon',
+    es: 'Lun',
+  },
+  'run.calendar.tue': {
+    en: 'Tue',
+    es: 'Mar',
+  },
+  'run.calendar.wed': {
+    en: 'Wed',
+    es: 'Mié',
+  },
+  'run.calendar.thu': {
+    en: 'Thu',
+    es: 'Jue',
+  },
+  'run.calendar.fri': {
+    en: 'Fri',
+    es: 'Vie',
+  },
+  'run.calendar.sat': {
+    en: 'Sat',
+    es: 'Sáb',
+  },
+  'run.footer.lastUpdated': {
+    en: 'Last updated',
+    es: 'Última actualización',
+  },
+  'run.footer.cached': {
+    en: 'Cached',
+    es: 'En caché',
+  },
+  'run.footer.poweredBy': {
+    en: 'Powered by',
+    es: 'Impulsado por',
   },
 } as const;
 

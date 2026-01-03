@@ -1,0 +1,187 @@
+/**
+ * KV Cache Utility
+ *
+ * Manages caching and rate limiting using Cloudflare KV storage
+ */
+
+import type { ChallengeData, CacheData, RateLimitData } from '@/types/strava';
+
+const CACHE_KEY = 'strava-challenge-data';
+const RATE_LIMIT_KEY = 'strava-rate-limit';
+const CACHE_TTL_SECONDS = 86400; // 24 hours
+const RATE_LIMIT_WINDOW = 900; // 15 minutes in seconds
+const MAX_REQUESTS_PER_WINDOW = 180; // Stay under 200/15min limit
+
+/**
+ * Get cached challenge data from KV
+ */
+export async function getCachedData(
+  kv: KVNamespace | undefined
+): Promise<ChallengeData | null> {
+  if (!kv) {
+    console.warn('KV namespace not available');
+    return null;
+  }
+
+  try {
+    const cached = await kv.get<CacheData>(CACHE_KEY, 'json');
+
+    if (!cached) {
+      return null;
+    }
+
+    // Check if cache has expired
+    const now = Date.now();
+    if (now > cached.expiresAt) {
+      console.log('Cache expired');
+      await kv.delete(CACHE_KEY);
+      return null;
+    }
+
+    console.log('Cache hit');
+    return cached.data;
+  } catch (error) {
+    console.error('Error reading from cache:', error);
+    return null;
+  }
+}
+
+/**
+ * Store challenge data in KV cache
+ */
+export async function setCachedData(
+  kv: KVNamespace | undefined,
+  data: ChallengeData
+): Promise<void> {
+  if (!kv) {
+    console.warn('KV namespace not available');
+    return;
+  }
+
+  try {
+    const now = Date.now();
+    const cacheData: CacheData = {
+      data,
+      timestamp: now,
+      expiresAt: now + (CACHE_TTL_SECONDS * 1000),
+    };
+
+    await kv.put(CACHE_KEY, JSON.stringify(cacheData), {
+      expirationTtl: CACHE_TTL_SECONDS,
+    });
+
+    console.log('Data cached successfully');
+  } catch (error) {
+    console.error('Error writing to cache:', error);
+  }
+}
+
+/**
+ * Invalidate (delete) cached data
+ * Called by webhook when new activity is created
+ */
+export async function invalidateCache(
+  kv: KVNamespace | undefined
+): Promise<void> {
+  if (!kv) {
+    console.warn('KV namespace not available');
+    return;
+  }
+
+  try {
+    await kv.delete(CACHE_KEY);
+    console.log('Cache invalidated');
+  } catch (error) {
+    console.error('Error invalidating cache:', error);
+  }
+}
+
+/**
+ * Check if we can make a request to Strava API without exceeding rate limits
+ */
+export async function checkRateLimit(
+  kv: KVNamespace | undefined
+): Promise<{ allowed: boolean; remaining: number }> {
+  if (!kv) {
+    // If KV not available, allow the request but warn
+    console.warn('KV namespace not available, cannot track rate limits');
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
+  }
+
+  try {
+    const rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
+
+    if (!rateLimitData) {
+      // No rate limit data yet, allow request
+      return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
+    }
+
+    const now = Date.now();
+    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
+
+    // Filter timestamps within current window
+    const recentRequests = rateLimitData.fifteenMin.filter(
+      timestamp => timestamp > windowStart
+    );
+
+    const remaining = MAX_REQUESTS_PER_WINDOW - recentRequests.length;
+    const allowed = recentRequests.length < MAX_REQUESTS_PER_WINDOW;
+
+    return { allowed, remaining };
+  } catch (error) {
+    console.error('Error checking rate limit:', error);
+    // On error, allow the request
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
+  }
+}
+
+/**
+ * Increment rate limit counter
+ */
+export async function incrementRateLimit(
+  kv: KVNamespace | undefined
+): Promise<void> {
+  if (!kv) {
+    console.warn('KV namespace not available, cannot track rate limits');
+    return;
+  }
+
+  try {
+    const now = Date.now();
+    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
+    const dayStart = now - (86400 * 1000);
+
+    // Get existing rate limit data
+    let rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
+
+    if (!rateLimitData) {
+      rateLimitData = {
+        fifteenMin: [],
+        daily: [],
+      };
+    }
+
+    // Clean old timestamps and add current request
+    rateLimitData.fifteenMin = rateLimitData.fifteenMin.filter(
+      timestamp => timestamp > windowStart
+    );
+    rateLimitData.daily = rateLimitData.daily.filter(
+      timestamp => timestamp > dayStart
+    );
+
+    rateLimitData.fifteenMin.push(now);
+    rateLimitData.daily.push(now);
+
+    // Store updated rate limit data (expires in 24 hours)
+    await kv.put(RATE_LIMIT_KEY, JSON.stringify(rateLimitData), {
+      expirationTtl: 86400,
+    });
+
+    console.log('Rate limit incremented:', {
+      fifteenMin: rateLimitData.fifteenMin.length,
+      daily: rateLimitData.daily.length,
+    });
+  } catch (error) {
+    console.error('Error incrementing rate limit:', error);
+  }
+}
