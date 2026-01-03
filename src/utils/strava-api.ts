@@ -94,6 +94,11 @@ export async function fetchActivitiesSinceDate(
       console.warn('Skipping activity with missing required fields:', activity.id || 'unknown');
       return false;
     }
+    // Validate distance is a valid number
+    if (typeof activity.distance !== 'number' || isNaN(activity.distance) || activity.distance < 0) {
+      console.warn('Skipping activity with invalid distance:', activity.id, activity.distance);
+      return false;
+    }
     return true;
   });
 

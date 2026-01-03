@@ -9,6 +9,26 @@ import { getRunningActivities } from '@/utils/strava-api';
 import type { StravaActivity } from '@/types/strava';
 
 /**
+ * Cloudflare runtime context type
+ */
+interface CloudflareRuntime {
+  env?: {
+    STRAVA_CLIENT_ID?: string;
+    STRAVA_CLIENT_SECRET?: string;
+    STRAVA_REFRESH_TOKEN?: string;
+    KV_STRAVA_CACHE?: KVNamespace;
+    STRAVA_WEBHOOK_VERIFY_TOKEN?: string;
+  };
+}
+
+/**
+ * Validate that a string is not empty or whitespace-only
+ */
+const isValidString = (str: string | undefined | null): str is string => {
+  return typeof str === 'string' && str.trim().length > 0;
+};
+
+/**
  * Fetch Strava running activities with server-side credentials
  *
  * @param runtime - Cloudflare runtime context with environment variables
@@ -17,7 +37,7 @@ import type { StravaActivity } from '@/types/strava';
  * @throws Error if credentials are missing
  */
 export async function fetchStravaData(
-  runtime: any,
+  runtime: CloudflareRuntime,
   challengeYear: number
 ): Promise<StravaActivity[]> {
   // Extract credentials from runtime environment (server-side only)
@@ -25,8 +45,8 @@ export async function fetchStravaData(
   const clientSecret = runtime?.env?.STRAVA_CLIENT_SECRET;
   const refreshToken = runtime?.env?.STRAVA_REFRESH_TOKEN;
 
-  // Validate all required credentials are present
-  if (!clientId || !clientSecret || !refreshToken) {
+  // Validate all required credentials are present and non-empty
+  if (!isValidString(clientId) || !isValidString(clientSecret) || !isValidString(refreshToken)) {
     throw new Error('Missing required Strava API credentials. Please configure environment variables.');
   }
 

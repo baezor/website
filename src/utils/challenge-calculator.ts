@@ -38,6 +38,13 @@ function calculatePace(distanceKm: number, durationMinutes: number): number {
  * Uses the date string directly to avoid timezone conversion issues
  */
 function formatDate(dateString: string): string {
+  // Validate ISO 8601 format (YYYY-MM-DDTHH:MM:SS...)
+  const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+  if (!iso8601Regex.test(dateString)) {
+    console.warn('Invalid date format, using current date:', dateString);
+    return new Date().toISOString().split('T')[0];
+  }
+
   // dateString from Strava is already in local timezone (start_date_local)
   // Just extract the date portion without timezone conversion
   return dateString.split('T')[0];
