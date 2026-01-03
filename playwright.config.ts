@@ -29,6 +29,9 @@ export default defineConfig({
     },
   },
 
+  /* Use platform-agnostic snapshots (remove platform suffix) */
+  snapshotPathTemplate: "{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}",
+
   /* Test projects for different viewports */
   projects: [
     {
