@@ -11,6 +11,7 @@ const RATE_LIMIT_KEY = 'strava-rate-limit';
 const CACHE_TTL_SECONDS = 86400; // 24 hours
 const RATE_LIMIT_WINDOW = 900; // 15 minutes in seconds
 const MAX_REQUESTS_PER_WINDOW = 180; // Stay under 200/15min limit
+const MAX_REQUESTS_PER_DAY = 2000; // Strava's daily limit
 
 /**
  * Get cached challenge data from KV
@@ -97,45 +98,6 @@ export async function invalidateCache(
 }
 
 /**
- * Check if we can make a request to Strava API without exceeding rate limits
- */
-export async function checkRateLimit(
-  kv: KVNamespace | undefined
-): Promise<{ allowed: boolean; remaining: number }> {
-  if (!kv) {
-    // If KV not available, allow the request but warn
-    console.warn('KV namespace not available, cannot track rate limits');
-    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
-  }
-
-  try {
-    const rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
-
-    if (!rateLimitData) {
-      // No rate limit data yet, allow request
-      return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
-    }
-
-    const now = Date.now();
-    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
-
-    // Filter timestamps within current window
-    const recentRequests = rateLimitData.fifteenMin.filter(
-      timestamp => timestamp > windowStart
-    );
-
-    const remaining = MAX_REQUESTS_PER_WINDOW - recentRequests.length;
-    const allowed = recentRequests.length < MAX_REQUESTS_PER_WINDOW;
-
-    return { allowed, remaining };
-  } catch (error) {
-    console.error('Error checking rate limit:', error);
-    // On error, allow the request
-    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW };
-  }
-}
-
-/**
  * Atomically check and increment rate limit counter
  *
  * This combines the check and increment operations to prevent race conditions
@@ -206,53 +168,3 @@ export async function checkAndIncrementRateLimit(
   }
 }
 
-/**
- * Increment rate limit counter
- */
-export async function incrementRateLimit(
-  kv: KVNamespace | undefined
-): Promise<void> {
-  if (!kv) {
-    console.warn('KV namespace not available, cannot track rate limits');
-    return;
-  }
-
-  try {
-    const now = Date.now();
-    const windowStart = now - (RATE_LIMIT_WINDOW * 1000);
-    const dayStart = now - (86400 * 1000);
-
-    // Get existing rate limit data
-    let rateLimitData = await kv.get<RateLimitData>(RATE_LIMIT_KEY, 'json');
-
-    if (!rateLimitData) {
-      rateLimitData = {
-        fifteenMin: [],
-        daily: [],
-      };
-    }
-
-    // Clean old timestamps and add current request
-    rateLimitData.fifteenMin = rateLimitData.fifteenMin.filter(
-      timestamp => timestamp > windowStart
-    );
-    rateLimitData.daily = rateLimitData.daily.filter(
-      timestamp => timestamp > dayStart
-    );
-
-    rateLimitData.fifteenMin.push(now);
-    rateLimitData.daily.push(now);
-
-    // Store updated rate limit data (expires in 24 hours)
-    await kv.put(RATE_LIMIT_KEY, JSON.stringify(rateLimitData), {
-      expirationTtl: 86400,
-    });
-
-    console.log('Rate limit incremented:', {
-      fifteenMin: rateLimitData.fifteenMin.length,
-      daily: rateLimitData.daily.length,
-    });
-  } catch (error) {
-    console.error('Error incrementing rate limit:', error);
-  }
-}
