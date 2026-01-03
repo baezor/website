@@ -57,6 +57,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
     //   event_time: number
     // }
 
+    // Validate required webhook fields
+    if (!event.object_type || !event.aspect_type || typeof event.object_id !== 'number') {
+      console.error('Invalid webhook payload - missing required fields:', event);
+      return new Response('Invalid payload', { status: 400 });
+    }
+
+    // Validate object_type and aspect_type values
+    const validObjectTypes = ['activity', 'athlete'];
+    const validAspectTypes = ['create', 'update', 'delete'];
+
+    if (!validObjectTypes.includes(event.object_type)) {
+      console.error('Invalid object_type:', event.object_type);
+      return new Response('Invalid object_type', { status: 400 });
+    }
+
+    if (!validAspectTypes.includes(event.aspect_type)) {
+      console.error('Invalid aspect_type:', event.aspect_type);
+      return new Response('Invalid aspect_type', { status: 400 });
+    }
+
     // Only invalidate cache for activity events
     if (event.object_type === 'activity') {
       console.log(`Activity ${event.aspect_type} event for activity ${event.object_id}`);

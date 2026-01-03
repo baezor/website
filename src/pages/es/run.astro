@@ -65,9 +65,9 @@ try {
 
     // Step 4: Fetch fresh data from Strava
     const activities = await getRunningActivities(
-      import.meta.env.STRAVA_CLIENT_ID,
-      import.meta.env.STRAVA_CLIENT_SECRET,
-      import.meta.env.STRAVA_REFRESH_TOKEN,
+      Astro.locals.runtime?.env?.STRAVA_CLIENT_ID,
+      Astro.locals.runtime?.env?.STRAVA_CLIENT_SECRET,
+      Astro.locals.runtime?.env?.STRAVA_REFRESH_TOKEN,
       CHALLENGE_YEAR
     );
 
