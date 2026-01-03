@@ -1,0 +1,153 @@
+---
+import { Icon } from "astro-icon/components";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
+interface Props {
+  totalKm: number;
+  remainingKm: number;
+  remainingDays: number;
+  kmPerDayNeeded: number;
+  actualDailyAverage: number;
+  expectedKmByToday: number;
+  aheadBehindKm: number;
+  isOnTrack: boolean;
+}
+
+const { totalKm, remainingKm, remainingDays, kmPerDayNeeded, actualDailyAverage, expectedKmByToday, aheadBehindKm, isOnTrack } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Format the ahead/behind display
+const aheadBehindText = aheadBehindKm >= 0
+  ? t('run.stats.ahead').replace('{km}', Math.abs(aheadBehindKm).toFixed(1))
+  : t('run.stats.behindBy').replace('{km}', Math.abs(aheadBehindKm).toFixed(1));
+---
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <Icon name="mdi:map-marker-distance" class="stat-icon" />
+    <div class="stat-value">{totalKm.toFixed(1)} km</div>
+    <div class="stat-label">{t('run.stats.totalDistance')}</div>
+  </div>
+
+  <div class="stat-card">
+    <Icon name="mdi:run" class="stat-icon" />
+    <div class="stat-value">{remainingKm.toFixed(1)} km</div>
+    <div class="stat-label">{t('run.stats.remaining')}</div>
+  </div>
+
+  <div class="stat-card">
+    <Icon name="mdi:calendar" class="stat-icon" />
+    <div class="stat-value">{remainingDays}</div>
+    <div class="stat-label">{t('run.stats.daysLeft')}</div>
+  </div>
+
+  <div class="stat-card">
+    <Icon name="mdi:run-fast" class="stat-icon" />
+    <div class="stat-value">{kmPerDayNeeded.toFixed(1)} km/day</div>
+    <div class="stat-label">{t('run.stats.paceNeeded')}</div>
+  </div>
+
+  <div class="stat-card">
+    <Icon name="mdi:chart-line" class="stat-icon" />
+    <div class="stat-value">{actualDailyAverage.toFixed(1)} km/day</div>
+    <div class="stat-label">{t('run.stats.currentAverage')}</div>
+  </div>
+
+  <div class={`stat-card ${isOnTrack ? 'on-track' : 'behind'}`}>
+    <Icon name="mdi:chart-line" class="stat-icon" />
+    <div class="stat-value">{aheadBehindText}</div>
+    <div class="stat-label">{isOnTrack ? t('run.stats.onTrack') : t('run.stats.behind')}</div>
+  </div>
+</div>
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background-color: var(--color-bg-elevated);
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-icon {
+    width: 2rem;
+    height: 2rem;
+    margin: 0 auto 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--color-text);
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* On track indicator */
+  .stat-card.on-track {
+    border: 2px solid color-mix(in srgb, green 50%, transparent);
+    background-color: color-mix(in srgb, green 5%, var(--color-bg-elevated));
+  }
+
+  .stat-card.on-track .stat-icon {
+    color: green;
+  }
+
+  /* Behind pace indicator */
+  .stat-card.behind {
+    border: 2px solid color-mix(in srgb, orange 50%, transparent);
+    background-color: color-mix(in srgb, orange 5%, var(--color-bg-elevated));
+  }
+
+  .stat-card.behind .stat-icon {
+    color: orange;
+  }
+
+  /* Tablet and Mobile - 2 columns */
+  @media (max-width: 900px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .stat-card {
+      padding: 1rem;
+    }
+
+    .stat-icon {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+    }
+  }
+</style>

@@ -1,0 +1,206 @@
+---
+import { Icon } from "astro-icon/components";
+import type { ProcessedActivity } from '@/types/strava';
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { locales } from "@/i18n/ui";
+import { translateActivityName } from "@/utils/activity-translator";
+
+interface Props {
+  activities: ProcessedActivity[];
+  limit?: number;
+}
+
+const { activities, limit = 10 } = Astro.props;
+const displayActivities = activities.slice(0, limit);
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const locale = locales[lang];
+
+// Format date for display
+function formatDate(dateStr: string): string {
+  // Parse YYYY-MM-DD format directly to avoid timezone issues
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed
+  return date.toLocaleDateString(locale, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+// Format duration
+function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.floor(minutes % 60);
+  const secs = Math.floor((minutes % 1) * 60);
+
+  if (hours > 0) {
+    return `${hours}h ${mins}m`;
+  }
+  return `${mins}m ${secs}s`;
+}
+---
+
+<div class="activities-container">
+  <h3 class="activities-title">{t('run.activities.title')}</h3>
+
+  {displayActivities.length === 0 ? (
+    <div class="no-activities">
+      <Icon name="mdi:run" class="no-activities-icon" />
+      <p>{t('run.activities.noActivities')}</p>
+    </div>
+  ) : (
+    <div class="activities-grid">
+      {displayActivities.map(activity => (
+        <div class="activity-card">
+          <div class="activity-header">
+            <Icon name="mdi:run" class="activity-icon" />
+            <h4 class="activity-name">{translateActivityName(activity.name, lang)}</h4>
+          </div>
+          <div class="activity-date">{formatDate(activity.date)}</div>
+          <div class="activity-stats">
+            <div class="stat-item">
+              <Icon name="mdi:map-marker-distance" class="stat-icon-small" />
+              <span class="stat-text">{activity.distanceKm} km</span>
+            </div>
+            <div class="stat-item">
+              <Icon name="mdi:chart-line" class="stat-icon-small" />
+              <span class="stat-text">{activity.paceMinPerKm} min/km</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+<style>
+  .activities-container {
+    background-color: var(--color-bg-elevated);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .activities-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .no-activities {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .no-activities-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    color: var(--color-text-muted);
+    opacity: 0.5;
+  }
+
+  .no-activities p {
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+  }
+
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .activity-card {
+    background-color: var(--color-bg);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-text) 10%, transparent);
+  }
+
+  .activity-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .activity-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .activity-name {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .activity-date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .activity-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-icon-small {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-text-muted);
+  }
+
+  .stat-text {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .activities-container {
+      padding: 1.5rem;
+    }
+
+    .activities-title {
+      font-size: 1.125rem;
+    }
+
+    .activities-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .activity-card {
+      padding: 1.25rem;
+    }
+
+    .activity-name {
+      font-size: 1rem;
+    }
+  }
+</style>
