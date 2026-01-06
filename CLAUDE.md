@@ -79,15 +79,26 @@ This project uses GitFlow branching model.
 
 After creating a PR, **always check and address** the following CI feedback:
 
+**Quick Reference:**
+
+| CI Check | Purpose | Where to Find Results |
+|----------|---------|----------------------|
+| **Claude Code Review** | Static code analysis, identifies missing tests, i18n issues, accessibility, security | PR → Checks tab → "Claude Code Review" → Comment |
+| **Visual Regression Tests** | Screenshot comparison to catch UI regressions | PR → Checks tab → "Visual Regression Tests" → Comment + Artifacts (if failed) |
+| **Lighthouse CI** | Performance, accessibility, SEO, best practices audits | PR → Checks tab → "Lighthouse CI" → Comment with scores |
+
 ### 1. Check Claude Code Review
 
 Claude automatically performs static code analysis on all PRs and posts findings as a comment.
 
 **Steps:**
 1. Go to your PR on GitHub
-2. Look for the comment from `github-actions` bot titled "Code Review"
-3. Review all suggestions, concerns, and recommendations
-4. Check the verdict: "Approve", "Approve with suggestions", or "Request changes"
+2. Click the "Checks" tab at the top
+3. Select "Claude Code Review" from the left sidebar
+4. Check the workflow status (✅ passed or ❌ failed)
+5. Look for the automated comment from `github-actions` bot titled "Code Review"
+6. Review all suggestions, concerns, and recommendations
+7. Check the verdict: "Approve", "Approve with suggestions", or "Request changes"
 
 **If Claude identifies issues:**
 - Address each concern mentioned in the automated review
@@ -108,9 +119,11 @@ Claude automatically performs static code analysis on all PRs and posts findings
 Visual regression tests run automatically and compare screenshots against baselines.
 
 **Steps:**
-1. Go to PR → Actions → "Visual Regression Tests" workflow
-2. Check if tests passed or failed
-3. If failed, review the posted comment with failure details
+1. Go to your PR on GitHub
+2. Click the "Checks" tab at the top
+3. Select "Visual Regression Tests" from the left sidebar
+4. Check if tests passed (✅) or failed (❌)
+5. If failed, review the automated comment on the PR with failure details
 
 **If visual tests fail:**
 - See the detailed "Visual Regression Testing" section below for complete update instructions
@@ -118,14 +131,19 @@ Visual regression tests run automatically and compare screenshots against baseli
   - **Intentional changes** (you updated styles): Update snapshots locally using `npm run test:visual:update`, commit, and push
   - **Unintentional changes** (unexpected regression): Fix the CSS/component issue and push the fix
 
+**Note:** Screenshot diff artifacts are only available when tests fail and visual differences are detected.
+
 ### 3. Check Lighthouse CI Results
 
 Lighthouse CI runs automated performance, accessibility, SEO, and best practices audits.
 
 **Steps:**
-1. Go to PR → Check "Lighthouse CI" workflow status
-2. Review the posted comment with Lighthouse scores
-3. Check for any regressions or failing audits
+1. Go to your PR on GitHub
+2. Click the "Checks" tab at the top
+3. Select "Lighthouse CI" from the left sidebar
+4. Check the workflow status (✅ passed or ❌ failed)
+5. Review the automated comment with Lighthouse scores for each page
+6. Check for any regressions or failing audits (scores below thresholds)
 
 **If Lighthouse scores regress:**
 
