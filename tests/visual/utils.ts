@@ -15,6 +15,15 @@ export async function setTheme(page: Page, theme: "light" | "dark") {
 }
 
 /**
+ * Blocks external analytics scripts for test consistency.
+ */
+export async function blockAnalytics(page: Page) {
+  await page.route('**/*googletagmanager.com/**', route => route.abort());
+  await page.route('**/*google-analytics.com/**', route => route.abort());
+  await page.route('**/*analytics.google.com/**', route => route.abort());
+}
+
+/**
  * Waits for the page to be fully loaded and stable for screenshots.
  */
 export async function waitForPageStable(page: Page) {
@@ -22,5 +31,5 @@ export async function waitForPageStable(page: Page) {
   // Wait for fonts to load
   await page.evaluate(() => document.fonts.ready);
   // Small delay for any CSS transitions to complete
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(50);
 }

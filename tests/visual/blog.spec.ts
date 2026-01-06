@@ -1,23 +1,23 @@
 import { test, expect } from "@playwright/test";
 import { setTheme, waitForPageStable, blockAnalytics } from "./utils";
 
-test.describe("Run Page (Spanish)", () => {
+test.describe("Blog Post Layout", () => {
   test.beforeEach(async ({ page }) => {
     await blockAnalytics(page);
-    await page.goto("/es/run");
+    await page.goto("/blog/visual-regression-testing-with-playwright");
     await waitForPageStable(page);
   });
 
   test("light mode", async ({ page }) => {
     await setTheme(page, "light");
-    await expect(page).toHaveScreenshot("run-es-light.png", {
+    await expect(page).toHaveScreenshot("blog-light.png", {
       fullPage: true,
     });
   });
 
   test("dark mode", async ({ page }) => {
     await setTheme(page, "dark");
-    await expect(page).toHaveScreenshot("run-es-dark.png", {
+    await expect(page).toHaveScreenshot("blog-dark.png", {
       fullPage: true,
     });
   });

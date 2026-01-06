@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { setTheme, waitForPageStable } from "./utils";
+import { setTheme, waitForPageStable, blockAnalytics } from "./utils";
 
 // Use a specific locator for the navigation header (contains nav element)
 const navHeaderSelector = "header:has(nav)";
 
 test.describe("Header Component", () => {
   test.beforeEach(async ({ page }) => {
+    await blockAnalytics(page);
     await page.goto("/");
     await waitForPageStable(page);
   });
@@ -27,6 +28,7 @@ test.describe("Mobile Navigation", () => {
   test.use({ viewport: { width: 375, height: 667 } });
 
   test.beforeEach(async ({ page }) => {
+    await blockAnalytics(page);
     await page.goto("/");
     await waitForPageStable(page);
   });
@@ -47,7 +49,7 @@ test.describe("Mobile Navigation", () => {
     await setTheme(page, "light");
     // Click hamburger menu to open
     await page.click('button[aria-label="Toggle menu"]');
-    await page.waitForTimeout(300); // Wait for animation
+    await page.waitForTimeout(100); // Wait for animation
     await expect(page).toHaveScreenshot("header-mobile-open-light.png", {
       fullPage: true,
     });
@@ -57,7 +59,7 @@ test.describe("Mobile Navigation", () => {
     await setTheme(page, "dark");
     // Click hamburger menu to open
     await page.click('button[aria-label="Toggle menu"]');
-    await page.waitForTimeout(300); // Wait for animation
+    await page.waitForTimeout(100); // Wait for animation
     await expect(page).toHaveScreenshot("header-mobile-open-dark.png", {
       fullPage: true,
     });

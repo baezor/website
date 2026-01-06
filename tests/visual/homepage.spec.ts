@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { setTheme, waitForPageStable } from "./utils";
+import { setTheme, waitForPageStable, blockAnalytics } from "./utils";
 
 test.describe("Homepage", () => {
   test.beforeEach(async ({ page }) => {
+    await blockAnalytics(page);
     await page.goto("/");
     await waitForPageStable(page);
   });
