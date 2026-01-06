@@ -75,6 +75,60 @@ This project uses GitFlow branching model.
 2. Final testing and version bumps
 3. Merge to `main` (tag with version) and back to `develop`
 
+## Visual Regression Testing
+
+Visual tests run automatically on every PR to catch UI regressions.
+
+**Test Coverage:**
+- 6 pages × 2 viewports (desktop 1280×720, mobile Pixel 5) × 2 themes = 32 snapshots
+- **Pages tested:**
+  1. Homepage (`/`)
+  2. Contact page (`/contact`)
+  3. Run page - English (`/run`)
+  4. Run page - Spanish (`/es/run`)
+  5. Blog post example (`/blog/visual-regression-testing-with-playwright`)
+  6. Header component (desktop navigation, mobile menu closed/open)
+
+**When CI visual tests fail:**
+
+1. **Review changes:**
+   - Go to PR → Actions → Visual Regression Tests → Artifacts
+   - Download `screenshot-diffs` artifact
+   - Extract and review visual differences
+
+2. **If changes are intentional** (e.g., you updated styles):
+   ```bash
+   # Update snapshots locally
+   npm run build
+   npm run dev  # In separate terminal
+   npm run test:visual:update
+
+   # Review updated snapshots
+   git status  # Should show modified .png files in tests/visual/
+
+   # Commit updated baselines
+   git add tests/visual
+   git commit -m "test: update visual regression baselines after [describe change]"
+   git push
+   ```
+
+3. **If changes are unintentional:**
+   - Fix the CSS/component causing regression
+   - Push fix (snapshots don't need updating)
+
+**Local testing:**
+```bash
+npm run test:visual          # Run all tests
+npm run test:visual:update   # Update snapshots
+npm run test:visual:ui       # Interactive debugging
+```
+
+**Configuration:**
+- Config: `playwright.config.ts`
+- Threshold: 0.2% max pixel difference
+- CI: Sequential execution (1 worker) for consistency
+- Retries: 2 (handles transient failures)
+
 ## Commit Convention
 
 Commits are validated using commitlint. Format: `<type>: <description>`
