@@ -52,7 +52,9 @@ const readingTime = calculateReadingTime(entry.body);
             <div class="post-meta-info">
               <time datetime={pubDate.toISOString()}>{formattedPublishDate}</time>
               <span class="meta-separator">·</span>
-              <span class="reading-time">📖 {readingTime} min read</span>
+              <span class="reading-time" aria-label={t('blog.readingTime.aria', { time: readingTime.toString() })}>
+                <span aria-hidden="true">📖</span> {readingTime} {t('blog.readingTime')}
+              </span>
             </div>
             {
               updatedDate && (

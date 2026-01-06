@@ -7,13 +7,24 @@
 export function calculateReadingTime(content: string, wordsPerMinute = 200): number {
   // Remove markdown syntax for more accurate word count
   const cleanContent = content
-    .replace(/^---[\s\S]*?---/m, '') // Remove frontmatter
-    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-    .replace(/`[^`]+`/g, '') // Remove inline code
-    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Convert links to text
-    .replace(/[#*_~]/g, '') // Remove markdown formatting
-    .replace(/\s+/g, ' ') // Normalize whitespace
+    // Remove frontmatter (only the first occurrence)
+    .replace(/^---[\s\S]*?---/, '')
+    // Remove fenced code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove indented code blocks (4+ spaces or tab at line start)
+    .replace(/^(?:    |\t).+$/gm, '')
+    // Remove inline code
+    .replace(/`[^`]+`/g, '')
+    // Remove HTML tags
+    .replace(/<[^>]+>/g, '')
+    // Remove images
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    // Convert links to text (handle simple nested brackets by removing link part)
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+    // Remove markdown formatting characters
+    .replace(/[#*_~]/g, '')
+    // Normalize whitespace
+    .replace(/\s+/g, ' ')
     .trim();
 
   // Count words
