@@ -67,13 +67,120 @@ This project uses GitFlow branching model.
 6. Commit changes (include updated snapshots if any)
 7. `git push -u origin feature/<name>`
 8. `gh pr create --base develop`
-9. Lighthouse CI and Visual Regression tests run on PR
+9. **Wait for CI checks and review feedback** (see "After Creating a PR" section below)
 10. After approval, merge to `develop` and delete branch
 
 **Release workflow**:
 1. `git checkout -b release/v1.x.x` from `develop`
 2. Final testing and version bumps
 3. Merge to `main` (tag with version) and back to `develop`
+
+## After Creating a PR
+
+After creating a PR, **always check and address** the following CI feedback:
+
+**Quick Reference:**
+
+| CI Check | Purpose | Where to Find Results |
+|----------|---------|----------------------|
+| **Claude Code Review** | Static code analysis, identifies missing tests, i18n issues, accessibility, security | PR → Checks tab → "Claude Code Review" → Comment |
+| **Visual Regression Tests** | Screenshot comparison to catch UI regressions | PR → Checks tab → "Visual Regression Tests" → Comment + Artifacts (if failed) |
+| **Lighthouse CI** | Performance, accessibility, SEO, best practices audits | PR → Checks tab → "Lighthouse CI" → Comment with scores |
+
+### 1. Check Claude Code Review
+
+Claude automatically performs static code analysis on all PRs and posts findings as a comment.
+
+**Steps:**
+1. Go to your PR on GitHub
+2. Click the "Checks" tab at the top
+3. Select "Claude Code Review" from the left sidebar
+4. Check the workflow status (✅ passed or ❌ failed)
+5. Look for the automated comment from `github-actions` bot titled "Code Review"
+6. Review all suggestions, concerns, and recommendations
+7. Check the verdict: "Approve", "Approve with suggestions", or "Request changes"
+
+**If Claude identifies issues:**
+- Address each concern mentioned in the automated review
+- Make the requested changes in new commits
+- Push the changes to your PR branch
+- Claude will automatically re-analyze the updated code
+
+**Common automated review findings:**
+- Missing tests (unit tests, edge cases, test coverage gaps)
+- Internationalization issues (hardcoded text that should use i18n)
+- Accessibility concerns (missing ARIA labels, semantic HTML issues)
+- Code quality issues (regex patterns, error handling, edge cases)
+- Security vulnerabilities (XSS, injection risks, exposed credentials)
+- Documentation gaps (missing JSDoc, unclear naming)
+
+### 2. Check Visual Regression Test Results
+
+Visual regression tests run automatically and compare screenshots against baselines.
+
+**Steps:**
+1. Go to your PR on GitHub
+2. Click the "Checks" tab at the top
+3. Select "Visual Regression Tests" from the left sidebar
+4. Check if tests passed (✅) or failed (❌)
+5. If failed, review the automated comment on the PR with failure details
+
+**If visual tests fail:**
+- See the detailed "Visual Regression Testing" section below for complete update instructions
+- **Quick summary:**
+  - **Intentional changes** (you updated styles): Update snapshots locally using `npm run test:visual:update`, commit, and push
+  - **Unintentional changes** (unexpected regression): Fix the CSS/component issue and push the fix
+
+**Note:** Screenshot diff artifacts are only available when tests fail and visual differences are detected.
+
+### 3. Check Lighthouse CI Results
+
+Lighthouse CI runs automated performance, accessibility, SEO, and best practices audits.
+
+**Steps:**
+1. Go to your PR on GitHub
+2. Click the "Checks" tab at the top
+3. Select "Lighthouse CI" from the left sidebar
+4. Check the workflow status (✅ passed or ❌ failed)
+5. Review the automated comment with Lighthouse scores for each page
+6. Check for any regressions or failing audits (scores below thresholds)
+
+**If Lighthouse scores regress:**
+
+**Performance Issues:**
+- Review the "Opportunities" and "Diagnostics" sections in the report
+- Common fixes:
+  - Optimize images (use Astro's `<Image>` component)
+  - Reduce JavaScript bundle size
+  - Enable caching headers
+  - Minimize render-blocking resources
+
+**Accessibility Issues:**
+- Add missing ARIA labels
+- Fix color contrast ratios
+- Ensure semantic HTML structure
+- Add alt text to images
+
+**SEO Issues:**
+- Add missing meta descriptions
+- Fix heading hierarchy
+- Ensure mobile-friendly viewport
+- Add structured data where appropriate
+
+**Best Practices Issues:**
+- Fix console errors
+- Use HTTPS for all resources
+- Add proper error handling
+
+**Note:** Minor score fluctuations (±2 points) are normal. Focus on significant regressions (>5 points) or new failing audits.
+
+### 4. Address All Feedback Before Merge
+
+**Important:** Do not merge the PR until:
+- ✅ All CI checks pass (Visual Regression, Lighthouse, Claude Review)
+- ✅ All Claude code review feedback is addressed
+- ✅ Visual regression tests pass or snapshots are intentionally updated
+- ✅ Code has been approved (if applicable)
 
 ## Visual Regression Testing
 
