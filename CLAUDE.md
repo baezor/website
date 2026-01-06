@@ -67,13 +67,79 @@ This project uses GitFlow branching model.
 6. Commit changes (include updated snapshots if any)
 7. `git push -u origin feature/<name>`
 8. `gh pr create --base develop`
-9. Lighthouse CI and Visual Regression tests run on PR
+9. **Wait for CI checks and review feedback** (see "After Creating a PR" section below)
 10. After approval, merge to `develop` and delete branch
 
 **Release workflow**:
 1. `git checkout -b release/v1.x.x` from `develop`
 2. Final testing and version bumps
 3. Merge to `main` (tag with version) and back to `develop`
+
+## After Creating a PR
+
+After creating a PR, **always check and address** the following CI feedback:
+
+### 1. Check Claude Code Review
+
+Claude automatically reviews all PRs and posts feedback as a comment.
+
+**Steps:**
+1. Go to your PR on GitHub
+2. Look for the comment from `github-actions` bot with code review feedback
+3. Review all suggestions, concerns, and recommendations
+
+**If Claude identifies issues:**
+- Address each concern mentioned in the review
+- Make the requested changes in new commits
+- Push the changes to your PR branch
+- Claude will automatically re-review
+
+**Common feedback categories:**
+- Missing tests (unit tests, edge cases)
+- Internationalization issues (hardcoded text)
+- Accessibility concerns (ARIA labels, semantic HTML)
+- Code quality (regex patterns, error handling)
+- Security issues
+
+### 2. Check Visual Regression Test Results
+
+Visual regression tests run automatically and compare screenshots against baselines.
+
+**Steps:**
+1. Go to PR → Actions → "Visual Regression Tests" workflow
+2. Check if tests passed or failed
+3. If failed, review the posted comment with failure details
+
+**If visual tests fail:**
+
+**Option A: Changes are intentional** (you updated styles/UI):
+```bash
+# Download CI artifacts and update from production build
+gh run list --branch <your-branch> --limit 1
+gh run download <run-id> --name screenshot-diffs --dir /tmp/diffs
+
+# Copy actual images from retry2 directories to baselines
+# (adjust paths based on which tests failed)
+cp /tmp/diffs/*-retry2/*-actual.png tests/visual/.../baseline.png
+
+# Commit updated snapshots
+git add tests/visual
+git commit -m "test: update visual regression baselines after [describe change]"
+git push
+```
+
+**Option B: Changes are unintentional** (unexpected visual regression):
+- Review the diff images in the CI artifacts
+- Fix the CSS/component causing the regression
+- Push the fix (no snapshot update needed)
+
+### 3. Address All Feedback Before Merge
+
+**Important:** Do not merge the PR until:
+- ✅ All CI checks pass (Visual Regression, Lighthouse, Claude Review)
+- ✅ All Claude code review feedback is addressed
+- ✅ Visual regression tests pass or snapshots are intentionally updated
+- ✅ Code has been approved (if applicable)
 
 ## Visual Regression Testing
 
