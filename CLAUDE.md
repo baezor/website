@@ -81,7 +81,13 @@ Visual tests run automatically on every PR to catch UI regressions.
 
 **Test Coverage:**
 - 6 pages × 2 viewports (desktop 1280×720, mobile Pixel 5) × 2 themes = 32 snapshots
-- Pages: Homepage, Contact, Run (EN), Run (ES), Blog post, Header variations
+- **Pages tested:**
+  1. Homepage (`/`)
+  2. Contact page (`/contact`)
+  3. Run page - English (`/run`)
+  4. Run page - Spanish (`/es/run`)
+  5. Blog post example (`/blog/visual-regression-testing-with-playwright`)
+  6. Header component (desktop navigation, mobile menu closed/open)
 
 **When CI visual tests fail:**
 
