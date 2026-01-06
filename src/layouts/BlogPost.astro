@@ -5,6 +5,7 @@ import Layout from "./Layout.astro";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { calculateReadingTime } from "@/utils/readingTime";
 
 type Props = {
   entry: CollectionEntry<"blog">;
@@ -29,6 +30,9 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
   month: "long",
   day: "numeric",
 });
+
+// Calculate reading time
+const readingTime = calculateReadingTime(entry.body);
 ---
 
 <Layout title={title} description={metaDescription || description} keywords={keywords}>
@@ -45,7 +49,11 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
         <div class="container">
           <h1 class="post-title">{title}</h1>
           <div class="post-meta">
-            <time datetime={pubDate.toISOString()}>{formattedPublishDate}</time>
+            <div class="post-meta-info">
+              <time datetime={pubDate.toISOString()}>{formattedPublishDate}</time>
+              <span class="meta-separator">·</span>
+              <span class="reading-time">📖 {readingTime} min read</span>
+            </div>
             {
               updatedDate && (
                 <div class="updated-date">
@@ -188,6 +196,26 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
     font-size: 0.875rem;
     color: var(--prose-captions);
     margin-bottom: 1.5rem;
+  }
+
+  .post-meta-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-separator {
+    color: var(--prose-captions);
+    opacity: 0.5;
+  }
+
+  .reading-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--prose-captions);
+    font-weight: 500;
   }
 
   .updated-date {
