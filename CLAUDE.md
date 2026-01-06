@@ -81,25 +81,27 @@ After creating a PR, **always check and address** the following CI feedback:
 
 ### 1. Check Claude Code Review
 
-Claude automatically reviews all PRs and posts feedback as a comment.
+Claude automatically performs static code analysis on all PRs and posts findings as a comment.
 
 **Steps:**
 1. Go to your PR on GitHub
-2. Look for the comment from `github-actions` bot with code review feedback
+2. Look for the comment from `github-actions` bot titled "Code Review"
 3. Review all suggestions, concerns, and recommendations
+4. Check the verdict: "Approve", "Approve with suggestions", or "Request changes"
 
 **If Claude identifies issues:**
-- Address each concern mentioned in the review
+- Address each concern mentioned in the automated review
 - Make the requested changes in new commits
 - Push the changes to your PR branch
-- Claude will automatically re-review
+- Claude will automatically re-analyze the updated code
 
-**Common feedback categories:**
-- Missing tests (unit tests, edge cases)
-- Internationalization issues (hardcoded text)
-- Accessibility concerns (ARIA labels, semantic HTML)
-- Code quality (regex patterns, error handling)
-- Security issues
+**Common automated review findings:**
+- Missing tests (unit tests, edge cases, test coverage gaps)
+- Internationalization issues (hardcoded text that should use i18n)
+- Accessibility concerns (missing ARIA labels, semantic HTML issues)
+- Code quality issues (regex patterns, error handling, edge cases)
+- Security vulnerabilities (XSS, injection risks, exposed credentials)
+- Documentation gaps (missing JSDoc, unclear naming)
 
 ### 2. Check Visual Regression Test Results
 
@@ -111,29 +113,50 @@ Visual regression tests run automatically and compare screenshots against baseli
 3. If failed, review the posted comment with failure details
 
 **If visual tests fail:**
+- See the detailed "Visual Regression Testing" section below for complete update instructions
+- **Quick summary:**
+  - **Intentional changes** (you updated styles): Update snapshots locally using `npm run test:visual:update`, commit, and push
+  - **Unintentional changes** (unexpected regression): Fix the CSS/component issue and push the fix
 
-**Option A: Changes are intentional** (you updated styles/UI):
-```bash
-# Download CI artifacts and update from production build
-gh run list --branch <your-branch> --limit 1
-gh run download <run-id> --name screenshot-diffs --dir /tmp/diffs
+### 3. Check Lighthouse CI Results
 
-# Copy actual images from retry2 directories to baselines
-# (adjust paths based on which tests failed)
-cp /tmp/diffs/*-retry2/*-actual.png tests/visual/.../baseline.png
+Lighthouse CI runs automated performance, accessibility, SEO, and best practices audits.
 
-# Commit updated snapshots
-git add tests/visual
-git commit -m "test: update visual regression baselines after [describe change]"
-git push
-```
+**Steps:**
+1. Go to PR → Check "Lighthouse CI" workflow status
+2. Review the posted comment with Lighthouse scores
+3. Check for any regressions or failing audits
 
-**Option B: Changes are unintentional** (unexpected visual regression):
-- Review the diff images in the CI artifacts
-- Fix the CSS/component causing the regression
-- Push the fix (no snapshot update needed)
+**If Lighthouse scores regress:**
 
-### 3. Address All Feedback Before Merge
+**Performance Issues:**
+- Review the "Opportunities" and "Diagnostics" sections in the report
+- Common fixes:
+  - Optimize images (use Astro's `<Image>` component)
+  - Reduce JavaScript bundle size
+  - Enable caching headers
+  - Minimize render-blocking resources
+
+**Accessibility Issues:**
+- Add missing ARIA labels
+- Fix color contrast ratios
+- Ensure semantic HTML structure
+- Add alt text to images
+
+**SEO Issues:**
+- Add missing meta descriptions
+- Fix heading hierarchy
+- Ensure mobile-friendly viewport
+- Add structured data where appropriate
+
+**Best Practices Issues:**
+- Fix console errors
+- Use HTTPS for all resources
+- Add proper error handling
+
+**Note:** Minor score fluctuations (±2 points) are normal. Focus on significant regressions (>5 points) or new failing audits.
+
+### 4. Address All Feedback Before Merge
 
 **Important:** Do not merge the PR until:
 - ✅ All CI checks pass (Visual Regression, Lighthouse, Claude Review)
