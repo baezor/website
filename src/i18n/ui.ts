@@ -70,6 +70,14 @@ export const ui = {
     en: 'Updated:',
     es: 'Actualizado:',
   },
+  'blog.readingTime': {
+    en: 'min read',
+    es: 'min de lectura',
+  },
+  'blog.readingTime.aria': {
+    en: 'Estimated reading time: {time} minutes',
+    es: 'Tiempo estimado de lectura: {time} minutos',
+  },
   'blog.post': {
     en: 'post',
     es: 'artículo',
