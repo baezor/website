@@ -334,6 +334,75 @@ export const ui = {
     en: 'Powered by',
     es: 'Impulsado por',
   },
+  // About page
+  'about.title': {
+    en: 'About Me',
+    es: 'Sobre Mí',
+  },
+  'about.meta.description': {
+    en: 'Learn about Angel Baez - Software engineer and entrepreneur based in Cancun, Mexico. Building web applications and digital products.',
+    es: 'Conoce a Angel Baez - Ingeniero de software y emprendedor en Cancún, México. Desarrollando aplicaciones web y productos digitales.',
+  },
+  'about.intro': {
+    en: 'Hi! I\'m Angel Baez, a software engineer and entrepreneur based in Cancun, Mexico.',
+    es: '¡Hola! Soy Angel Baez, un ingeniero de software y emprendedor en Cancún, México.',
+  },
+  'about.section.background': {
+    en: 'Background',
+    es: 'Trayectoria',
+  },
+  'about.background.p1': {
+    en: 'I\'ve been building software for over a decade, working with startups and established companies to create web applications, APIs, and digital products. My focus is on building reliable, scalable solutions that solve real problems.',
+    es: 'He estado desarrollando software por más de una década, trabajando con startups y empresas establecidas para crear aplicaciones web, APIs y productos digitales. Mi enfoque está en construir soluciones confiables y escalables que resuelvan problemas reales.',
+  },
+  'about.background.p2': {
+    en: 'Currently, I\'m focused on web development using modern technologies like TypeScript, React, and Node.js. I\'m passionate about clean code, performance optimization, and creating great user experiences.',
+    es: 'Actualmente, me enfoco en desarrollo web usando tecnologías modernas como TypeScript, React y Node.js. Me apasiona el código limpio, la optimización del rendimiento y crear excelentes experiencias de usuario.',
+  },
+  'about.section.expertise': {
+    en: 'Areas of Expertise',
+    es: 'Áreas de Experiencia',
+  },
+  'about.expertise.frontend': {
+    en: 'Frontend Development',
+    es: 'Desarrollo Frontend',
+  },
+  'about.expertise.frontend.desc': {
+    en: 'React, TypeScript, Astro, Next.js, CSS/Tailwind',
+    es: 'React, TypeScript, Astro, Next.js, CSS/Tailwind',
+  },
+  'about.expertise.backend': {
+    en: 'Backend Development',
+    es: 'Desarrollo Backend',
+  },
+  'about.expertise.backend.desc': {
+    en: 'Node.js, Python, REST APIs, GraphQL, Databases',
+    es: 'Node.js, Python, REST APIs, GraphQL, Bases de datos',
+  },
+  'about.expertise.devops': {
+    en: 'DevOps & Cloud',
+    es: 'DevOps & Cloud',
+  },
+  'about.expertise.devops.desc': {
+    en: 'AWS, Cloudflare, Docker, CI/CD, Infrastructure',
+    es: 'AWS, Cloudflare, Docker, CI/CD, Infraestructura',
+  },
+  'about.section.connect': {
+    en: 'Let\'s Connect',
+    es: 'Conectemos',
+  },
+  'about.connect.text': {
+    en: 'I\'m always open to discussing new projects, opportunities, or just having a conversation about technology. Feel free to reach out!',
+    es: 'Siempre estoy abierto a discutir nuevos proyectos, oportunidades, o simplemente tener una conversación sobre tecnología. ¡No dudes en contactarme!',
+  },
+  'about.connect.cta': {
+    en: 'Get in Touch',
+    es: 'Contáctame',
+  },
+  'nav.about': {
+    en: 'About',
+    es: 'Sobre Mí',
+  },
 } as const;
 
 export type UiKey = keyof typeof ui;

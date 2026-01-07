@@ -1,0 +1,49 @@
+---
+/**
+ * FAQPage Schema Component
+ *
+ * Adds structured data for FAQ sections to improve SEO and AEO.
+ * FAQPage schema helps content appear in Google's featured snippets
+ * and AI-generated answers.
+ *
+ * Usage in blog posts:
+ * ---
+ * import FAQSchema from "@/components/FAQSchema.astro";
+ *
+ * const faqs = [
+ *   { question: "What is Playwright?", answer: "Playwright is a browser automation..." },
+ *   { question: "Why use visual testing?", answer: "Visual testing catches UI bugs..." }
+ * ];
+ * ---
+ * <FAQSchema faqs={faqs} />
+ */
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  faqs: FAQItem[];
+}
+
+const { faqs } = Astro.props;
+
+// Build the FAQ list for schema
+const faqList = faqs.map((faq) => ({
+  "@type": "Question",
+  "name": faq.question,
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": faq.answer
+  }
+}));
+---
+
+{faqs.length > 0 && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqList
+  })} />
+)}

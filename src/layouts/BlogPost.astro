@@ -1,18 +1,20 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from "@/const";
 import Layout from "./Layout.astro";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { calculateReadingTime } from "@/utils/readingTime";
+import BreadcrumbSchema from "@/components/BreadcrumbSchema.astro";
+import FAQSchema from "@/components/FAQSchema.astro";
 
 type Props = {
   entry: CollectionEntry<"blog">;
 };
 
 const { entry } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType, lang } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType, lang, faqs } = entry.data;
 
 const currentLang = lang || 'en';
 const t = useTranslations(currentLang);
@@ -31,8 +33,83 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
   day: "numeric",
 });
 
-// Calculate reading time
+// Calculate reading time and word count
 const readingTime = calculateReadingTime(entry.body);
+const wordCount = entry.body ? entry.body.split(/\s+/).filter(word => word.length > 0).length : 0;
+
+// Build breadcrumb items for structured data
+const breadcrumbItems = [
+  { name: t('nav.home'), url: getRelativeLocaleUrl(currentLang, '/') },
+  { name: t('nav.blog'), url: getRelativeLocaleUrl(currentLang, 'blog') },
+  { name: title, url: getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`) }
+];
+
+// Build canonical URL for this post
+const postUrl = new URL(getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`), SITE_URL).toString();
+
+// Build image URL if hero image exists
+const imageUrl = heroImage ? new URL(heroImage, SITE_URL).toString() : null;
+
+// Build enhanced BlogPosting schema
+const blogPostingSchema: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": metaDescription || description,
+  "datePublished": pubDate.toISOString(),
+  "dateModified": (updatedDate || pubDate).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": "Angel Baez",
+    "url": SITE_URL,
+    "sameAs": [
+      "https://github.com/baezor",
+      "https://x.com/baezor",
+      "https://www.linkedin.com/in/angelromerobaez",
+      "https://www.instagram.com/baez0r"
+    ]
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Angel Baez",
+    "url": SITE_URL,
+    "logo": {
+      "@type": "ImageObject",
+      "url": new URL("/favicon.png", SITE_URL).toString()
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": postUrl
+  },
+  "wordCount": wordCount,
+  "inLanguage": currentLang === 'es' ? 'es-MX' : 'en-US'
+};
+
+// Add image if available
+if (imageUrl) {
+  blogPostingSchema.image = {
+    "@type": "ImageObject",
+    "url": imageUrl
+  };
+}
+
+// Add keywords if available
+if (keywords && keywords.length > 0) {
+  blogPostingSchema.keywords = keywords.join(", ");
+}
+
+// Add article section (categories) if available
+if (categories && categories.length > 0) {
+  blogPostingSchema.articleSection = categories[0]; // Primary category
+}
+
+// Add speakable property for voice/AI optimization
+// Speakable identifies content suitable for text-to-speech
+blogPostingSchema.speakable = {
+  "@type": "SpeakableSpecification",
+  "cssSelector": [".post-title", ".prose p:first-of-type", ".prose h2", ".prose h3"]
+};
 ---
 
 <Layout title={title} description={metaDescription || description} keywords={keywords}>
@@ -42,7 +119,16 @@ const readingTime = calculateReadingTime(entry.body);
         {
           heroImage && (
             <div class="hero-image-container">
-              <img src={heroImage} alt={title} class="hero-image" />
+              <img
+                src={heroImage}
+                alt={title}
+                class="hero-image"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                width="1200"
+                height="630"
+              />
             </div>
           )
         }
@@ -90,6 +176,22 @@ const readingTime = calculateReadingTime(entry.body);
         <div class="prose">
           <slot />
         </div>
+
+        {faqs && faqs.length > 0 && (
+          <section class="faq-section" aria-labelledby="faq-heading">
+            <h2 id="faq-heading">{currentLang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}</h2>
+            <div class="faq-list">
+              {faqs.map((faq) => (
+                <details class="faq-item">
+                  <summary class="faq-question">{faq.question}</summary>
+                  <div class="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       <footer class="post-footer container">
@@ -100,33 +202,15 @@ const readingTime = calculateReadingTime(entry.body);
     </article>
   </main>
 
-  <!-- BlogPosting Structured Data -->
-  <script is:inline define:vars={{
-    headline: title,
-    desc: metaDescription || description,
-    datePublished: pubDate.toISOString(),
-    dateModified: (updatedDate || pubDate).toISOString(),
-    postKeywords: keywords
-  }} type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": headline,
-      "description": desc,
-      "datePublished": datePublished,
-      "dateModified": dateModified,
-      "author": {
-        "@type": "Person",
-        "name": "Angel Baez",
-        "url": "https://angel-baez.com"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Angel Baez"
-      },
-      "keywords": postKeywords ? postKeywords.join(", ") : undefined
-    }
-  </script>
+  <!-- Enhanced BlogPosting Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
+
+  <!-- Breadcrumb Structured Data -->
+  <BreadcrumbSchema items={breadcrumbItems} />
+
+  {faqs && faqs.length > 0 && (
+    <FAQSchema faqs={faqs} />
+  )}
 </Layout>
 
 <style is:global>
@@ -511,6 +595,69 @@ const readingTime = calculateReadingTime(entry.body);
     margin-bottom: 3em;
     border: 0;
     border-top: 1px solid var(--prose-borders);
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--prose-borders);
+  }
+
+  .faq-section h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--prose-headings);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    background-color: var(--prose-code-bg);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--prose-headings);
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question::after {
+    content: '+';
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-accent);
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-question::after {
+    content: '-';
+  }
+
+  .faq-answer {
+    padding: 0 1.25rem 1rem;
+    color: var(--prose-body);
+  }
+
+  .faq-answer p {
+    margin: 0;
+    line-height: 1.6;
   }
 
   /* Responsive adjustments */

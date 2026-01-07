@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
+import BreadcrumbSchema from "@/components/BreadcrumbSchema.astro";
 import { SITE_TITLE } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import { locales } from "@/i18n/ui";
@@ -48,6 +49,13 @@ const formatCategory = (cat: string) => {
 const displayCategory = formatCategory(category);
 const pageTitle = `${displayCategory} Posts | ${SITE_TITLE[lang]}`;
 const description = `All blog posts in the ${displayCategory} category`;
+
+// Build breadcrumb items for structured data
+const breadcrumbItems = [
+  { name: t('nav.home'), url: getRelativeLocaleUrl(lang, '/') },
+  { name: t('nav.blog'), url: getRelativeLocaleUrl(lang, 'blog') },
+  { name: displayCategory, url: getRelativeLocaleUrl(lang, `category/${category}`) }
+];
 ---
 
 <Layout title={pageTitle} description={description}>
@@ -103,6 +111,7 @@ const description = `All blog posts in the ${displayCategory} category`;
       }
     </section>
   </main>
+  <BreadcrumbSchema items={breadcrumbItems} />
 </Layout>
 
 <style>
