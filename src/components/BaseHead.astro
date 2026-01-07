@@ -70,7 +70,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta name="twitter:site" content="@baezor" />
 <meta name="twitter:creator" content="@baezor" />
 
-<!-- Structured Data for WebSite with SearchAction -->
+<!-- Structured Data for WebSite -->
 <script is:inline define:vars={{ siteUrl: SITE_URL }} type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -78,15 +78,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
     "name": "Angel Baez",
     "alternateName": ["angel-baez.com", "baezor"],
     "url": siteUrl,
-    "inLanguage": ["en", "es"],
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": siteUrl + "blog?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "inLanguage": ["en", "es"]
   }
 </script>
 

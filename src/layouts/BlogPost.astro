@@ -60,12 +60,22 @@ const blogPostingSchema: Record<string, unknown> = {
   "author": {
     "@type": "Person",
     "name": "Angel Baez",
-    "url": SITE_URL
+    "url": SITE_URL,
+    "sameAs": [
+      "https://github.com/baezor",
+      "https://x.com/baezor",
+      "https://www.linkedin.com/in/angelromerobaez",
+      "https://www.instagram.com/baez0r"
+    ]
   },
   "publisher": {
-    "@type": "Person",
+    "@type": "Organization",
     "name": "Angel Baez",
-    "url": SITE_URL
+    "url": SITE_URL,
+    "logo": {
+      "@type": "ImageObject",
+      "url": new URL("/favicon.png", SITE_URL).toString()
+    }
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
