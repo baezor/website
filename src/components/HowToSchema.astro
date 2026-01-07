@@ -1,0 +1,109 @@
+---
+/**
+ * HowTo Schema Component
+ *
+ * Adds structured data for step-by-step tutorials to improve SEO and AEO.
+ * HowTo schema helps content appear in Google's how-to rich results
+ * and AI-generated step-by-step answers.
+ *
+ * Usage in blog posts:
+ * ---
+ * import HowToSchema from "@/components/HowToSchema.astro";
+ *
+ * const howToData = {
+ *   name: "How to Set Up Visual Regression Testing with Playwright",
+ *   description: "Learn to implement visual testing in your development workflow",
+ *   totalTime: "PT30M", // ISO 8601 duration format
+ *   steps: [
+ *     { name: "Install Playwright", text: "Run npm install -d @playwright/test" },
+ *     { name: "Create test file", text: "Create tests/homepage.spec.ts" },
+ *     { name: "Write your first test", text: "Add a basic visual comparison test" }
+ *   ]
+ * };
+ * ---
+ * <HowToSchema {...howToData} />
+ */
+
+import { SITE_URL } from "@/const";
+
+interface HowToStep {
+  name: string;
+  text: string;
+  image?: string;
+  url?: string;
+}
+
+interface Props {
+  name: string;
+  description: string;
+  steps: HowToStep[];
+  totalTime?: string; // ISO 8601 duration (e.g., "PT30M" for 30 minutes)
+  estimatedCost?: {
+    currency: string;
+    value: string;
+  };
+  image?: string;
+  tool?: string[];
+  supply?: string[];
+}
+
+const { name, description, steps, totalTime, estimatedCost, image, tool, supply } = Astro.props;
+
+// Build the steps list for schema
+const stepsList = steps.map((step, index) => ({
+  "@type": "HowToStep",
+  "position": index + 1,
+  "name": step.name,
+  "text": step.text,
+  ...(step.image && { "image": new URL(step.image, SITE_URL).toString() }),
+  ...(step.url && { "url": new URL(step.url, SITE_URL).toString() })
+}));
+
+// Build optional arrays
+const toolList = tool?.map((t) => ({
+  "@type": "HowToTool",
+  "name": t
+}));
+
+const supplyList = supply?.map((s) => ({
+  "@type": "HowToSupply",
+  "name": s
+}));
+
+// Build the full schema
+const howToSchema: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": name,
+  "description": description,
+  "step": stepsList
+};
+
+if (totalTime) {
+  howToSchema.totalTime = totalTime;
+}
+
+if (estimatedCost) {
+  howToSchema.estimatedCost = {
+    "@type": "MonetaryAmount",
+    "currency": estimatedCost.currency,
+    "value": estimatedCost.value
+  };
+}
+
+if (image) {
+  howToSchema.image = new URL(image, SITE_URL).toString();
+}
+
+if (toolList && toolList.length > 0) {
+  howToSchema.tool = toolList;
+}
+
+if (supplyList && supplyList.length > 0) {
+  howToSchema.supply = supplyList;
+}
+---
+
+{steps.length > 0 && (
+  <script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
+)}
