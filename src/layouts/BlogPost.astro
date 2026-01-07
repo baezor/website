@@ -7,13 +7,14 @@ import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { calculateReadingTime } from "@/utils/readingTime";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema.astro";
+import FAQSchema from "@/components/FAQSchema.astro";
 
 type Props = {
   entry: CollectionEntry<"blog">;
 };
 
 const { entry } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType, lang } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, categories, tags, metaDescription, keywords, contentType, lang, faqs } = entry.data;
 
 const currentLang = lang || 'en';
 const t = useTranslations(currentLang);
@@ -118,7 +119,16 @@ blogPostingSchema.speakable = {
         {
           heroImage && (
             <div class="hero-image-container">
-              <img src={heroImage} alt={title} class="hero-image" />
+              <img
+                src={heroImage}
+                alt={title}
+                class="hero-image"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                width="1200"
+                height="630"
+              />
             </div>
           )
         }
@@ -166,6 +176,22 @@ blogPostingSchema.speakable = {
         <div class="prose">
           <slot />
         </div>
+
+        {faqs && faqs.length > 0 && (
+          <section class="faq-section" aria-labelledby="faq-heading">
+            <h2 id="faq-heading">{currentLang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}</h2>
+            <div class="faq-list">
+              {faqs.map((faq) => (
+                <details class="faq-item">
+                  <summary class="faq-question">{faq.question}</summary>
+                  <div class="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       <footer class="post-footer container">
@@ -181,6 +207,10 @@ blogPostingSchema.speakable = {
 
   <!-- Breadcrumb Structured Data -->
   <BreadcrumbSchema items={breadcrumbItems} />
+
+  {faqs && faqs.length > 0 && (
+    <FAQSchema faqs={faqs} />
+  )}
 </Layout>
 
 <style is:global>
@@ -565,6 +595,69 @@ blogPostingSchema.speakable = {
     margin-bottom: 3em;
     border: 0;
     border-top: 1px solid var(--prose-borders);
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--prose-borders);
+  }
+
+  .faq-section h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--prose-headings);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    background-color: var(--prose-code-bg);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--prose-headings);
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question::after {
+    content: '+';
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-accent);
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-question::after {
+    content: '-';
+  }
+
+  .faq-answer {
+    padding: 0 1.25rem 1rem;
+    color: var(--prose-body);
+  }
+
+  .faq-answer p {
+    margin: 0;
+    line-height: 1.6;
   }
 
   /* Responsive adjustments */
