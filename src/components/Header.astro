@@ -56,6 +56,9 @@ const isActive = (path: string) => {
           <a href={getRelativeLocaleUrl(lang, 'blog')} class={isActive("/blog") || isActive("/es/blog") ? "active" : ""}>{t('nav.blog')}</a>
         </li>
         <li>
+          <a href={getRelativeLocaleUrl(lang, 'about')} class={isActive("/about") || isActive("/es/about") ? "active" : ""}>{t('nav.about')}</a>
+        </li>
+        <li>
           <a href={getRelativeLocaleUrl(lang, 'run')} class={isActive("/run") || isActive("/es/run") ? "active" : ""}>{t('nav.run')}</a>
         </li>
         <li>
