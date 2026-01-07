@@ -114,6 +114,10 @@ export const ui = {
     en: 'Send Message',
     es: 'Enviar Mensaje',
   },
+  'contact.form.success': {
+    en: 'Thank you! Your message has been sent successfully.',
+    es: '¡Gracias! Tu mensaje ha sido enviado exitosamente.',
+  },
   'contact.lookingForward': {
     en: 'Looking forward to hearing from you!',
     es: '¡Espero saber de ti pronto!',
