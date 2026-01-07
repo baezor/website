@@ -5,7 +5,6 @@ import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const success = Astro.url.searchParams.get('success') === 'true';
 const redirectUrl = lang === 'es'
   ? `${SITE_URL}/es/contact?success=true`
   : `${SITE_URL}/contact?success=true`;
@@ -22,11 +21,9 @@ const redirectUrl = lang === 'es'
         {t('contact.intro')}
       </p>
 
-      {success && (
-        <div class="success-message" role="alert">
-          <p>{t('contact.form.success')}</p>
-        </div>
-      )}
+      <div id="success-message" class="success-message" role="alert" hidden>
+        <p>{t('contact.form.success')}</p>
+      </div>
 
       <form action="https://formspree.io/f/xkogdgow" method="POST" class="contact-form">
         <input type="hidden" name="_next" value={redirectUrl} />
@@ -198,3 +195,9 @@ const redirectUrl = lang === 'es'
     }
   }
 </style>
+
+<script>
+  if (new URLSearchParams(window.location.search).get('success') === 'true') {
+    document.getElementById('success-message')?.removeAttribute('hidden');
+  }
+</script>
