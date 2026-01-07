@@ -1,11 +1,12 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from "@/const";
 import Layout from "./Layout.astro";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { calculateReadingTime } from "@/utils/readingTime";
+import BreadcrumbSchema from "@/components/BreadcrumbSchema.astro";
 
 type Props = {
   entry: CollectionEntry<"blog">;
@@ -31,8 +32,83 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
   day: "numeric",
 });
 
-// Calculate reading time
+// Calculate reading time and word count
 const readingTime = calculateReadingTime(entry.body);
+const wordCount = entry.body ? entry.body.split(/\s+/).filter(word => word.length > 0).length : 0;
+
+// Build breadcrumb items for structured data
+const breadcrumbItems = [
+  { name: t('nav.home'), url: getRelativeLocaleUrl(currentLang, '/') },
+  { name: t('nav.blog'), url: getRelativeLocaleUrl(currentLang, 'blog') },
+  { name: title, url: getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`) }
+];
+
+// Build canonical URL for this post
+const postUrl = new URL(getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`), SITE_URL).toString();
+
+// Build image URL if hero image exists
+const imageUrl = heroImage ? new URL(heroImage, SITE_URL).toString() : null;
+
+// Build enhanced BlogPosting schema
+const blogPostingSchema: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": metaDescription || description,
+  "datePublished": pubDate.toISOString(),
+  "dateModified": (updatedDate || pubDate).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": "Angel Baez",
+    "url": SITE_URL,
+    "sameAs": [
+      "https://github.com/baezor",
+      "https://x.com/baezor",
+      "https://www.linkedin.com/in/angelromerobaez",
+      "https://www.instagram.com/baez0r"
+    ]
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Angel Baez",
+    "url": SITE_URL,
+    "logo": {
+      "@type": "ImageObject",
+      "url": new URL("/favicon.png", SITE_URL).toString()
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": postUrl
+  },
+  "wordCount": wordCount,
+  "inLanguage": currentLang === 'es' ? 'es-MX' : 'en-US'
+};
+
+// Add image if available
+if (imageUrl) {
+  blogPostingSchema.image = {
+    "@type": "ImageObject",
+    "url": imageUrl
+  };
+}
+
+// Add keywords if available
+if (keywords && keywords.length > 0) {
+  blogPostingSchema.keywords = keywords.join(", ");
+}
+
+// Add article section (categories) if available
+if (categories && categories.length > 0) {
+  blogPostingSchema.articleSection = categories[0]; // Primary category
+}
+
+// Add speakable property for voice/AI optimization
+// Speakable identifies content suitable for text-to-speech
+blogPostingSchema.speakable = {
+  "@type": "SpeakableSpecification",
+  "cssSelector": [".post-title", ".prose p:first-of-type", ".prose h2", ".prose h3"]
+};
 ---
 
 <Layout title={title} description={metaDescription || description} keywords={keywords}>
@@ -100,33 +176,11 @@ const readingTime = calculateReadingTime(entry.body);
     </article>
   </main>
 
-  <!-- BlogPosting Structured Data -->
-  <script is:inline define:vars={{
-    headline: title,
-    desc: metaDescription || description,
-    datePublished: pubDate.toISOString(),
-    dateModified: (updatedDate || pubDate).toISOString(),
-    postKeywords: keywords
-  }} type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": headline,
-      "description": desc,
-      "datePublished": datePublished,
-      "dateModified": dateModified,
-      "author": {
-        "@type": "Person",
-        "name": "Angel Baez",
-        "url": "https://angel-baez.com"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Angel Baez"
-      },
-      "keywords": postKeywords ? postKeywords.join(", ") : undefined
-    }
-  </script>
+  <!-- Enhanced BlogPosting Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
+
+  <!-- Breadcrumb Structured Data -->
+  <BreadcrumbSchema items={breadcrumbItems} />
 </Layout>
 
 <style is:global>

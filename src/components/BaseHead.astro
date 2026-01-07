@@ -70,6 +70,18 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta name="twitter:site" content="@baezor" />
 <meta name="twitter:creator" content="@baezor" />
 
+<!-- Structured Data for WebSite -->
+<script is:inline define:vars={{ siteUrl: SITE_URL }} type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Angel Baez",
+    "alternateName": ["angel-baez.com", "baezor"],
+    "url": siteUrl,
+    "inLanguage": ["en", "es"]
+  }
+</script>
+
 <!-- Structured Data for Person -->
 <script is:inline define:vars={{ siteUrl: SITE_URL, imageUrl: new URL(image, SITE_URL).toString() }} type="application/ld+json">
   {
