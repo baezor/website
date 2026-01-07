@@ -15,6 +15,15 @@ keywords:
   - snapshot testing
   - UI testing
 contentType: "technical-tutorial"
+faqs:
+  - question: "What is visual regression testing?"
+    answer: "Visual regression testing is a quality assurance technique that compares screenshots of your application before and after code changes to detect unintended visual differences. It helps catch UI bugs that traditional unit or integration tests might miss."
+  - question: "Why should I use Playwright for visual testing?"
+    answer: "Playwright offers built-in screenshot comparison with toMatchSnapshot(), supports all major browsers (Chromium, Firefox, WebKit), provides excellent cross-platform consistency, and integrates seamlessly with CI/CD pipelines. It's also faster than many alternatives."
+  - question: "How do I update snapshots when intentional changes are made?"
+    answer: "Run your tests with the --update-snapshots flag: npx playwright test --update-snapshots. This will regenerate all baseline screenshots with the current state of your application."
+  - question: "Can I test specific components instead of full pages?"
+    answer: "Yes, Playwright allows you to capture screenshots of specific elements using locators. Use page.locator() to select a component, then call toHaveScreenshot() on that specific element instead of the full page."
 ---
 
 ## Introduction

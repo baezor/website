@@ -1,0 +1,265 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { SITE_TITLE, SITE_URL } from "@/const";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { userData } from "../data";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const profilePhoto = userData[0].userPic;
+const userName = userData[0].userName;
+
+// Build ProfilePage schema for E-E-A-T
+const profilePageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Angel Baez",
+    "alternateName": "baezor",
+    "url": SITE_URL,
+    "image": new URL("/favicon.png", SITE_URL).toString(),
+    "email": "angel@romerobaez.com",
+    "jobTitle": "Software Engineer",
+    "description": t('about.meta.description'),
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cancun",
+      "addressRegion": "Quintana Roo",
+      "addressCountry": "Mexico"
+    },
+    "sameAs": [
+      "https://www.linkedin.com/in/angelromerobaez",
+      "https://github.com/baezor",
+      "https://x.com/baezor",
+      "https://www.instagram.com/baez0r"
+    ],
+    "knowsAbout": [
+      "Web Development",
+      "TypeScript",
+      "React",
+      "Node.js",
+      "Python",
+      "Cloud Infrastructure",
+      "Software Architecture"
+    ],
+    "knowsLanguage": [
+      { "@type": "Language", "name": "English" },
+      { "@type": "Language", "name": "Spanish" }
+    ]
+  },
+  "dateCreated": "2024-01-01",
+  "dateModified": new Date().toISOString().split('T')[0]
+};
+
+const expertise = [
+  {
+    title: t('about.expertise.frontend'),
+    description: t('about.expertise.frontend.desc')
+  },
+  {
+    title: t('about.expertise.backend'),
+    description: t('about.expertise.backend.desc')
+  },
+  {
+    title: t('about.expertise.devops'),
+    description: t('about.expertise.devops.desc')
+  }
+];
+---
+
+<Layout
+  title={`${t('about.title')} | ${SITE_TITLE[lang]}`}
+  description={t('about.meta.description')}
+>
+  <main>
+    <article class="about-container">
+      <header class="about-header">
+        <div class="profile-image">
+          <Image
+            src={profilePhoto}
+            alt={`Profile photo of ${userName}`}
+            width={150}
+            height={150}
+            format="avif"
+            quality={80}
+          />
+        </div>
+        <h1>{t('about.title')}</h1>
+        <p class="intro">{t('about.intro')}</p>
+      </header>
+
+      <section class="about-section" aria-labelledby="background-heading">
+        <h2 id="background-heading">{t('about.section.background')}</h2>
+        <p>{t('about.background.p1')}</p>
+        <p>{t('about.background.p2')}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="expertise-heading">
+        <h2 id="expertise-heading">{t('about.section.expertise')}</h2>
+        <div class="expertise-grid">
+          {expertise.map((item) => (
+            <div class="expertise-card">
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="about-section connect-section" aria-labelledby="connect-heading">
+        <h2 id="connect-heading">{t('about.section.connect')}</h2>
+        <p>{t('about.connect.text')}</p>
+        <a href={getRelativeLocaleUrl(lang, 'contact')} class="cta-button">
+          {t('about.connect.cta')}
+        </a>
+      </section>
+    </article>
+  </main>
+
+  <!-- ProfilePage Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(profilePageSchema)} />
+</Layout>
+
+<style>
+  .about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .profile-image {
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-image img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .intro {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .about-section {
+    margin-bottom: 3rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  .about-section p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .expertise-card {
+    background-color: var(--color-bg-elevated);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease;
+  }
+
+  .expertise-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .expertise-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .expertise-card p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    color: var(--color-text-muted);
+  }
+
+  .connect-section {
+    text-align: center;
+    background-color: var(--color-bg-elevated);
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+  }
+
+  .connect-section h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .connect-section p {
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .cta-button:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+    }
+
+    .about-section h2 {
+      font-size: 1.5rem;
+    }
+
+    .about-section p {
+      font-size: 1rem;
+    }
+
+    .connect-section {
+      padding: 1.5rem;
+    }
+  }
+</style>

@@ -41,11 +41,9 @@ const faqList = faqs.map((faq) => ({
 ---
 
 {faqs.length > 0 && (
-  <script is:inline define:vars={{ faqList }} type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": faqList
-    }
-  </script>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqList
+  })} />
 )}

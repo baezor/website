@@ -128,8 +128,22 @@ Visual regression tests run automatically and compare screenshots against baseli
 **If visual tests fail:**
 - See the detailed "Visual Regression Testing" section below for complete update instructions
 - **Quick summary:**
-  - **Intentional changes** (you updated styles): Update snapshots locally using `npm run test:visual:update`, commit, and push
+  - **Intentional changes** (you updated styles): Update snapshots in CI (preferred) or locally
   - **Unintentional changes** (unexpected regression): Fix the CSS/component issue and push the fix
+
+**Option A - Update in CI (recommended for cross-platform consistency):**
+1. Go to Actions → Visual Regression Tests → Run workflow
+2. Select your branch and check "Update baseline snapshots"
+3. Run the workflow - it will commit updated snapshots directly
+
+**Option B - Update locally:**
+```bash
+npm run build
+npm run dev  # In separate terminal
+npm run test:visual:update
+git add tests/visual && git commit -m "test: update visual regression baselines"
+git push
+```
 
 **Note:** Screenshot diff artifacts are only available when tests fail and visual differences are detected.
 
