@@ -1,6 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { Icon } from "astro-icon/components";
 import { SITE_TITLE } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
@@ -19,44 +18,29 @@ const t = useTranslations(lang);
         {t('contact.intro')}
       </p>
 
-      <div class="contact-methods">
-        <div class="contact-method">
-          <Icon name="simple-icons:gmail" class="contact-icon" />
-          <h2>{t('contact.email')}</h2>
-          <p>{t('contact.emailDesc')}</p>
-          <a href="mailto:angel@romerobaez.com" class="contact-link"
-            >angel@romerobaez.com</a
-          >
+      <form action="https://formspree.io/f/xkogdgow" method="POST" class="contact-form">
+        <div class="form-group">
+          <label for="name">{t('contact.form.name')}</label>
+          <input type="text" id="name" name="name" required />
         </div>
 
-        <div class="contact-method">
-          <Icon name="simple-icons:linkedin" class="contact-icon" />
-          <h2>{t('contact.linkedin')}</h2>
-          <p>{t('contact.linkedinDesc')}</p>
-          <a
-            href="https://www.linkedin.com/in/angelromerobaez"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contact-link"
-          >
-            linkedin.com/in/angelromerobaez
-          </a>
+        <div class="form-group">
+          <label for="email">{t('contact.form.email')}</label>
+          <input type="email" id="email" name="email" required />
         </div>
 
-        <div class="contact-method">
-          <Icon name="simple-icons:x" class="contact-icon" />
-          <h2>{t('contact.x')}</h2>
-          <p>{t('contact.xDesc')}</p>
-          <a
-            href="https://x.com/baezor/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contact-link"
-          >
-            @baezor
-          </a>
+        <div class="form-group">
+          <label for="subject">{t('contact.form.subject')}</label>
+          <input type="text" id="subject" name="subject" required />
         </div>
-      </div>
+
+        <div class="form-group">
+          <label for="message">{t('contact.form.message')}</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">{t('contact.form.submit')}</button>
+      </form>
 
       <div class="contact-note">
         <p>{t('contact.lookingForward')}</p>
@@ -84,56 +68,76 @@ const t = useTranslations(lang);
     line-height: 1.6;
     text-align: center;
     max-width: 600px;
-    margin: 0 auto 3rem;
+    margin: 0 auto 2rem;
   }
 
-  .contact-methods {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  .contact-method {
+  .contact-form {
+    max-width: 600px;
+    margin: 0 auto;
     background-color: var(--color-bg-elevated);
     padding: 2rem;
     border-radius: 0.5rem;
-    text-align: center;
-    transition: transform 0.2s ease;
   }
 
-  .contact-method:hover {
-    transform: translateY(-5px);
+  .form-group {
+    margin-bottom: 1.5rem;
   }
 
-  .contact-icon {
-    width: 3rem;
-    height: 3rem;
-    margin: 0 auto 1rem;
-    color: var(--color-accent);
-  }
-
-  .contact-method h2 {
-    font-size: 1.5rem;
+  .form-group label {
+    display: block;
     margin-bottom: 0.5rem;
-  }
-
-  .contact-method p {
-    margin-bottom: 0.75rem;
-    opacity: 0.8;
-  }
-
-  .contact-link {
-    font-family: var(--font-heading);
-    color: var(--color-accent);
-    text-decoration: none;
     font-weight: 600;
-    transition: color 0.2s ease;
-    display: inline-block;
+    color: var(--color-text);
   }
 
-  .contact-link:hover {
-    text-decoration: underline;
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-text-muted);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.2);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-2px);
+  }
+
+  .submit-btn:active {
+    background-color: var(--color-accent-active);
+    transform: translateY(0);
   }
 
   .contact-note {
@@ -152,8 +156,8 @@ const t = useTranslations(lang);
       font-size: 1.1rem;
     }
 
-    .contact-methods {
-      grid-template-columns: 1fr;
+    .contact-form {
+      padding: 1.5rem;
     }
   }
 </style>

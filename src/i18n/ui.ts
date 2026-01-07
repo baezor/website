@@ -94,29 +94,25 @@ export const ui = {
     en: 'Feel free to reach out with questions, project inquiries, or just to say hello. I\'m always open to new opportunities and connections.',
     es: 'No dudes en contactarme con preguntas, consultas de proyectos, o simplemente para saludar. Siempre estoy abierto a nuevas oportunidades y conexiones.',
   },
-  'contact.email': {
+  'contact.form.name': {
+    en: 'Name',
+    es: 'Nombre',
+  },
+  'contact.form.email': {
     en: 'Email',
-    es: 'Correo',
+    es: 'Correo electrónico',
   },
-  'contact.emailDesc': {
-    en: 'For direct inquiries:',
-    es: 'Para consultas directas:',
+  'contact.form.subject': {
+    en: "What's this about?",
+    es: '¿De qué se trata?',
   },
-  'contact.linkedin': {
-    en: 'LinkedIn',
-    es: 'LinkedIn',
+  'contact.form.message': {
+    en: 'Message',
+    es: 'Mensaje',
   },
-  'contact.linkedinDesc': {
-    en: 'Connect professionally:',
-    es: 'Conecta profesionalmente:',
-  },
-  'contact.x': {
-    en: 'X',
-    es: 'X',
-  },
-  'contact.xDesc': {
-    en: 'Follow for updates:',
-    es: 'Sígueme para actualizaciones:',
+  'contact.form.submit': {
+    en: 'Send Message',
+    es: 'Enviar Mensaje',
   },
   'contact.lookingForward': {
     en: 'Looking forward to hearing from you!',
