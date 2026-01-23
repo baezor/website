@@ -8,12 +8,12 @@ const faqItemSchema = z.object({
 
 const blogCollection = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     description: z.string(),
     pubDate: z.date(),
     updatedDate: z.date().optional(),
-    heroImage: z.string().optional(),
+    heroImage: image().optional(),
     categories: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
     metaDescription: z.string().max(160).optional(),
