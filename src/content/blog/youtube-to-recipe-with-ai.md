@@ -1,7 +1,7 @@
 ---
 title: "From YouTube Videos to Recipes with AI"
 description: "How I built a script that extracts recipes from YouTube cooking videos using Deepgram and ChatGPT, and why I had to open-source it."
-pubDate: 2025-01-23
+pubDate: 2026-01-23
 heroImage: "../../assets/youtube-to-recipe-with-ai.png"
 categories:
   - AI
