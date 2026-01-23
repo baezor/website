@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
 import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from "@/const";
 import Layout from "./Layout.astro";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
@@ -48,7 +49,7 @@ const breadcrumbItems = [
 const postUrl = new URL(getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`), SITE_URL).toString();
 
 // Build image URL if hero image exists
-const imageUrl = heroImage ? new URL(heroImage, SITE_URL).toString() : null;
+const imageUrl = heroImage ? new URL(heroImage.src, SITE_URL).toString() : null;
 
 // Build enhanced BlogPosting schema
 const blogPostingSchema: Record<string, unknown> = {
@@ -119,15 +120,13 @@ blogPostingSchema.speakable = {
         {
           heroImage && (
             <div class="hero-image-container">
-              <img
+              <Image
                 src={heroImage}
                 alt={title}
                 class="hero-image"
                 loading="eager"
                 decoding="async"
                 fetchpriority="high"
-                width="1200"
-                height="630"
               />
             </div>
           )

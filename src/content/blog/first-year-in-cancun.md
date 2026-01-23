@@ -2,7 +2,7 @@
 title: "First Year in Cancun"
 description: "About new beginnings"
 pubDate: 2025-03-19T00:00:00.000Z
-heroImage: "/img/cover-cancun.jpg"
+heroImage: "../../assets/cover-cancun.jpg"
 categories:
   - personal
   - mexico
