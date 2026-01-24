@@ -4,8 +4,8 @@ export const SITE_TITLE = {
 } as const;
 
 export const SITE_DESCRIPTION = {
-  en: "Angel Baez - Software engineer and entrepreneur",
-  es: "Angel Baez - Ingeniero de software y emprendedor",
+  en: "Angel Baez - Full Stack Developer and entrepreneur",
+  es: "Angel Baez - Desarrollador Full Stack y emprendedor",
 } as const;
 
 export const SITE_URL = "https://angel-baez.com";
