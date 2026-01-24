@@ -8,7 +8,7 @@
   --color-bg: #faf9f5;
   --color-bg-elevated: #ffffff;
 
-  /* Secondary accents */
+  /* Secondary accents - for tags, badges, and visual variety */
   --color-accent-blue: #6a9bcc;
   --color-accent-green: #788c5d;
 
@@ -21,7 +21,7 @@
   --color-text: #faf9f5;
   --color-text-muted: #b0aea5;
   --color-bg: #141413;
-  --color-bg-elevated: #1f1f1e;
+  --color-bg-elevated: #262625;
 }
 
 *,
