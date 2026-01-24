@@ -1,23 +1,27 @@
 :root {
-  /* Core palette - Anthropic inspired */
-  --color-accent: #CC785C;
-  --color-accent-hover: #b5694f;
-  --color-accent-active: #a35d46;
+  /* Core palette - Anthropic brand */
+  --color-accent: #d97757;
+  --color-accent-hover: #c56848;
+  --color-accent-active: #b35a3b;
   --color-text: #141413;
-  --color-text-muted: #828179;
-  --color-bg: #F0EFEA;
-  --color-bg-elevated: #FFFFFF;
+  --color-text-muted: #b0aea5;
+  --color-bg: #faf9f5;
+  --color-bg-elevated: #ffffff;
+
+  /* Secondary accents */
+  --color-accent-blue: #6a9bcc;
+  --color-accent-green: #788c5d;
 
   /* Typography */
-  --font-heading: "Space Grotesk Variable", system-ui, sans-serif;
-  --font-body: "Source Serif 4 Variable", Georgia, serif;
+  --font-heading: "Poppins", Arial, sans-serif;
+  --font-body: "Lora", Georgia, serif;
 }
 
 .dark {
-  --color-text: #F0EFEA;
-  --color-text-muted: rgba(240, 239, 234, 0.7);
-  --color-bg: #1a1a19;
-  --color-bg-elevated: #242423;
+  --color-text: #faf9f5;
+  --color-text-muted: #b0aea5;
+  --color-bg: #141413;
+  --color-bg-elevated: #1f1f1e;
 }
 
 *,
