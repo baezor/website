@@ -43,8 +43,8 @@ export const ui = {
     es: 'Alternar menú',
   },
   'home.bio': {
-    en: 'Hi human (or AI bot). I\'m an Angel, a web developer and entrepreneur. Welcome to my website!',
-    es: '¡Hola humano (o bot de IA)! Soy Angel, un desarrollador web y emprendedor. ¡Bienvenido a mi sitio web!',
+    en: 'Hi human (or AI bot). I\'m an Angel, a Full Stack Developer and entrepreneur. Welcome to my website!',
+    es: '¡Hola humano (o bot de IA)! Soy Angel, un Desarrollador Full Stack y emprendedor. ¡Bienvenido a mi sitio web!',
   },
   'home.aria.about': {
     en: 'About {name}',
@@ -340,12 +340,12 @@ export const ui = {
     es: 'Sobre Mí',
   },
   'about.meta.description': {
-    en: 'Learn about Angel Baez - Software engineer and entrepreneur based in Cancun, Mexico. Building web applications and digital products.',
-    es: 'Conoce a Angel Baez - Ingeniero de software y emprendedor en Cancún, México. Desarrollando aplicaciones web y productos digitales.',
+    en: 'Learn about Angel Baez - Full Stack Developer and entrepreneur based in Cancun, Mexico. Building web applications and digital products.',
+    es: 'Conoce a Angel Baez - Desarrollador Full Stack y emprendedor en Cancún, México. Desarrollando aplicaciones web y productos digitales.',
   },
   'about.intro': {
-    en: 'Hi! I\'m Angel Baez, a software engineer and entrepreneur based in Cancun, Mexico.',
-    es: '¡Hola! Soy Angel Baez, un ingeniero de software y emprendedor en Cancún, México.',
+    en: 'Hi! I\'m Angel Baez, a Full Stack Developer and entrepreneur based in Cancun, Mexico.',
+    es: '¡Hola! Soy Angel Baez, un Desarrollador Full Stack y emprendedor en Cancún, México.',
   },
   'about.section.background': {
     en: 'Background',
