@@ -1,30 +1,32 @@
 ---
 title: "From YouTube Videos to Recipes with AI"
-description: "How I built a script that extracts recipes from YouTube cooking videos using Deepgram and ChatGPT, and why I had to open-source it."
+description: "How I built a CLI tool that extracts recipes from YouTube cooking videos using Deepgram and ChatGPT."
 pubDate: 2026-01-23
 heroImage: "../../assets/youtube-to-recipe-with-ai.png"
 categories:
   - AI
   - open-source
   - side-projects
-metaDescription: "Build an AI-powered tool that converts YouTube cooking videos into text recipes using Deepgram for transcription and ChatGPT for generation."
+metaDescription: "Build an AI-powered CLI tool that converts YouTube cooking videos into text recipes using Deepgram for transcription and ChatGPT for generation."
 keywords:
   - youtube to recipe
   - ai recipe generator
   - deepgram
   - chatgpt
-  - encore.ts
+  - cli tool
   - open source
   - audio transcription
   - cooking videos
+  - typescript
+  - node.js
 contentType: "project-showcase"
 faqs:
   - question: "Can I use this tool to extract recipes from any YouTube video?"
     answer: "Yes, as long as the video contains spoken recipe instructions. The tool uses Deepgram to transcribe the audio and ChatGPT to extract and format the recipe."
-  - question: "Why doesn't this work as a web service?"
-    answer: "YouTube blocks requests from server IPs to prevent scraping. The tool works locally because it runs from your personal IP address, but deploying it as a public web service isn't feasible."
+  - question: "Does this tool work with local video files?"
+    answer: "Yes, the CLI accepts both YouTube URLs and local video or audio files as input."
   - question: "What technologies does this project use?"
-    answer: "The project uses Encore.ts for the backend framework, Deepgram for audio transcription, and OpenAI's ChatGPT for recipe extraction and formatting."
+    answer: "The CLI is built with TypeScript and Node.js, uses Deepgram for audio transcription, OpenAI's ChatGPT for recipe extraction, and yt-dlp with ffmpeg for video processing."
 ---
 
 ## The Problem with Video Recipes
@@ -33,42 +35,50 @@ Reading a recipe is infinitely better than watching one. You can scan ingredient
 
 ## Building the Solution
 
-Almost a year ago, I built a script that solves this problem. The workflow is simple:
+Almost a year ago, I built a CLI tool that solves this problem. The workflow is simple:
 
-1. Paste a YouTube video URL
+1. Paste a YouTube video URL (or provide a local video file)
 2. Deepgram transcribes the audio
 3. ChatGPT extracts and formats the recipe
 
 I built the first version in an hour, and it worked beautifully. It helped me several times when I wanted a recipe as text instead of constantly rewinding a video every time I forgot a step or an ingredient.
 
-## From Script to Web Service
+## How It Works
 
-Recently, I decided to turn this script into a proper web application using Claude Code and Codex. The goal was to make it available for anyone to use.
+The CLI provides a modular workflow with separate commands for each step:
 
-The development went smoothly. The API was ready, unit tests passed, and the frontend looked exactly how I wanted. Using Encore, I deployed the entire stack—API Gateway, PostgreSQL database, and infrastructure—in under a minute by pushing to main.
+```bash
+# Complete workflow - from URL or local file to recipe
+v2r generate <url-or-path>
 
-Then I hit a wall.
+# Or run each step separately
+v2r download <url>        # Fetch the video
+v2r transcribe <path>     # Generate transcript
+v2r recipe <path>         # Create recipe from transcript
+```
 
-## The YouTube Roadblock
+It also includes built-in SQLite caching (enabled by default) so repeated requests for the same video don't burn through API credits. You can copy the generated recipe directly to your clipboard or manage the cache with the `v2r cache` commands.
 
-YouTube blocks requests from server IPs. My local script worked fine because it ran from my home IP, but the deployed service couldn't access YouTube at all. I tried using authentication cookies, but that didn't work either.
+## Why a CLI?
 
-It was disappointing. I was genuinely excited about the project.
+I originally considered building a web service, but YouTube blocks requests from server IPs to prevent scraping. A CLI tool running on your local machine works around this limitation since it uses your personal IP address.
 
-## Open Source Instead
+The CLI approach has other advantages too: it's faster to develop, easier to maintain, and gives users full control over their API keys and data.
 
-Rather than let the project die, I decided to publish it on GitHub. Anyone can download it and run it locally for free.
+## Open Source
+
+The tool is available on GitHub for anyone to download and run locally for free.
 
 **Repository**: https://github.com/baezor/video-to-recipe-ai
 
-The repository includes complete setup instructions.
+The repository includes complete setup instructions. You'll need Node.js 20+, yt-dlp, ffmpeg, and API keys for Deepgram and OpenAI.
 
 ## Recommended Tools
 
 If you're building something similar, I highly recommend:
 
-- **Encore.ts** (https://encore.dev) — TypeScript-first backend framework with built-in infrastructure
 - **Deepgram** (https://deepgram.com) — Fast, accurate audio transcription API
+- **yt-dlp** (https://github.com/yt-dlp/yt-dlp) — Feature-rich command-line video downloader
 
 ## A Note on AI Progress
 
