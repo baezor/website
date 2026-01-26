@@ -48,8 +48,8 @@ I built the first version in an hour, and it worked beautifully. It helped me se
 The CLI provides a modular workflow with separate commands for each step:
 
 ```bash
-# Complete workflow - from URL to recipe
-v2r generate <video-url>
+# Complete workflow - from URL or local file to recipe
+v2r generate <url-or-path>
 
 # Or run each step separately
 v2r download <url>        # Fetch the video
