@@ -4,8 +4,8 @@ export const SITE_TITLE = {
 } as const;
 
 export const SITE_DESCRIPTION = {
-  en: "Angel Baez - Full Stack Developer and entrepreneur",
-  es: "Angel Baez - Desarrollador Full Stack y emprendedor",
+  en: "Angel Baez - Full Stack Developer and entrepreneur based in Cancun, Mexico. Building web apps with TypeScript, React, and Node.js. Explore my blog for tutorials and insights.",
+  es: "Angel Baez - Desarrollador Full Stack y emprendedor en Cancún, México. Creando aplicaciones web con TypeScript, React y Node.js. Explora mi blog para tutoriales e insights.",
 } as const;
 
 export const SITE_URL = "https://angel-baez.com";

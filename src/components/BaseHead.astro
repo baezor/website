@@ -11,6 +11,7 @@ interface Props {
   image?: string | ImageMetadata;
   keywords?: string[];
   lang: Language;
+  ogType?: 'website' | 'article';
 }
 
 const defaultKeywords = ["Angel Baez", "angel-baez.com", "Full Stack Developer", "Entrepreneur", "Cancun", "Mexico", "baezor", "Web Developer"];
@@ -20,7 +21,8 @@ const {
   description,
   image = defaultSocialCard,
   keywords,
-  lang
+  lang,
+  ogType = 'website'
 } = Astro.props;
 
 // Handle image URL (string or imported image)
@@ -39,6 +41,41 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 // Generate alternate URLs for hreflang using centralized utility
 const enUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'en'), SITE_URL);
 const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
+
+// Structured Data schemas
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Angel Baez",
+  "alternateName": ["angel-baez.com", "baezor"],
+  "url": SITE_URL,
+  "inLanguage": ["en", "es"]
+};
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Angel Baez",
+  "url": SITE_URL,
+  "image": imageUrl.toString(),
+  "email": "angel@romerobaez.com",
+  "jobTitle": "Full Stack Developer and Entrepreneur",
+  "description": "Full Stack Developer and entrepreneur based in Cancun, Mexico",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Cancun",
+    "addressRegion": "Quintana Roo",
+    "addressCountry": "Mexico"
+  },
+  "sameAs": [
+    "https://www.linkedin.com/in/angelromerobaez",
+    "https://github.com/baezor/",
+    "https://www.instagram.com/baez0r/",
+    "https://www.facebook.com/baezor/",
+    "https://x.com/baezor/"
+  ],
+  "knowsLanguage": ["en", "es"]
+};
 ---
 
 <!-- Essential Meta Tags -->
@@ -60,7 +97,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta name="robots" content="index, follow" />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -78,41 +115,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta name="twitter:creator" content="@baezor" />
 
 <!-- Structured Data for WebSite -->
-<script is:inline define:vars={{ siteUrl: SITE_URL }} type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Angel Baez",
-    "alternateName": ["angel-baez.com", "baezor"],
-    "url": siteUrl,
-    "inLanguage": ["en", "es"]
-  }
-</script>
+<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
 <!-- Structured Data for Person -->
-<script is:inline define:vars={{ siteUrl: SITE_URL, schemaImageUrl: imageUrl.toString() }} type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Angel Baez",
-    "url": siteUrl,
-    "image": schemaImageUrl,
-    "email": "angel@romerobaez.com",
-    "jobTitle": "Full Stack Developer and Entrepreneur",
-    "description": "Full Stack Developer and entrepreneur based in Cancun, Mexico",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Cancun",
-      "addressRegion": "Quintana Roo",
-      "addressCountry": "Mexico"
-    },
-    "sameAs": [
-      "https://www.linkedin.com/in/angelromerobaez",
-      "https://github.com/baezor/",
-      "https://www.instagram.com/baez0r/",
-      "https://www.facebook.com/baezor/",
-      "https://x.com/baezor/"
-    ],
-    "knowsLanguage": ["en", "es"]
-  }
-</script>
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
