@@ -1,12 +1,14 @@
 ---
 import { SITE_URL } from "../const";
 import type { Language } from "@/i18n/ui";
+import type { ImageMetadata } from "astro";
 import { getLocalizedUrl } from "@/i18n/utils";
+import defaultSocialCard from "@/assets/social-card.png";
 
 interface Props {
   title: string;
   description: string;
-  image?: string;
+  image?: string | ImageMetadata;
   keywords?: string[];
   lang: Language;
 }
@@ -16,10 +18,15 @@ const defaultKeywords = ["Angel Baez", "angel-baez.com", "Full Stack Developer",
 const {
   title,
   description,
-  image = "/favicon.png",
+  image = defaultSocialCard,
   keywords,
   lang
 } = Astro.props;
+
+// Handle image URL (string or imported image)
+const imageUrl = typeof image === 'string'
+  ? new URL(image, SITE_URL)
+  : new URL(image.src, SITE_URL);
 
 // Merge post-specific keywords with defaults
 const allKeywords = keywords && keywords.length > 0
@@ -57,7 +64,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, SITE_URL)} />
+<meta property="og:image" content={imageUrl} />
 <meta property="og:site_name" content="Angel Baez" />
 <meta property="og:locale" content={lang === 'es' ? 'es_MX' : 'en_US'} />
 
@@ -66,7 +73,7 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 <meta property="twitter:url" content={canonicalURL} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, SITE_URL)} />
+<meta property="twitter:image" content={imageUrl} />
 <meta name="twitter:site" content="@baezor" />
 <meta name="twitter:creator" content="@baezor" />
 
@@ -83,13 +90,13 @@ const esUrl = new URL(getLocalizedUrl(Astro.url.pathname, 'es'), SITE_URL);
 </script>
 
 <!-- Structured Data for Person -->
-<script is:inline define:vars={{ siteUrl: SITE_URL, imageUrl: new URL(image, SITE_URL).toString() }} type="application/ld+json">
+<script is:inline define:vars={{ siteUrl: SITE_URL, schemaImageUrl: imageUrl.toString() }} type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Angel Baez",
     "url": siteUrl,
-    "image": imageUrl,
+    "image": schemaImageUrl,
     "email": "angel@romerobaez.com",
     "jobTitle": "Full Stack Developer and Entrepreneur",
     "description": "Full Stack Developer and entrepreneur based in Cancun, Mexico",

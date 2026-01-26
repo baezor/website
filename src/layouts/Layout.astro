@@ -12,22 +12,24 @@ import BaseHead from "@/components/BaseHead.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { getLangFromUrl } from "@/i18n/utils";
+import type { ImageMetadata } from "astro";
 
 // Define the title and description props
 interface Props {
   title?: string;
   description?: string;
   keywords?: string[];
+  image?: string | ImageMetadata;
 }
 
 const lang = getLangFromUrl(Astro.url);
-const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords } = Astro.props;
+const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords, image } = Astro.props;
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <BaseHead title={title} description={description} keywords={keywords} lang={lang} />
+    <BaseHead title={title} description={description} keywords={keywords} lang={lang} image={image} />
     <!-- favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
 

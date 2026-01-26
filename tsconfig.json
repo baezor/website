@@ -6,6 +6,7 @@
     "jsxImportSource": "react",
     "types": ["vitest/globals"],
     "paths": {
+      "@/assets/*": ["./src/assets/*"],
       "@/css/*": ["./src/css/*"],
       "@/layouts/*": ["./src/layouts/*"],
       "@/pages/*": ["./src/pages/*"],
