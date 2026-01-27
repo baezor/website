@@ -12,19 +12,17 @@ interface Props {
 
 const { items } = Astro.props;
 
-// Build the breadcrumb list with position
-const breadcrumbList = items.map((item, index) => ({
-  "@type": "ListItem",
-  "position": index + 1,
-  "name": item.name,
-  "item": new URL(item.url, SITE_URL).toString()
-}));
+// Build the breadcrumb schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": new URL(item.url, SITE_URL).toString()
+  }))
+};
 ---
 
-<script is:inline define:vars={{ breadcrumbList }} type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": breadcrumbList
-  }
-</script>
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />

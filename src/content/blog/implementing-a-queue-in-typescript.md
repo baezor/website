@@ -3,7 +3,7 @@ title: "Implementing a Queue in TypeScript"
 description: "Implementing a queue in TypeScript"
 pubDate: 2024-07-14T10:00:00.000Z
 categories:
-  - TypeScript
+  - typescript
   - data-structures
 metaDescription: "Build a queue data structure from scratch in TypeScript using linked lists. Includes enqueue, dequeue, peek methods and real-world use cases."
 keywords:

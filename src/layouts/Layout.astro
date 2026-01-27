@@ -20,16 +20,17 @@ interface Props {
   description?: string;
   keywords?: string[];
   image?: string | ImageMetadata;
+  ogType?: 'website' | 'article';
 }
 
 const lang = getLangFromUrl(Astro.url);
-const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords, image } = Astro.props;
+const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords, image, ogType = 'website' } = Astro.props;
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <BaseHead title={title} description={description} keywords={keywords} lang={lang} image={image} />
+    <BaseHead title={title} description={description} keywords={keywords} lang={lang} image={image} ogType={ogType} />
     <!-- favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
 

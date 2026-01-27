@@ -39,6 +39,13 @@ export default defineConfig({
           es: 'es-MX',
         },
       },
+      serialize(item) {
+        // Add lastmod to all sitemap entries
+        // For blog posts, this will be updated by the build process
+        // Static pages get the build date
+        item.lastmod = new Date().toISOString();
+        return item;
+      },
     }),
   ],
   site: "https://angel-baez.com/",
