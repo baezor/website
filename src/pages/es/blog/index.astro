@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
@@ -29,7 +30,7 @@ const sortedPosts = posts.sort(
             {post.data.heroImage && (
               <div class="post-image">
                 <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>
-                  <img src={post.data.heroImage} alt={post.data.title} />
+                  <Image src={post.data.heroImage} alt={post.data.title} width={600} height={300} />
                 </a>
               </div>
             )}
