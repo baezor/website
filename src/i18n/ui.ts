@@ -142,6 +142,10 @@ export const ui = {
     en: 'Social media links',
     es: 'Enlaces de redes sociales',
   },
+  'footer.createdBy': {
+    en: 'Created by',
+    es: 'Creado por',
+  },
   'links.aria.connect': {
     en: 'Connect with Angel Baez',
     es: 'Conecta con Angel Baez',
