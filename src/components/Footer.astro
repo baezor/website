@@ -36,6 +36,9 @@ const t = useTranslations(lang);
         |
         <a href={getRelativeLocaleUrl(lang, 'contact')}>{t('nav.contact')}</a>
       </p>
+      <p class="footer-credit">
+        {t('footer.createdBy')} <a href="https://tutecnicoweb.com/" target="_blank" rel="noopener noreferrer">tutecnicoweb.com</a>
+      </p>
     </div>
   </div>
 </footer>
@@ -120,6 +123,12 @@ const t = useTranslations(lang);
   .footer-content a:hover {
     color: var(--color-accent);
     text-decoration: underline;
+  }
+
+  .footer-credit {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0.7;
   }
 
   .sr-only {
