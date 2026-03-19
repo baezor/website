@@ -43,12 +43,48 @@ export const ui = {
     es: 'Alternar menú',
   },
   'home.bio': {
-    en: 'Hi human (or AI bot). I\'m an Angel, a Full Stack Developer and entrepreneur. Welcome to my website!',
-    es: '¡Hola humano (o bot de IA)! Soy Angel, un Desarrollador Full Stack y emprendedor. ¡Bienvenido a mi sitio web!',
+    en: 'I build AI agents and autonomous systems that get things done. From agentic workflows to full-stack applications, I create software that works on your behalf.',
+    es: 'Construyo agentes de IA y sistemas autónomos que hacen el trabajo. Desde flujos de trabajo agénticos hasta aplicaciones full-stack, creo software que trabaja por ti.',
   },
   'home.aria.about': {
     en: 'About {name}',
     es: 'Acerca de {name}',
+  },
+  'home.hero.subtitle': {
+    en: 'Agentic Developer & Entrepreneur',
+    es: 'Desarrollador Agéntico & Emprendedor',
+  },
+  'home.about.heading': {
+    en: 'About Me',
+    es: 'Sobre Mí',
+  },
+  'home.about.text': {
+    en: 'I\'ve been building software for over a decade, working with startups and established companies. Currently focused on AI agents, agentic workflows, and intelligent automation — creating systems that think, decide, and act.',
+    es: 'He estado desarrollando software por más de una década, trabajando con startups y empresas establecidas. Actualmente enfocado en agentes de IA, flujos de trabajo agénticos y automatización inteligente — creando sistemas que piensan, deciden y actúan.',
+  },
+  'home.about.cta': {
+    en: 'Learn more',
+    es: 'Conocer más',
+  },
+  'home.posts.heading': {
+    en: 'Latest Posts',
+    es: 'Últimos Artículos',
+  },
+  'home.posts.viewAll': {
+    en: 'View all posts →',
+    es: 'Ver todos los artículos →',
+  },
+  'home.contact.heading': {
+    en: 'Let\'s Work Together',
+    es: 'Trabajemos Juntos',
+  },
+  'home.contact.text': {
+    en: 'Have a project in mind or want to collaborate on something interesting? I\'m always open to new opportunities and conversations.',
+    es: '¿Tienes un proyecto en mente o quieres colaborar en algo interesante? Siempre estoy abierto a nuevas oportunidades y conversaciones.',
+  },
+  'home.contact.cta': {
+    en: 'Get in Touch',
+    es: 'Contáctame',
   },
   'blog.title': {
     en: 'Blog',
@@ -340,12 +376,12 @@ export const ui = {
     es: 'Sobre Mí',
   },
   'about.meta.description': {
-    en: 'Learn about Angel Baez - Full Stack Developer and entrepreneur based in Cancun, Mexico. Building web applications and digital products.',
-    es: 'Conoce a Angel Baez - Desarrollador Full Stack y emprendedor en Cancún, México. Desarrollando aplicaciones web y productos digitales.',
+    en: 'Learn about Angel Baez - Agentic Developer and entrepreneur based in Cancun, Mexico. Building AI agents, autonomous systems, and intelligent web applications.',
+    es: 'Conoce a Angel Baez - Desarrollador Agéntico y emprendedor en Cancún, México. Creando agentes de IA, sistemas autónomos y aplicaciones web inteligentes.',
   },
   'about.intro': {
-    en: 'Hi! I\'m Angel Baez, a Full Stack Developer and entrepreneur based in Cancun, Mexico.',
-    es: '¡Hola! Soy Angel Baez, un Desarrollador Full Stack y emprendedor en Cancún, México.',
+    en: 'Hi! I\'m Angel Baez, an Agentic Developer and entrepreneur based in Cancun, Mexico.',
+    es: '¡Hola! Soy Angel Baez, un Desarrollador Agéntico y emprendedor en Cancún, México.',
   },
   'about.section.background': {
     en: 'Background',
@@ -356,8 +392,8 @@ export const ui = {
     es: 'He estado desarrollando software por más de una década, trabajando con startups y empresas establecidas para crear aplicaciones web, APIs y productos digitales. Mi enfoque está en construir soluciones confiables y escalables que resuelvan problemas reales.',
   },
   'about.background.p2': {
-    en: 'Currently, I\'m focused on web development using modern technologies like TypeScript, React, and Node.js. I\'m passionate about clean code, performance optimization, and creating great user experiences.',
-    es: 'Actualmente, me enfoco en desarrollo web usando tecnologías modernas como TypeScript, React y Node.js. Me apasiona el código limpio, la optimización del rendimiento y crear excelentes experiencias de usuario.',
+    en: 'Currently, I\'m focused on AI agents, agentic workflows, and intelligent automation using TypeScript, Python, and Node.js. I\'m passionate about building systems that think, decide, and act autonomously.',
+    es: 'Actualmente, me enfoco en agentes de IA, flujos de trabajo agénticos y automatización inteligente usando TypeScript, Python y Node.js. Me apasiona construir sistemas que piensan, deciden y actúan de forma autónoma.',
   },
   'about.section.expertise': {
     en: 'Areas of Expertise',

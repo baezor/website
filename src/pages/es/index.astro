@@ -1,85 +1,114 @@
 ---
+import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import Layout from "@/layouts/Layout.astro";
-import ProfilePicture from "@/components/ProfilePicture.astro";
-import Links from "@/components/Links.astro";
-import { userData } from "../../data";
+import HeroSection from "@/components/HeroSection.astro";
+import BlogPostCard from "@/components/BlogPostCard.astro";
+import SectionCTA from "@/components/SectionCTA.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../../const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
-const userName = userData[0].userName;
-const userDesc = userData[0].userDesc;
-
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+const posts = await getCollection("blog", ({ data }) => data.lang === lang);
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 ---
 
 <Layout title={SITE_TITLE[lang]} description={SITE_DESCRIPTION[lang]}>
   <main id="main-content">
-    <article class="profile-container">
-      <header>
-        <ProfilePicture />
-      </header>
-      <section aria-labelledby="about-heading">
-        <h2 id="about-heading" class="visually-hidden">{t('home.aria.about', { name: userName })}</h2>
-        <p class="bio">
-          {t('home.bio')}
-        </p>
-      </section>
-      <Links lang={lang} />
-    </article>
+    <div class="homepage">
+      <HeroSection lang={lang} />
+
+      <SectionCTA
+        heading={t('home.about.heading')}
+        text={t('home.about.text')}
+        ctaText={t('home.about.cta')}
+        ctaHref={getRelativeLocaleUrl(lang, 'about')}
+        elevated
+      />
+
+      {recentPosts.length > 0 && (
+        <section class="latest-posts" aria-labelledby="posts-heading">
+          <h2 id="posts-heading">{t('home.posts.heading')}</h2>
+          <div class="posts-grid">
+            {recentPosts.map((post) => (
+              <BlogPostCard post={post} lang={lang} />
+            ))}
+          </div>
+          <div class="view-all">
+            <a href={getRelativeLocaleUrl(lang, 'blog')} class="view-all-link">
+              {t('home.posts.viewAll')}
+            </a>
+          </div>
+        </section>
+      )}
+
+      <SectionCTA
+        heading={t('home.contact.heading')}
+        text={t('home.contact.text')}
+        ctaText={t('home.contact.cta')}
+        ctaHref={getRelativeLocaleUrl(lang, 'contact')}
+        elevated
+      />
+    </div>
   </main>
 </Layout>
 
 <style>
-  .profile-container {
-    max-width: 584px;
+  main {
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .homepage {
+    max-width: 900px;
     margin: 0 auto;
     width: 100%;
-    padding: 0 16px;
+    padding: 0 1rem;
+  }
+
+  .latest-posts {
+    margin-bottom: 3rem;
+  }
+
+  .latest-posts h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+
+  .view-all {
     text-align: center;
+    margin-top: 2rem;
   }
 
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-
-  .bio {
-    text-align: center;
-    margin: 1.5rem 0;
-    line-height: 1.6;
-    font-size: 1.1rem;
-    color: var(--color-text);
-  }
-
-  .bio a {
-    color: var(--color-accent);
+  .view-all-link {
+    font-family: var(--font-heading);
     font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 1rem;
+  }
+
+  .view-all-link:hover {
     text-decoration: underline;
-    transition: color 0.2s ease;
   }
 
-  .bio a:hover {
-    color: var(--color-accent-hover);
-  }
-
-  /* Improve mobile experience */
-  @media (max-width: 640px) {
-    .profile-container {
-      padding: 0 12px;
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
     }
 
-    .bio {
-      font-size: 1rem;
-      margin: 1rem 0;
-      text-align: center;
+    .latest-posts h2 {
+      font-size: 1.5rem;
     }
   }
 </style>
