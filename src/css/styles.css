@@ -13,8 +13,9 @@
   --color-accent-green: #788c5d;
 
   /* Typography */
-  --font-heading: "Poppins", Arial, sans-serif;
-  --font-body: "Lora", Georgia, serif;
+  --font-heading: "Geist Sans", Arial, sans-serif;
+  --font-body: "Geist Sans", Arial, sans-serif;
+  --font-mono: "Geist Mono", "Courier New", monospace;
 }
 
 .dark {
@@ -64,10 +65,15 @@ body {
   word-break: break-word;
 }
 
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.2;
+  letter-spacing: -0.03em;
 }
 
 button, .button {

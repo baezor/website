@@ -1,0 +1,114 @@
+---
+import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import HeroSection from "@/components/HeroSection.astro";
+import BlogPostCard from "@/components/BlogPostCard.astro";
+import SectionCTA from "@/components/SectionCTA.astro";
+import { useTranslations, type Language } from "@/i18n/utils";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const posts = await getCollection("blog", ({ data }) => data.lang === lang);
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<main id="main-content">
+  <div class="homepage">
+    <HeroSection lang={lang} />
+
+    <SectionCTA
+      heading={t('home.about.heading')}
+      text={t('home.about.text')}
+      ctaText={t('home.about.cta')}
+      ctaHref={getRelativeLocaleUrl(lang, 'about')}
+      elevated
+    />
+
+    {recentPosts.length > 0 && (
+      <section class="latest-posts" aria-labelledby="posts-heading">
+        <h2 id="posts-heading">{t('home.posts.heading')}</h2>
+        <div class="posts-grid">
+          {recentPosts.map((post) => (
+            <BlogPostCard post={post} lang={lang} />
+          ))}
+        </div>
+        <div class="view-all">
+          <a href={getRelativeLocaleUrl(lang, 'blog')} class="view-all-link">
+            {t('home.posts.viewAll')}
+          </a>
+        </div>
+      </section>
+    )}
+
+    <SectionCTA
+      heading={t('home.contact.heading')}
+      text={t('home.contact.text')}
+      ctaText={t('home.contact.cta')}
+      ctaHref={getRelativeLocaleUrl(lang, 'contact')}
+      elevated
+    />
+  </div>
+</main>
+
+<style>
+  main {
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .homepage {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .latest-posts {
+    margin-bottom: 3rem;
+  }
+
+  .latest-posts h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+
+  .view-all {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .view-all-link {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 1rem;
+  }
+
+  .view-all-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .latest-posts h2 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
