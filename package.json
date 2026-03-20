@@ -1,7 +1,7 @@
 {
   "name": "@baezor/website",
   "type": "module",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/partytown": "^2.1.4",
+    "@astrojs/partytown": "^2.1.5",
     "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/quicksand": "^5.2.10",

@@ -35,8 +35,8 @@ export const ui = {
     es: 'Menú',
   },
   'nav.aria.home': {
-    en: 'Home',
-    es: 'Inicio',
+    en: 'Angel Baez - Home',
+    es: 'Angel Baez - Inicio',
   },
   'nav.aria.toggle': {
     en: 'Toggle menu',
@@ -97,6 +97,10 @@ export const ui = {
   'blog.readMore': {
     en: 'Read more →',
     es: 'Leer más →',
+  },
+  'blog.readMore.aria': {
+    en: 'Read more about {title}',
+    es: 'Leer más sobre {title}',
   },
   'blog.backToAll': {
     en: '← Back to all posts',
@@ -191,12 +195,12 @@ export const ui = {
     es: 'Perfiles de redes sociales',
   },
   'lang.switch.toSpanish': {
-    en: 'Switch to Spanish',
-    es: 'Cambiar a español',
+    en: 'ES - Switch to Spanish',
+    es: 'ES - Cambiar a español',
   },
   'lang.switch.toEnglish': {
-    en: 'Switch to English',
-    es: 'Cambiar a inglés',
+    en: 'EN - Switch to English',
+    es: 'EN - Cambiar a inglés',
   },
   'lang.current': {
     en: 'EN',
