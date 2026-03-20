@@ -53,7 +53,7 @@ const sortedPosts = posts.sort(
                 </div>
               )}
               <p class="post-description">{post.data.description}</p>
-              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more">
+              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more" aria-label={t('blog.readMore.aria').replace('{title}', post.data.title)}>
                 {t('blog.readMore')}
               </a>
             </div>
