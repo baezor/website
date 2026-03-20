@@ -63,8 +63,8 @@ export const ui = {
     es: 'He estado desarrollando software por más de una década, trabajando con startups y empresas establecidas. Actualmente enfocado en agentes de IA, flujos de trabajo agénticos y automatización inteligente — creando sistemas que piensan, deciden y actúan.',
   },
   'home.about.cta': {
-    en: 'Learn more',
-    es: 'Conocer más',
+    en: 'Learn more about me',
+    es: 'Conocer más sobre mí',
   },
   'home.posts.heading': {
     en: 'Latest Posts',
