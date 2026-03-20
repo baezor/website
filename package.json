@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/partytown": "^2.1.5",
     "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/quicksand": "^5.2.10",
