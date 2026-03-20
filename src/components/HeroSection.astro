@@ -1,0 +1,151 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import { userData, socialLinks } from "@/data/index";
+import { useTranslations, type Language } from "@/i18n/utils";
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const profilePhoto = userData[0].userPic;
+const userName = userData[0].userName;
+---
+
+<section class="hero" itemscope itemtype="https://schema.org/Person">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 itemprop="name">{userName}</h1>
+      <p class="subtitle" itemprop="jobTitle">{t('home.hero.subtitle')}</p>
+      <p class="tagline">{t('home.bio')}</p>
+      <nav class="social-icons" aria-label={t('footer.socialLinks')}>
+        {socialLinks.map((link) => {
+          const isExternal = link.url.startsWith('http://') || link.url.startsWith('https://');
+          return (
+            <a
+              href={link.url}
+              aria-label={link.label}
+              {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              <Icon name={link.icon} />
+            </a>
+          );
+        })}
+      </nav>
+    </div>
+    <div class="hero-image">
+      <Image
+        src={profilePhoto}
+        alt={`Profile photo of ${userName}`}
+        width={160}
+        height={160}
+        format="avif"
+        quality={80}
+        loading="eager"
+        fetchpriority="high"
+        itemprop="image"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    margin-bottom: 4rem;
+  }
+
+  .hero-content {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-text {
+    flex: 1;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin: 0 0 1rem;
+  }
+
+  .tagline {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin: 0 0 1.5rem;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .social-icons a:hover {
+    color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .social-icons a :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .hero-image img {
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    .hero-content {
+      flex-direction: column-reverse;
+      text-align: center;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+    }
+
+    .tagline {
+      font-size: 1rem;
+    }
+
+    .social-icons {
+      justify-content: center;
+    }
+
+    .hero-image img {
+      width: 120px;
+      height: 120px;
+    }
+  }
+</style>

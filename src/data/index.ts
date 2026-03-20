@@ -4,7 +4,7 @@ import type { UiKey } from "@/i18n/ui";
 const userData = [
   {
     userName: "Angel Baez",
-    userDesc: "Full Stack Developer and entrepreneur",
+    userDesc: "Agentic Developer & Entrepreneur",
     userPic: profileImage,
     userPicDark: profileImage,
   },
