@@ -42,7 +42,7 @@ const locale = locales[lang];
       </div>
     )}
     <p class="post-description">{post.data.description}</p>
-    <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more">
+    <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more" aria-label={t('blog.readMore.aria').replace('{title}', post.data.title)}>
       {t('blog.readMore')}
     </a>
   </div>
@@ -126,7 +126,7 @@ const locale = locales[lang];
     font-size: 0.75rem;
     padding: 0.25rem 0.75rem;
     background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
-    color: var(--color-accent);
+    color: var(--color-text);
     border-radius: 1rem;
     font-weight: 500;
     text-transform: lowercase;
