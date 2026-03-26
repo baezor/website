@@ -1,6 +1,7 @@
 ---
 title: "FizzBuzz: Classic Coding Interview Problem"
 description: "How I solved the FizzBuzz problem on Leetcode."
+heroImage: "../../assets/og/fizzbuzz.png"
 pubDate: 2024-07-05T11:00:00.000Z
 categories:
   - algorithms

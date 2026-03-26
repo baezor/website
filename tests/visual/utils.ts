@@ -6,10 +6,10 @@ import { Page } from "@playwright/test";
 export async function setTheme(page: Page, theme: "light" | "dark") {
   await page.evaluate((t) => {
     localStorage.setItem("theme", t);
-    if (t === "dark") {
-      document.documentElement.classList.add("dark");
+    if (t === "light") {
+      document.documentElement.classList.add("light");
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove("light");
     }
   }, theme);
 }

@@ -1,6 +1,5 @@
 ---
 import { Image } from "astro:assets";
-import { Icon } from "astro-icon/components";
 import { userData, socialLinks } from "@/data/index";
 import { useTranslations, type Language } from "@/i18n/utils";
 
@@ -13,35 +12,56 @@ const t = useTranslations(lang);
 
 const profilePhoto = userData[0].userPic;
 const userName = userData[0].userName;
+
+const socialAbbreviations: Record<string, string> = {
+  'LinkedIn': 'LI',
+  'GitHub': 'GH',
+  'X': 'X',
+  'Instagram': 'IG',
+  'Facebook': 'FB',
+  'Strava': 'STR',
+  'RSS Feed': 'RSS',
+  'RSS': 'RSS',
+};
 ---
 
 <section class="hero" itemscope itemtype="https://schema.org/Person">
   <div class="hero-content">
     <div class="hero-text">
-      <h1 itemprop="name">{userName}</h1>
-      <p class="subtitle" itemprop="jobTitle">{t('home.hero.subtitle')}</p>
-      <p class="tagline">{t('home.bio')}</p>
-      <nav class="social-icons" aria-label={t('footer.socialLinks')}>
-        {socialLinks.map((link) => {
-          const isExternal = link.url.startsWith('http://') || link.url.startsWith('https://');
-          return (
-            <a
-              href={link.url}
-              aria-label={link.label}
-              {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            >
-              <Icon name={link.icon} />
-            </a>
-          );
-        })}
-      </nav>
+      <div class="hero-label"><span class="accent-bar"></span>// {t('home.hero.subtitle').toUpperCase()}</div>
+      <h1 itemprop="name" data-scramble={userName.toUpperCase()} aria-label={userName}>{userName.toUpperCase()}</h1>
+      <p class="tagline" itemprop="description">{t('home.bio')}</p>
+      <hr class="hero-rule" />
+      <div class="hero-meta">
+        <span class="coordinates">21.1619°N, 86.8515°W — CANCUN, MX</span>
+        <nav class="social-links" aria-label={t('footer.socialLinks')}>
+          {socialLinks.map((link, i) => {
+            const isExternal = link.url.startsWith('http://') || link.url.startsWith('https://');
+            const abbr = socialAbbreviations[link.label] || link.label.toUpperCase().slice(0, 3);
+            return (
+              <>
+                {i > 0 && <span class="sep">/</span>}
+                <a
+                  href={link.url}
+                  title={link.label}
+                  {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  itemprop="sameAs"
+                >
+                  <span aria-hidden="true">{abbr}</span>
+                  <span class="sr-only">{link.label}</span>
+                </a>
+              </>
+            );
+          })}
+        </nav>
+      </div>
     </div>
     <div class="hero-image">
       <Image
         src={profilePhoto}
         alt={`Profile photo of ${userName}`}
-        width={160}
-        height={160}
+        width={180}
+        height={180}
         format="avif"
         quality={80}
         loading="eager"
@@ -54,98 +74,159 @@ const userName = userData[0].userName;
 
 <style>
   .hero {
-    margin-bottom: 4rem;
+    margin-bottom: var(--space-16);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--color-border);
+    width: 100%;
   }
 
   .hero-content {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-12);
+    align-items: start;
   }
 
-  .hero-text {
-    flex: 1;
+  .hero-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-4);
+    text-transform: uppercase;
+  }
+
+  .accent-bar {
+    display: inline-block;
+    width: 40px;
+    height: 3px;
+    background-color: var(--color-accent);
+    flex-shrink: 0;
   }
 
   h1 {
-    font-size: 2.75rem;
-    margin: 0 0 0.5rem;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-
-  .subtitle {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-accent);
-    margin: 0 0 1rem;
+    font-size: clamp(2.75rem, 6vw, 5rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    margin: 0 0 var(--space-6);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 rgba(255, 59, 48, 0.12);
   }
 
   .tagline {
-    font-size: 1.1rem;
-    line-height: 1.7;
+    font-size: 1.0625rem;
+    line-height: 1.6;
     color: var(--color-text-muted);
-    margin: 0 0 1.5rem;
+    max-width: 55ch;
+    margin: 0 0 var(--space-6);
   }
 
-  .social-icons {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  .hero-rule {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 0 0 var(--space-4);
   }
 
-  .social-icons a {
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Staggered entrance */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-label { animation: fadeInUp 0.4s ease both; animation-delay: 0s; }
+    h1 { animation: fadeInUp 0.4s ease both; animation-delay: 0.06s; }
+    .tagline { animation: fadeInUp 0.4s ease both; animation-delay: 0.12s; }
+    .hero-rule { animation: fadeInUp 0.3s ease both; animation-delay: 0.18s; }
+    .hero-meta { animation: fadeInUp 0.4s ease both; animation-delay: 0.22s; }
+    .hero-image { animation: fadeInUp 0.5s ease both; animation-delay: 0.1s; }
+  }
+
+  .coordinates {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+  }
+
+  .social-links {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .social-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
     color: var(--color-text-muted);
-    transition: color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
   }
 
-  .social-icons a:hover {
+  .social-links a:hover {
     color: var(--color-accent);
-    transform: translateY(-2px);
   }
 
-  .social-icons a :global(svg) {
-    width: 1.25rem;
-    height: 1.25rem;
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .social-links .sep {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    user-select: none;
+  }
+
+  .hero-image {
+    position: relative;
   }
 
   .hero-image img {
-    border-radius: 50%;
-    width: 160px;
-    height: 160px;
+    width: 180px;
+    height: 180px;
     object-fit: cover;
+    border: 2px solid var(--color-accent);
+    border-radius: 0;
+    filter: grayscale(100%) contrast(1.1);
+    transition: filter 0.3s linear;
   }
 
-  @media (max-width: 768px) {
+  .hero-image:hover img {
+    filter: grayscale(0%) contrast(1);
+  }
+
+  @media (max-width: 640px) {
     .hero-content {
-      flex-direction: column-reverse;
-      text-align: center;
-      gap: 1.5rem;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
     }
 
-    h1 {
-      font-size: 2.25rem;
-    }
-
-    .subtitle {
-      font-size: 1.1rem;
-    }
-
-    .tagline {
-      font-size: 1rem;
-    }
-
-    .social-icons {
-      justify-content: center;
+    .hero-image {
+      order: -1;
     }
 
     .hero-image img {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 10vw, 3rem);
     }
   }
 </style>

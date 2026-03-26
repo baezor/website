@@ -1,159 +1,119 @@
 ---
-import { Icon } from "astro-icon/components";
 import { socialLinks } from "../data/index";
 import { SITE_TITLE } from "../const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
-import { getRelativeLocaleUrl } from "astro:i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+const socialTextLinks = socialLinks.map(link => ({
+  url: link.url,
+  label: link.label,
+  text: link.label.toUpperCase().replace(/\s+/g, ''),
+}));
 ---
 
 <footer>
   <div class="footer-container">
-    <nav class="social-icons" aria-label={t('footer.socialLinks')}>
-      {socialLinks.map((link) => (
-        <a
-          href={link.url}
-          class="social-icon"
-          target={link.url.startsWith("/") ? undefined : "_blank"}
-          rel={link.url.startsWith("/") ? undefined : "noopener noreferrer"}
-          aria-label={link.label}
-        >
-          <Icon name={link.icon} />
-          <span class="sr-only">{link.label}</span>
-        </a>
+    <nav class="social-links" aria-label={t('footer.socialLinks')}>
+      {socialTextLinks.map((link, i) => (
+        <>
+          {i > 0 && <span class="sep">&middot;</span>}
+          <a
+            href={link.url}
+            target={link.url.startsWith("/") ? undefined : "_blank"}
+            rel={link.url.startsWith("/") ? undefined : "noopener noreferrer"}
+          >
+            {link.text}
+          </a>
+        </>
       ))}
     </nav>
-    <div class="footer-lang-switcher">
-      <LanguageSwitcher />
+
+    <div class="footer-meta">
+      <span class="footer-mark">&#9632;</span>
+      <span>&copy; {new Date().getFullYear()} {SITE_TITLE[lang].toUpperCase()}</span>
+      <span class="sep">//</span>
+      <span>CANCUN, MX</span>
+      <span class="sep">//</span>
+      <span>v0.25.0</span>
+      <span class="sep">//</span>
+      <span>BUILT WITH ASTRO</span>
     </div>
-    <div class="footer-content">
-      <p>&copy; {new Date().getFullYear()} {SITE_TITLE[lang]}</p>
-      <p>
-        <a href={getRelativeLocaleUrl(lang, 'blog')}>{t('nav.blog')}</a>
-        |
-        <a href={getRelativeLocaleUrl(lang, 'contact')}>{t('nav.contact')}</a>
-      </p>
-      <p class="footer-credit">
-        {t('footer.createdBy')} <a href="https://tutecnicoweb.com/" target="_blank" rel="noopener noreferrer">tutecnicoweb.com</a>
-      </p>
+
+    <div class="footer-utils">
+      <LanguageSwitcher />
     </div>
   </div>
 </footer>
 
 <style>
   footer {
-    padding: 2rem 1rem;
+    padding: var(--space-8) var(--gutter);
     margin-top: auto;
     width: 100%;
-    background-color: var(--color-bg);
-    border-top: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .footer-mark {
+    color: var(--color-accent);
+    font-size: 0.5rem;
   }
 
   .footer-container {
-    max-width: 900px;
+    max-width: var(--max-width);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    align-items: flex-start;
+    gap: var(--space-4);
   }
 
-  .social-icons {
+  .social-links {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.25rem;
-  }
-
-  .social-icon {
-    color: var(--color-text);
-    transition: color 0.2s ease, transform 0.2s ease;
-    display: flex;
+    gap: var(--space-2);
     align-items: center;
-    justify-content: center;
   }
 
-  .social-icon svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .custom-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .custom-icon svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .social-icon:hover {
-    color: var(--color-accent);
-    transform: translateY(-2px);
-  }
-
-  .social-icon:active {
-    color: var(--color-accent-active);
-  }
-
-  .footer-lang-switcher {
-    margin-top: 0.5rem;
-  }
-
-  .footer-content {
-    text-align: center;
-    font-size: 0.9rem;
+  .social-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
     color: var(--color-text-muted);
-  }
-
-  .footer-content a {
-    color: inherit;
     text-decoration: none;
-    transition: color 0.2s ease;
   }
 
-  .footer-content a:hover {
+  .social-links a:hover {
     color: var(--color-accent);
-    text-decoration: underline;
   }
 
-  .footer-credit {
-    margin-top: 0.25rem;
-    font-size: 0.8rem;
+  .sep {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    user-select: none;
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
   }
 
-  @media (max-width: 480px) {
-    .footer-content {
-      font-size: 0.8rem;
-    }
-    
-    .social-icon svg {
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-    
-    .custom-icon {
-      width: 1.25rem;
-      height: 1.25rem;
+  .footer-utils {
+    margin-top: var(--space-2);
+  }
+
+  @media (max-width: 640px) {
+    .footer-meta {
+      font-size: 0.625rem;
     }
   }
 </style>

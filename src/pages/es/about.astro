@@ -12,7 +12,6 @@ const t = useTranslations(lang);
 const profilePhoto = userData[0].userPic;
 const userName = userData[0].userName;
 
-// Build ProfilePage schema for E-E-A-T
 const profilePageSchema = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
@@ -57,15 +56,15 @@ const profilePageSchema = {
 
 const expertise = [
   {
-    title: t('about.expertise.frontend'),
+    label: 'FRONTEND',
     description: t('about.expertise.frontend.desc')
   },
   {
-    title: t('about.expertise.backend'),
+    label: 'BACKEND',
     description: t('about.expertise.backend.desc')
   },
   {
-    title: t('about.expertise.devops'),
+    label: 'DEVOPS',
     description: t('about.expertise.devops.desc')
   }
 ];
@@ -77,189 +76,192 @@ const expertise = [
 >
   <main>
     <article class="about-container">
-      <header class="about-header">
-        <div class="profile-image">
+      <span class="page-label">// {t('about.title').toUpperCase()}</span>
+
+      <div class="about-content">
+        <div class="about-text">
+          <h1 data-scramble={userName.toUpperCase()}>{userName.toUpperCase()}</h1>
+          <p class="intro">{t('about.intro')}</p>
+        </div>
+        <div class="about-image">
           <Image
             src={profilePhoto}
             alt={`Foto de perfil de ${userName}`}
-            width={150}
-            height={150}
+            width={200}
+            height={200}
             format="avif"
             quality={80}
           />
         </div>
-        <h1>{t('about.title')}</h1>
-        <p class="intro">{t('about.intro')}</p>
-      </header>
+      </div>
 
       <section class="about-section" aria-labelledby="background-heading">
-        <h2 id="background-heading">{t('about.section.background')}</h2>
+        <h2 id="background-heading">{t('about.section.background').toUpperCase()}</h2>
         <p>{t('about.background.p1')}</p>
         <p>{t('about.background.p2')}</p>
       </section>
 
       <section class="about-section" aria-labelledby="expertise-heading">
-        <h2 id="expertise-heading">{t('about.section.expertise')}</h2>
-        <div class="expertise-grid">
+        <h2 id="expertise-heading">{t('about.section.expertise').toUpperCase()}</h2>
+        <dl class="expertise-list">
           {expertise.map((item) => (
-            <div class="expertise-card">
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+            <div class="expertise-row">
+              <dt>{item.label}</dt>
+              <dd>{item.description}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
-      <section class="about-section connect-section" aria-labelledby="connect-heading">
-        <h2 id="connect-heading">{t('about.section.connect')}</h2>
-        <p>{t('about.connect.text')}</p>
-        <a href={getRelativeLocaleUrl(lang, 'contact')} class="cta-button">
-          {t('about.connect.cta')}
-        </a>
+      <section class="about-section" aria-labelledby="connect-heading">
+        <h2 id="connect-heading">{t('about.section.connect').toUpperCase()}</h2>
+        <p>
+          {t('about.connect.text')}{' '}
+          <a href={getRelativeLocaleUrl(lang, 'contact')} class="connect-link">
+            {t('about.connect.cta')} <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </p>
       </section>
     </article>
   </main>
 
-  <!-- ProfilePage Structured Data -->
   <script type="application/ld+json" set:html={JSON.stringify(profilePageSchema)} />
 </Layout>
 
 <style>
   .about-container {
     max-width: 800px;
-    margin: 0 auto;
     width: 100%;
-    padding: 0 1rem;
   }
 
-  .about-header {
-    text-align: center;
-    margin-bottom: 3rem;
+  .page-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
   }
 
-  .profile-image {
-    margin-bottom: 1.5rem;
+  .about-content {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-8);
+    align-items: start;
+    margin-bottom: var(--space-12);
   }
 
-  .profile-image img {
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
+  .about-image img {
+    width: 200px;
+    height: 200px;
     object-fit: cover;
+    border: 2px solid var(--color-accent);
+    border-radius: 0;
   }
 
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.02em;
   }
 
   .intro {
-    font-size: 1.25rem;
+    font-size: 1.0625rem;
     color: var(--color-text-muted);
-    max-width: 600px;
-    margin: 0 auto;
     line-height: 1.6;
+    max-width: 55ch;
   }
 
   .about-section {
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-12);
   }
 
   .about-section h2 {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-accent);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .about-section p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+    max-width: 65ch;
   }
 
-  .expertise-grid {
+  .expertise-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .expertise-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
   }
 
-  .expertise-card {
-    background-color: var(--color-bg-elevated);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    transition: transform 0.2s ease;
+  .expertise-row:first-child {
+    border-top: 1px solid var(--color-border);
   }
 
-  .expertise-card:hover {
-    transform: translateY(-4px);
-  }
-
-  .expertise-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+  .expertise-row dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: var(--color-accent);
+    padding-top: 0.15rem;
   }
 
-  .expertise-card p {
-    font-size: 0.95rem;
-    margin-bottom: 0;
+  .expertise-row dd {
+    font-size: 0.9375rem;
+    line-height: 1.6;
     color: var(--color-text-muted);
   }
 
-  .connect-section {
-    text-align: center;
-    background-color: var(--color-bg-elevated);
-    padding: 2.5rem;
-    border-radius: 0.75rem;
-  }
-
-  .connect-section h2 {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .connect-section p {
-    max-width: 500px;
-    margin: 0 auto 1.5rem;
-  }
-
-  .cta-button {
-    display: inline-block;
-    padding: 0.875rem 2rem;
-    background-color: var(--color-accent);
-    color: white;
+  .connect-link {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-accent);
     text-decoration: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    letter-spacing: 0.03em;
   }
 
-  .cta-button:hover {
-    background-color: var(--color-accent-hover);
-    transform: translateY(-2px);
+  .connect-link:hover {
+    color: var(--color-accent-hover);
   }
 
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2rem;
+  .connect-link .arrow {
+    display: inline-block;
+    transition: transform 0.15s linear;
+  }
+
+  .connect-link:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 640px) {
+    .about-content {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
     }
 
-    .intro {
-      font-size: 1.1rem;
+    .about-image {
+      order: -1;
     }
 
-    .about-section h2 {
-      font-size: 1.5rem;
+    .about-image img {
+      width: 120px;
+      height: 120px;
     }
 
-    .about-section p {
-      font-size: 1rem;
-    }
-
-    .connect-section {
-      padding: 1.5rem;
+    .expertise-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
     }
   }
 </style>

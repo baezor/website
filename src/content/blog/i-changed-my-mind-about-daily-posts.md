@@ -1,6 +1,7 @@
 ---
 title: "I Changed My Mind About Daily Posts"
 description: "I changed my mind about daily posts"
+heroImage: "../../assets/og/i-changed-my-mind-about-daily-posts.png"
 pubDate: 2024-08-19T10:00:00.000Z
 categories:
   - personal

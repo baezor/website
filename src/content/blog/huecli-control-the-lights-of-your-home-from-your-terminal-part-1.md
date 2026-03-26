@@ -1,6 +1,7 @@
 ---
 title: "Hue-CLI: Control Philips Hue Lights from Your Terminal"
 description: "Launching a CLI tool to control your Phillips Hue devices."
+heroImage: "../../assets/og/huecli-control-the-lights-of-your-home-from-your-terminal-part-1.png"
 pubDate: 2024-07-15T10:00:00.000Z
 categories:
   - project

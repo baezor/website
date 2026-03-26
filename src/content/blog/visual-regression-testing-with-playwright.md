@@ -1,6 +1,7 @@
 ---
 title: "Visual Regression Testing with Playwright"
 description: "Visual testing with Playwright"
+heroImage: "../../assets/og/visual-regression-testing-with-playwright.png"
 pubDate: 2024-07-11T10:00:00.000Z
 categories:
   - testing

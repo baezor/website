@@ -20,38 +20,26 @@ const { title, description, pubDate, updatedDate, heroImage, categories, tags, m
 const currentLang = lang || 'en';
 const t = useTranslations(currentLang);
 
-// Format date for display with correct locale
 const locale = locales[currentLang];
-const formattedPublishDate = pubDate.toLocaleDateString(locale, {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
 
-const formattedUpdatedDate = updatedDate?.toLocaleDateString(locale, {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const dateStr = pubDate.toISOString().slice(0, 10).replace(/-/g, '.');
 
-// Calculate reading time and word count
 const readingTime = calculateReadingTime(entry.body);
 const wordCount = entry.body ? entry.body.split(/\s+/).filter(word => word.length > 0).length : 0;
 
-// Build breadcrumb items for structured data
+const updatedDateStr = updatedDate
+  ? updatedDate.toISOString().slice(0, 10).replace(/-/g, '.')
+  : null;
+
 const breadcrumbItems = [
   { name: t('nav.home'), url: getRelativeLocaleUrl(currentLang, '/') },
   { name: t('nav.blog'), url: getRelativeLocaleUrl(currentLang, 'blog') },
   { name: title, url: getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`) }
 ];
 
-// Build canonical URL for this post
 const postUrl = new URL(getRelativeLocaleUrl(currentLang, `blog/${entry.slug}`), SITE_URL).toString();
-
-// Build image URL if hero image exists
 const imageUrl = heroImage ? new URL(heroImage.src, SITE_URL).toString() : null;
 
-// Build enhanced BlogPosting schema
 const blogPostingSchema: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -87,26 +75,15 @@ const blogPostingSchema: Record<string, unknown> = {
   "inLanguage": currentLang === 'es' ? 'es-MX' : 'en-US'
 };
 
-// Add image if available
 if (imageUrl) {
-  blogPostingSchema.image = {
-    "@type": "ImageObject",
-    "url": imageUrl
-  };
+  blogPostingSchema.image = { "@type": "ImageObject", "url": imageUrl };
 }
-
-// Add keywords if available
 if (keywords && keywords.length > 0) {
   blogPostingSchema.keywords = keywords.join(", ");
 }
-
-// Add article section (categories) if available
 if (categories && categories.length > 0) {
-  blogPostingSchema.articleSection = categories[0]; // Primary category
+  blogPostingSchema.articleSection = categories[0];
 }
-
-// Add speakable property for voice/AI optimization
-// Speakable identifies content suitable for text-to-speech
 blogPostingSchema.speakable = {
   "@type": "SpeakableSpecification",
   "cssSelector": [".post-title", ".prose p:first-of-type", ".prose h2", ".prose h3"]
@@ -117,57 +94,58 @@ blogPostingSchema.speakable = {
   <main>
     <article class="blog-post">
       <header class="blog-header">
-        {
-          heroImage && (
-            <div class="hero-image-container">
-              <Image
-                src={heroImage}
-                alt={title}
-                class="hero-image"
-                loading="eager"
-                decoding="async"
-                fetchpriority="high"
-              />
-            </div>
-          )
-        }
-        <div class="container">
-          <h1 class="post-title">{title}</h1>
-          <div class="post-meta">
-            <div class="post-meta-info">
-              <time datetime={pubDate.toISOString()}>{formattedPublishDate}</time>
-              <span class="meta-separator">·</span>
-              <span class="reading-time" aria-label={t('blog.readingTime.aria', { time: readingTime.toString() })}>
-                <span aria-hidden="true">📖</span> {readingTime} {t('blog.readingTime')}
-              </span>
-            </div>
-            {
-              updatedDate && (
-                <div class="updated-date">
-                  {t('blog.updated')}{" "}
-                  <time datetime={updatedDate.toISOString()}>
-                    {formattedUpdatedDate}
-                  </time>
-                </div>
-              )
-            }
-            <div class="post-taxonomy">
+        <div class="header-layout">
+          <div class="header-text">
+            <a href={getRelativeLocaleUrl(currentLang, 'blog')} class="back-link">← {t('blog.backToAll').toUpperCase()}</a>
+
+            <h1 class="post-title" data-scramble={title.toUpperCase()}>{title.toUpperCase()}</h1>
+
+            <div class="post-meta">
+              <span>{dateStr}</span>
+              <span class="meta-sep">//</span>
+              <span>{readingTime} {t('blog.readingTime').toUpperCase()}</span>
               {categories && categories.length > 0 && (
-                <div class="post-categories">
-                  {categories.map((category) => (
-                    <a href={getRelativeLocaleUrl(currentLang, `category/${category}`)} class="category-badge">{category}</a>
+                <>
+                  <span class="meta-sep">//</span>
+                  {categories.map((category, i) => (
+                    <>
+                      {i > 0 && <span>, </span>}
+                      <a href={getRelativeLocaleUrl(currentLang, `category/${category}`)} class="meta-category">{category.toUpperCase()}</a>
+                    </>
                   ))}
-                </div>
-              )}
-              {tags && tags.length > 0 && (
-                <div class="post-tags">
-                  {tags.map((tag) => (
-                    <a href={getRelativeLocaleUrl(currentLang, `tag/${tag}`)} class="tag-badge">#{tag}</a>
-                  ))}
-                </div>
+                </>
               )}
             </div>
+
+            {updatedDateStr && (
+              <div class="updated-date">
+                {t('blog.updated')} {updatedDateStr}
+              </div>
+            )}
+
+            {tags && tags.length > 0 && (
+              <div class="post-tags">
+                {tags.map((tag) => (
+                  <a href={getRelativeLocaleUrl(currentLang, `tag/${tag}`)} class="tag-badge">#{tag}</a>
+                ))}
+              </div>
+            )}
           </div>
+
+          {
+            heroImage && (
+              <div class="hero-image-container">
+                <Image
+                  src={heroImage}
+                  alt={title}
+                  class="hero-image"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </div>
+            )
+          }
         </div>
       </header>
 
@@ -178,7 +156,7 @@ blogPostingSchema.speakable = {
 
         {faqs && faqs.length > 0 && (
           <section class="faq-section" aria-labelledby="faq-heading">
-            <h2 id="faq-heading">{currentLang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}</h2>
+            <h2 id="faq-heading">{currentLang === 'es' ? 'PREGUNTAS FRECUENTES' : 'FREQUENTLY ASKED QUESTIONS'}</h2>
             <div class="faq-list">
               {faqs.map((faq) => (
                 <details class="faq-item">
@@ -194,41 +172,38 @@ blogPostingSchema.speakable = {
       </div>
 
       <footer class="post-footer container">
-        <div class="post-nav">
-          <a href={getRelativeLocaleUrl(currentLang, 'blog')} class="back-link">{t('blog.backToAll')}</a>
-        </div>
+        <a href={getRelativeLocaleUrl(currentLang, 'blog')} class="back-link">← {t('blog.backToAll').toUpperCase()}</a>
       </footer>
     </article>
   </main>
 
-  <!-- Enhanced BlogPosting Structured Data -->
   <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
-
-  <!-- Breadcrumb Structured Data -->
   <BreadcrumbSchema items={breadcrumbItems} />
-
   {faqs && faqs.length > 0 && (
     <FAQSchema faqs={faqs} />
   )}
 </Layout>
 
 <style is:global>
-  /* Prose variables - inherit from core palette via CSS variable swap */
   :root {
     --prose-headings: var(--color-text);
     --prose-body: var(--color-text);
     --prose-links: var(--color-accent);
     --prose-links-hover: var(--color-accent-hover);
-    --prose-borders: color-mix(in srgb, var(--color-text) 10%, transparent);
+    --prose-borders: var(--color-border);
     --prose-captions: var(--color-text-muted);
-    --prose-code-bg: color-mix(in srgb, var(--color-text) 5%, transparent);
+    --prose-code-bg: var(--color-bg-surface);
     --prose-code-text: var(--color-text);
-    --prose-pre-bg: #1a1a19;
-    --prose-pre-text: #F0EFEA;
+    --prose-pre-bg: #0d0d0d;
+    --prose-pre-text: #e8e6e3;
     --prose-blockquote: var(--color-text-muted);
   }
 
-  /* Container */
+  .light {
+    --prose-pre-bg: #1a1a19;
+    --prose-pre-text: #F0EFEA;
+  }
+
   .container {
     width: 100%;
     max-width: 65ch;
@@ -236,152 +211,145 @@ blogPostingSchema.speakable = {
     margin-right: auto;
   }
 
-  /* Blog post layout */
   .blog-post {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
 
-  /* Header and hero image */
   .blog-header {
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-12);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  .header-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-8);
+    align-items: end;
   }
 
   .hero-image-container {
-    width: 100%;
-    margin-bottom: 2.5rem;
-    display: flex;
-    justify-content: center;
+    border: 2px solid var(--color-accent);
+    overflow: hidden;
   }
 
   .hero-image {
-    max-width: 1200px;
     width: 100%;
-    max-height: 500px;
-    object-fit: cover;
-    border-radius: 0.375rem;
-    box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--color-text) 5%, transparent);
+    object-fit: contain;
+    border-radius: 0;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .header-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .hero-image-container {
+      max-width: 280px;
+    }
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-bottom: var(--space-6);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent-hover);
   }
 
   .post-title {
     font-family: var(--font-heading);
-    font-size: 2.5rem;
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 1rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin-bottom: var(--space-4);
     color: var(--prose-headings);
+    text-transform: uppercase;
   }
 
   .post-meta {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--prose-captions);
-    margin-bottom: 1.5rem;
-  }
-
-  .post-meta-info {
-    display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
     flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-3);
   }
 
-  .meta-separator {
-    color: var(--prose-captions);
-    opacity: 0.5;
+  .meta-sep {
+    color: var(--color-text-dim);
+    user-select: none;
   }
 
-  .reading-time {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: var(--prose-captions);
-    font-weight: 500;
+  .meta-category {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .meta-category:hover {
+    color: var(--color-accent-hover);
   }
 
   .updated-date {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-text-dim);
     font-style: italic;
+    margin-bottom: var(--space-3);
   }
 
-  .post-taxonomy {
-    margin-top: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .post-categories,
   .post-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .category-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
-    color: var(--color-accent);
-    border-radius: 1rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    font-style: normal;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-
-  .category-badge:hover {
-    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
   }
 
   .tag-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
-    color: var(--color-text);
-    border-radius: 0.25rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.03em;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    text-transform: lowercase;
   }
 
   .tag-badge:hover {
-    background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
-  /* Post footer */
   .post-footer {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--prose-borders);
+    margin-top: var(--space-16);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
   }
 
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--font-heading);
-    color: var(--prose-links);
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .back-link:hover {
-    color: var(--prose-links-hover);
-    text-decoration: underline;
-  }
-
-  /* Typography styles inspired by Tailwind Typography */
+  /* Prose typography */
   .prose {
     color: var(--prose-body);
     max-width: 65ch;
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     line-height: 1.75;
   }
 
@@ -395,48 +363,50 @@ blogPostingSchema.speakable = {
 
   .prose h1 {
     font-family: var(--font-heading);
-    font-size: 2.25rem;
+    font-size: 2rem;
     margin-top: 0;
-    margin-bottom: 0.8888889em;
-    line-height: 1.1111111;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    margin-bottom: 0.8em;
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     color: var(--prose-headings);
   }
 
   .prose h2 {
     font-family: var(--font-heading);
     font-size: 1.5rem;
-    margin-top: 2em;
+    margin-top: 2.5em;
     margin-bottom: 1em;
-    line-height: 1.3333333;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     color: var(--prose-headings);
     border-bottom: 1px solid var(--prose-borders);
-    padding-bottom: 0.5rem;
+    padding-bottom: var(--space-3);
   }
 
   .prose h3 {
     font-family: var(--font-heading);
     font-size: 1.25rem;
-    margin-top: 1.6em;
+    margin-top: 1.8em;
     margin-bottom: 0.6em;
-    line-height: 1.6;
-    font-weight: 700;
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     color: var(--prose-headings);
   }
 
   .prose h4 {
     font-family: var(--font-heading);
+    font-size: 1.0625rem;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-    line-height: 1.5;
-    font-weight: 700;
+    line-height: 1.2;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     color: var(--prose-headings);
   }
 
-  /* Lists */
   .prose ul {
     list-style-type: disc;
     padding-left: 1.625em;
@@ -457,27 +427,36 @@ blogPostingSchema.speakable = {
     color: var(--prose-captions);
   }
 
-  /* Links */
   .prose a {
     color: var(--prose-links);
     text-decoration: underline;
     font-weight: 500;
-    text-underline-offset: 2px;
-    transition: color 0.15s ease;
+    text-underline-offset: 3px;
   }
 
   .prose a:hover {
     color: var(--prose-links-hover);
   }
 
-  /* Blockquotes */
   .prose blockquote {
     font-style: italic;
     color: var(--prose-blockquote);
-    border-left: 4px solid var(--prose-links);
-    padding-left: 1rem;
+    border-left: 2px solid var(--color-accent);
+    padding: 1rem 1.25rem;
     margin-left: 0;
     margin-right: 0;
+    background-color: var(--color-bg-elevated);
+  }
+
+  /* Drop cap on first paragraph */
+  .prose p:first-of-type::first-letter {
+    font-family: var(--font-heading);
+    font-size: 3.2em;
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.08em;
+    margin-top: 0.05em;
+    color: var(--color-accent);
   }
 
   .prose blockquote p {
@@ -485,15 +464,14 @@ blogPostingSchema.speakable = {
     margin-bottom: 0;
   }
 
-  /* Code blocks */
   .prose code {
     font-family: var(--font-mono);
-    font-size: 0.875em;
+    font-size: 0.85em;
     font-weight: 600;
     color: var(--prose-code-text);
     background-color: var(--prose-code-bg);
     padding: 0.2em 0.4em;
-    border-radius: 0.25em;
+    border-radius: 0;
   }
 
   .prose pre {
@@ -501,11 +479,12 @@ blogPostingSchema.speakable = {
     background-color: var(--prose-pre-bg);
     overflow-x: auto;
     font-weight: 400;
-    font-size: 0.875em;
-    line-height: 1.7142857;
-    margin-top: 1.7142857em;
-    margin-bottom: 1.7142857em;
-    border-radius: 0.375rem;
+    font-size: 0.85em;
+    line-height: 1.7;
+    margin-top: 1.7em;
+    margin-bottom: 1.7em;
+    border-radius: 0;
+    border: 1px solid var(--color-border);
     padding: 1.25rem;
   }
 
@@ -521,7 +500,6 @@ blogPostingSchema.speakable = {
     line-height: inherit;
   }
 
-  /* Tables */
   .prose table {
     width: 100%;
     table-layout: auto;
@@ -529,7 +507,7 @@ blogPostingSchema.speakable = {
     margin-top: 2em;
     margin-bottom: 2em;
     font-size: 0.875em;
-    line-height: 1.7142857;
+    line-height: 1.7;
     border-collapse: collapse;
   }
 
@@ -538,11 +516,12 @@ blogPostingSchema.speakable = {
   }
 
   .prose thead th {
-    padding-right: 0.5714286em;
-    padding-bottom: 0.5714286em;
-    padding-left: 0.5714286em;
-    font-weight: 600;
-    vertical-align: bottom;
+    padding: 0.5em;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--prose-headings);
   }
 
@@ -555,18 +534,14 @@ blogPostingSchema.speakable = {
   }
 
   .prose tbody td {
-    padding-top: 0.5714286em;
-    padding-right: 0.5714286em;
-    padding-bottom: 0.5714286em;
-    padding-left: 0.5714286em;
+    padding: 0.5em;
     vertical-align: top;
   }
 
-  /* Images */
   .prose img {
     margin-top: 2em;
     margin-bottom: 2em;
-    border-radius: 0.375rem;
+    border-radius: 0;
   }
 
   .prose figure {
@@ -582,12 +557,11 @@ blogPostingSchema.speakable = {
   .prose figcaption {
     color: var(--prose-captions);
     font-size: 0.875em;
-    line-height: 1.4285714;
-    margin-top: 0.8571429em;
-    text-align: center;
+    font-family: var(--font-mono);
+    line-height: 1.4;
+    margin-top: 0.75em;
   }
 
-  /* Horizontal rule */
   .prose hr {
     margin-top: 3em;
     margin-bottom: 3em;
@@ -597,32 +571,35 @@ blogPostingSchema.speakable = {
 
   /* FAQ Section */
   .faq-section {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--prose-borders);
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
   }
 
   .faq-section h2 {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    margin-bottom: var(--space-6);
     color: var(--prose-headings);
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .faq-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
   }
 
   .faq-item {
-    background-color: var(--prose-code-bg);
-    border-radius: 0.5rem;
-    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .faq-item:first-child {
+    border-top: 1px solid var(--color-border);
   }
 
   .faq-question {
-    padding: 1rem 1.25rem;
+    padding: var(--space-4) 0;
     font-weight: 600;
     cursor: pointer;
     list-style: none;
@@ -630,6 +607,7 @@ blogPostingSchema.speakable = {
     justify-content: space-between;
     align-items: center;
     color: var(--prose-headings);
+    font-size: 0.9375rem;
   }
 
   .faq-question::-webkit-details-marker {
@@ -638,10 +616,10 @@ blogPostingSchema.speakable = {
 
   .faq-question::after {
     content: '+';
+    font-family: var(--font-mono);
     font-size: 1.25rem;
     font-weight: 400;
     color: var(--color-accent);
-    transition: transform 0.2s ease;
   }
 
   .faq-item[open] .faq-question::after {
@@ -649,35 +627,32 @@ blogPostingSchema.speakable = {
   }
 
   .faq-answer {
-    padding: 0 1.25rem 1rem;
+    padding: 0 0 var(--space-4);
     color: var(--prose-body);
   }
 
   .faq-answer p {
     margin: 0;
     line-height: 1.6;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
   }
 
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     .post-title {
-      font-size: 2rem;
+      font-size: 1.75rem;
     }
 
     .prose {
       font-size: 1rem;
     }
 
-    .prose h1 {
-      font-size: 1.875rem;
-    }
-
     .prose h2 {
-      font-size: 1.375rem;
+      font-size: 1.25rem;
     }
 
     .prose h3 {
-      font-size: 1.125rem;
+      font-size: 1.0625rem;
     }
   }
 </style>

@@ -1,0 +1,136 @@
+---
+/**
+ * Text scramble/decode animation component.
+ * Include once in Layout — it auto-targets all elements with [data-scramble].
+ *
+ * Usage: <h1 data-scramble="ANGEL BAEZ">ANGEL BAEZ</h1>
+ *
+ * Locks element dimensions before animating to prevent CLS (layout shift).
+ */
+---
+
+<script>
+  function scrambleText(el: HTMLElement) {
+    const target = el.dataset.scramble || el.textContent || '';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+    const staggerPerChar = 50;
+    const framesPerChar = 5;
+
+    // Lock dimensions to prevent layout shift (CLS)
+    const rect = el.getBoundingClientRect();
+    el.style.minHeight = rect.height + 'px';
+    el.style.minWidth = rect.width + 'px';
+    el.style.display = 'inline-block';
+
+    const resolved = new Array(target.length).fill(false);
+    const display = new Array(target.length).fill('');
+    let frame = 0;
+
+    for (let i = 0; i < target.length; i++) {
+      if (target[i] === ' ') {
+        display[i] = '\u00A0';
+        resolved[i] = true;
+      } else {
+        display[i] = chars[Math.floor(Math.random() * chars.length)];
+      }
+    }
+
+    // Create inline cursor element that follows the text
+    const cursor = document.createElement('span');
+    cursor.className = 'scramble-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+
+    el.textContent = display.join('');
+    el.appendChild(cursor);
+    el.classList.add('scrambling');
+
+    const interval = setInterval(() => {
+      frame++;
+
+      for (let i = 0; i < target.length; i++) {
+        if (resolved[i]) continue;
+
+        const charStart = i * staggerPerChar;
+        const elapsed = (frame * 16) - charStart;
+
+        if (elapsed < framesPerChar * 50) {
+          display[i] = chars[Math.floor(Math.random() * chars.length)];
+        } else {
+          display[i] = target[i] === ' ' ? '\u00A0' : target[i];
+          resolved[i] = true;
+        }
+      }
+
+      el.textContent = display.join('');
+      el.appendChild(cursor);
+
+      if (resolved.every(Boolean)) {
+        clearInterval(interval);
+        el.textContent = target;
+        el.appendChild(cursor);
+        // Release locked dimensions
+        el.style.minHeight = '';
+        el.style.minWidth = '';
+        el.style.display = '';
+        el.classList.remove('scrambling');
+        el.classList.add('scramble-done');
+        // Remove cursor after fade
+        setTimeout(() => cursor.remove(), 900);
+      }
+    }, 16);
+  }
+
+  function initScramble() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const elements = document.querySelectorAll<HTMLElement>('[data-scramble]');
+
+    elements.forEach((el) => {
+      if (el.classList.contains('scramble-done')) return;
+
+      if (prefersReducedMotion) {
+        el.classList.add('scramble-done');
+        return;
+      }
+
+      scrambleText(el);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initScramble);
+  document.addEventListener('astro:page-load', initScramble);
+</script>
+
+<style is:global>
+  [data-scramble].scrambling .scramble-cursor,
+  [data-scramble].scramble-done .scramble-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 0.85em;
+    background-color: var(--color-accent);
+    vertical-align: baseline;
+    margin-left: 2px;
+  }
+
+  [data-scramble].scrambling .scramble-cursor {
+    animation: scramble-blink 0.5s steps(1) infinite;
+  }
+
+  [data-scramble].scramble-done .scramble-cursor {
+    animation: scramble-fade 0.6s 0.3s ease forwards;
+  }
+
+  @keyframes scramble-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes scramble-fade {
+    to { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scramble]::after {
+      display: none !important;
+    }
+  }
+</style>

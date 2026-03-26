@@ -1,6 +1,7 @@
 ---
 title: "Hello World Again!"
 description: "I've decided to start writing again. But this time I'm taking it seriously."
+heroImage: "../../assets/og/hello-world-again.png"
 pubDate: 2024-07-02T11:00:00.000Z
 categories:
   - announcement

@@ -1,17 +1,13 @@
 ---
 import { getCollection } from "astro:content";
-import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
+import BlogPostCard from "@/components/BlogPostCard.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
-import { locales } from "@/i18n/ui";
-import { getRelativeLocaleUrl } from "astro:i18n";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const locale = locales[lang];
 
-// Get all blog posts for current language and sort by publication date
 const posts = await getCollection("blog", ({ data }) => data.lang === lang);
 const sortedPosts = posts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -20,162 +16,51 @@ const sortedPosts = posts.sort(
 
 <Layout title={`${t('blog.title')} | ${SITE_TITLE[lang]}`} description={SITE_DESCRIPTION[lang]}>
   <main class="blog-container">
-    <h1>{t('blog.title')}</h1>
-    <p class="description">{t('blog.description')}</p>
+    <span class="page-label">// {t('blog.title').toUpperCase()}</span>
+    <h1 data-scramble={t('blog.title').toUpperCase()}>{t('blog.title').toUpperCase()}</h1>
+    <span class="entry-count">{sortedPosts.length} ENTRADAS</span>
 
     <section class="blog-posts">
-      {
-        sortedPosts.map((post) => (
-          <article class="post-card">
-            {post.data.heroImage && (
-              <div class="post-image">
-                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>
-                  <Image src={post.data.heroImage} alt={post.data.title} width={600} height={300} />
-                </a>
-              </div>
-            )}
-            <div class="post-content">
-              <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString(locale, {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </time>
-              <h2 class="post-title">
-                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>{post.data.title}</a>
-              </h2>
-              {post.data.categories && post.data.categories.length > 0 && (
-                <div class="post-categories">
-                  {post.data.categories.map((category) => (
-                    <a href={getRelativeLocaleUrl(lang, `category/${category}`)} class="category-badge">{category}</a>
-                  ))}
-                </div>
-              )}
-              <p class="post-description">{post.data.description}</p>
-              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more" aria-label={t('blog.readMore.aria').replace('{title}', post.data.title)}>
-                {t('blog.readMore')}
-              </a>
-            </div>
-          </article>
-        ))
-      }
+      {sortedPosts.map((post) => (
+        <BlogPostCard post={post} lang={lang} />
+      ))}
     </section>
   </main>
 </Layout>
 
 <style>
   .blog-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 6rem 1rem 4rem 1rem;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .page-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
   }
 
   h1 {
-    margin-bottom: 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
   }
 
-  .description {
-    color: var(--color-text-muted);
-    margin-bottom: 3rem;
+  .entry-count {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-8);
   }
 
   .blog-posts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .post-card {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    height: 100%;
-  }
-
-  .post-card:hover {
-    transform: translateY(-4px);
-  }
-
-  .post-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .post-content {
-    padding: 1.5rem 0;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  time {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-  }
-
-  .post-title {
-    margin: 0.5rem 0;
-    font-size: 1.5rem;
-  }
-
-  .post-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .post-title a:hover {
-    text-decoration: underline;
-  }
-
-  .post-description {
-    margin: 0.5rem 0 1.5rem;
-    flex-grow: 1;
-  }
-
-  .read-more {
-    display: inline-block;
-    font-family: var(--font-heading);
-    color: var(--color-accent);
-    text-decoration: none;
-    font-weight: 600;
-    align-self: flex-start;
-  }
-
-  .read-more:hover {
-    text-decoration: underline;
-  }
-
-  .post-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0.75rem 0;
-  }
-
-  .category-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
-    color: var(--color-text);
-    border-radius: 1rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-
-  .category-badge:hover {
-    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .blog-posts {
-      grid-template-columns: 1fr;
-    }
   }
 </style>

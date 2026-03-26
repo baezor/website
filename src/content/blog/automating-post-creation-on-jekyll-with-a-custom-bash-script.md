@@ -1,6 +1,7 @@
 ---
 title: "Automating Post Creation on Jekyll with a Custom Bash Script"
 description: "A bash script to automate the creation of new posts on Jekyll."
+heroImage: "../../assets/og/automating-post-creation-on-jekyll-with-a-custom-bash-script.png"
 pubDate: 2024-07-10T10:00:00.000Z
 categories:
   - jekyll
@@ -57,6 +58,7 @@ layout: post
 title: $TITLE
 date: $CURRENT_DATE
 description:
+heroImage: "../../assets/og/automating-post-creation-on-jekyll-with-a-custom-bash-script.png"
 categories:
 author:
 ---

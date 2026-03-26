@@ -1,6 +1,7 @@
 ---
 title: "Flying to Mexico City"
 description: "I truly enjoy flying"
+heroImage: "../../assets/og/flying-to-mexico-city.png"
 pubDate: 2024-07-18T04:06:08.000Z
 categories:
   - personal
