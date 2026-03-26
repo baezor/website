@@ -1,7 +1,8 @@
 ---
 title: "How I Achieved Perfect Lighthouse Scores (100 Across the Board)"
-description: "A walkthrough of the specific fixes I made to push my Astro site from 95/81/92 to 100/100/100 on Lighthouse's Accessibility, Best Practices, and SEO audits."
+description: "A deep dive into the tech stack and architecture decisions behind angel-baez.com — built with Astro, deployed on Cloudflare Pages, scoring 100/100/100/100 on Lighthouse."
 pubDate: 2026-03-19T00:00:00.000Z
+updatedDate: 2026-03-25T00:00:00.000Z
 heroImage: ../../assets/pagespeed-100-scores.png
 categories:
   - performance
@@ -9,77 +10,141 @@ categories:
 keywords:
   - lighthouse
   - web performance
-  - accessibility
-  - SEO
-  - WCAG
-  - Cloudflare Zaraz
+  - core web vitals
   - Astro
+  - Cloudflare Pages
+  - SEO
+  - accessibility
+  - WCAG
 contentType: "technical-tutorial"
 faqs:
-  - question: "What causes Lighthouse Best Practices to drop below 100?"
-    answer: "A common culprit is Partytown, which enumerates all window properties on initialization, triggering Chrome's deprecation tracking for APIs like SharedStorage and AttributionReporting. Removing Partytown and using an edge-based solution like Cloudflare Zaraz eliminates these warnings."
-  - question: "How do I fix color contrast issues flagged by Lighthouse?"
-    answer: "Use a contrast checker to ensure your text colors meet WCAG AA's 4.5:1 ratio for normal text. Watch out for compounding CSS opacity values and text on tinted backgrounds, where the effective contrast can be much lower than expected."
-  - question: "Does removing Partytown hurt performance?"
-    answer: "Not necessarily. For static sites with excellent Core Web Vitals, Partytown's overhead (service worker initialization, window enumeration) can actually be more costly than loading analytics directly with async. Edge-based alternatives like Cloudflare Zaraz have near-zero client impact."
+  - question: "What is a good Lighthouse score?"
+    answer: "A score of 90+ is considered good, and 100 is perfect. Most production sites score between 60-90. Achieving 100 across all four categories (Performance, Accessibility, Best Practices, SEO) requires intentional architecture decisions, not just optimization after the fact."
+  - question: "Does Astro really make a performance difference?"
+    answer: "Yes. Astro ships zero JavaScript by default — pages are static HTML with only the CSS needed for that page inlined. Compare that to Next.js or Gatsby which ship a React runtime (~40-80 KB) even for static pages. The difference shows in LCP and Time to Interactive."
+  - question: "Why Cloudflare Pages instead of Vercel or Netlify?"
+    answer: "Cloudflare's edge network has the widest global coverage (300+ cities), and Pages has zero cold starts for static assets. Combined with Cloudflare Zaraz for analytics (zero client-side JS), you get a complete stack with minimal moving parts."
+  - question: "How do you maintain perfect scores as you add features?"
+    answer: "CI automation. Every PR runs Lighthouse CI and visual regression tests automatically. If a change drops any score below threshold, the PR is flagged before it merges. Prevention is easier than remediation."
+lang: en
 ---
 
-I recently set out to fix the Lighthouse audit failures on this site. The starting scores were Accessibility 95, Best Practices 81, and SEO 92 — not bad, but not perfect. Here's exactly what I fixed to get all three to 100.
+This site scores 100/100/100/100 on Google's Lighthouse audit — Performance, Accessibility, Best Practices, and SEO. Not through tricks or micro-optimizations, but through architecture decisions that make perfect scores the natural outcome.
 
-## The Starting Point
+Here's the full tech stack and why each piece matters.
 
-The site is built with Astro, deployed on Cloudflare Pages, with Core Web Vitals already in great shape (LCP ~180ms, CLS 0.00). The issues were all in the non-performance categories: color contrast, missing aria attributes, generic link text, and deprecated browser API warnings.
+## The Stack
 
-## Fix 1: Color Contrast (Accessibility)
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| Framework | Astro 5 | Zero JS by default, static-first |
+| Hosting | Cloudflare Pages | Edge-deployed, global CDN |
+| Analytics | Cloudflare Zaraz | Zero client-side JavaScript |
+| Styling | Vanilla CSS | No framework overhead |
+| Fonts | Self-hosted via @fontsource | No external font requests |
+| Images | Astro Image + Sharp | Build-time optimization (AVIF/WebP) |
+| i18n | Custom Astro i18n | EN/ES with locale-aware routing |
+| CI | GitHub Actions | Lighthouse CI + visual regression on every PR |
 
-Lighthouse flagged several text elements for insufficient contrast against their backgrounds. WCAG AA requires at least a 4.5:1 contrast ratio for normal-sized text.
+## Why Core Web Vitals Are Great
 
-**Muted text color** — `#7a786f` on `#faf9f5` was only ~4.2:1. Darkened to `#65635b` (~5.1:1).
+Core Web Vitals aren't just a Google ranking signal — they measure real user experience. Here's what this site achieves:
 
-**Accent color** — `#d97757` on light backgrounds was ~3.0:1. Darkened to `#b5532f` (~4.7:1).
+**LCP (Largest Contentful Paint): ~300ms**
+The main content renders in under half a second. This happens because Astro inlines critical CSS directly into the HTML, fonts are self-hosted (no third-party DNS lookups), and the Cloudflare edge serves the page from the nearest data center.
 
-**Category badges** — This one was subtle. The badge used `color: var(--color-accent)` on a background of `color-mix(in srgb, var(--color-accent) 15%, transparent)`. The text and background were both derived from the same accent color, yielding only 3.85:1 contrast. Fixed by using the main text color instead.
+**CLS (Cumulative Layout Shift): 0.00**
+Zero layout shift. No fonts cause reflow because `font-display: swap` is handled at build time by @fontsource. Images have explicit dimensions. No dynamically injected content pushes things around.
 
-**Footer credit** — The footer used `opacity: 0.8` on the container and `opacity: 0.7` on the credit text. These compound multiplicatively: `0.8 x 0.7 = 0.56` effective opacity, making the text far too light. Replaced with an explicit `color: var(--color-text-muted)`.
+**INP (Interaction to Next Paint): Near-instant**
+There's almost no JavaScript on the page. The scramble animation on headings is the only JS, and it locks element dimensions before running to prevent layout shift. Everything else is CSS.
 
-The takeaway: **always check computed contrast, not just your CSS variable values.** Opacity stacking and tinted backgrounds can silently break your ratios.
+## Astro: Ship Less, Score Higher
 
-## Fix 2: Aria-Label Mismatches (Accessibility)
+Astro's architecture is the foundation. Unlike React-based frameworks that ship a JavaScript runtime to every page, Astro renders everything to static HTML at build time and ships zero JS by default.
 
-WCAG 2.5.3 requires that when an element has both visible text and an `aria-label`, the label must contain the visible text. Two elements failed this:
+What this means in practice:
+- **No hydration cost** — The page is interactive as soon as HTML loads
+- **Inlined CSS** — Each page gets only the styles it needs, inlined in `<head>`
+- **No client-side routing** — View Transitions API handles page transitions natively
+- **Islands architecture** — Interactive components only load JS when needed
 
-- **Logo link** — visible text "Angel Baez", aria-label was just "Home". Changed to "Angel Baez - Home".
-- **Language switcher** — visible text "ES", aria-label was "Switch to Spanish". Changed to "ES - Switch to Spanish".
+The result is a page that loads, parses, and renders in a single pass. No framework boot time, no hydration flash, no JS-dependent content.
 
-## Fix 3: Descriptive Link Text (SEO)
+## Cloudflare Pages + Zaraz: The Zero-JS Analytics Stack
 
-Generic link text like "Read more" and "Learn more" hurts both screen reader usability and SEO. Two fixes:
+Most analytics setups tank your performance score. Google Tag Manager alone is ~90 KB, and gtag.js adds another ~40 KB. That's 130 KB of JavaScript just to count page views.
 
-- **Blog "Read more" links** — Added `aria-label="Read more about {post title}"` to each link.
-- **Homepage CTA** — Changed "Learn more" to "Learn more about me".
+Cloudflare Zaraz eliminates this entirely:
+- Analytics logic runs on Cloudflare's edge, not in the browser
+- The client-side payload is ~2-3 KB (a tiny loader)
+- No `document.write`, no blocking scripts, no deprecated API warnings
+- Free tier includes 1 million events/month
 
-## Fix 4: Replacing Partytown with Cloudflare Zaraz (Best Practices)
+Previously, this site used Partytown to offload analytics to a web worker. But Partytown caused Best Practices failures — it enumerates all `window` properties during initialization, touching deprecated APIs like `SharedStorage`. Zaraz solved this with zero client-side code.
 
-This was the most interesting one. Lighthouse flagged `SharedStorage` and `AttributionReporting` as deprecated APIs, dropping Best Practices to 81. But my code wasn't using those APIs — Partytown was.
+## Self-Hosted Fonts: Eliminating Third-Party Requests
 
-Partytown works by running third-party scripts in a web worker. During initialization, it calls `Object.getOwnPropertyNames(window)` to enumerate every browser API and create proxy objects. This enumeration touches deprecated APIs, which Chrome flags even though nobody actually called them.
+Google Fonts is convenient but adds latency: DNS lookup to `fonts.googleapis.com`, CSS fetch, then font file downloads from `fonts.gstatic.com`. That's 3 round trips before your text renders.
 
-**The fix:** Remove Partytown entirely and switch to [Cloudflare Zaraz](https://developers.cloudflare.com/zaraz/). Since the site already runs on Cloudflare Pages, Zaraz was a natural fit:
+Self-hosting via @fontsource bundles fonts into your build:
+- Fonts are served from the same CDN as your HTML
+- No CORS, no third-party DNS, no external CSS
+- `font-display: swap` is configured at build time
+- Only the weights you use are included
 
-- **Zero client-side code** — Zaraz runs analytics logic on Cloudflare's edge, injecting only a tiny ~2-3 KB loader (vs. gtag.js at ~111 KB + Partytown's service worker).
-- **No deprecated API warnings** — No window enumeration, no service worker sandbox.
-- **Free tier** — 1 million events/month included.
-- **Setup** — Just enable GA4 in the Cloudflare dashboard and delete all analytics code from the codebase.
+This site uses three fonts (Archivo Black, Inter, Space Mono) in specific weights — total font payload is ~60 KB, served from the edge.
+
+## Image Optimization: Build-Time, Not Runtime
+
+Every image is processed at build time by Astro's Image component + Sharp:
+- Source images in `src/assets/` (not `public/`) enable optimization
+- Automatic AVIF/WebP conversion with quality control
+- Explicit `width`/`height` attributes prevent CLS
+- `loading="eager"` on above-fold images, `loading="lazy"` everywhere else
+- `fetchpriority="high"` on the LCP image
+
+The hero profile photo is 3 KB as an AVIF. Blog OG images are ~15 KB each.
+
+## Accessibility: 100 Without Compromise
+
+Accessibility isn't a separate concern — it's embedded in every component:
+
+- **WCAG AA contrast ratios** on all text. The accent color was adjusted three times during development until it passed on both dark and light backgrounds.
+- **Semantic HTML** — `<nav>`, `<main>`, `<article>`, `<header>`, `<footer>` everywhere. No `<div>` soup.
+- **Aria attributes** carefully applied — visible text matches accessible names (WCAG 2.5.3). Decorative elements have `aria-hidden="true"`.
+- **Keyboard navigation** works throughout. Focus states are visible.
+- **`prefers-reduced-motion`** — all animations (scramble text, entrance animations, view transitions) are disabled when the user prefers reduced motion.
+
+## SEO: Structured Data + Technical Hygiene
+
+SEO scoring comes from technical correctness, not content tricks:
+- **Structured data** — `WebSite`, `Person`, `BlogPosting`, `BreadcrumbList`, `FAQPage`, and `HowTo` schemas on appropriate pages
+- **Hreflang** — Proper `<link rel="alternate">` for EN/ES with `x-default`
+- **Canonical URLs** — Every page has a canonical
+- **Meta descriptions** — Unique per page
+- **Sitemap** — Auto-generated by `@astrojs/sitemap`
+- **Open Graph + Twitter Cards** — Generated OG images with unique generative patterns per post
+
+## CI: Preventing Regressions
+
+Perfect scores mean nothing if they break on the next PR. Every pull request triggers:
+
+1. **Lighthouse CI** — Runs full audits, posts scores as a PR comment
+2. **Visual regression tests** — Playwright screenshots 32 snapshots (6 pages × 2 viewports × 2 themes), catches unintended visual changes
+3. **Claude Code Review** — Automated static analysis for accessibility, security, and code quality
+
+If any check fails, the PR doesn't merge. Scores are maintained by automation, not discipline.
 
 ## The Result
 
-| Category | Before | After |
-|---|---|---|
-| Performance | 99 | 99 |
-| Accessibility | 95 | **100** |
-| Best Practices | 81 | **100** |
-| SEO | 92 | **100** |
+| Category | Score |
+|----------|:-----:|
+| Performance | **100** |
+| Accessibility | **100** |
+| Best Practices | **100** |
+| SEO | **100** |
 
-Zero failed audits. The site is faster too — removing Partytown's service worker and gtag.js eliminated ~120 KB of client-side JavaScript.
+LCP 300ms. CLS 0.00. Zero failed audits across every page.
 
-If you're using Partytown on a Cloudflare-hosted site and wondering why your Best Practices score won't budge, consider Zaraz. It solved the problem with less code, not more.
+The lesson: perfect Lighthouse scores aren't about fixing issues after the fact. They're about choosing a stack where performance, accessibility, and SEO are the default behavior, not afterthoughts.
