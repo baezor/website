@@ -1,6 +1,5 @@
 ---
 import { getLangFromUrl, getLocalizedUrl, useTranslations } from '@/i18n/utils';
-import { languages } from '@/i18n/ui';
 
 const currentLang = getLangFromUrl(Astro.url);
 const alternateLang = currentLang === 'en' ? 'es' : 'en';
@@ -9,12 +8,14 @@ const t = useTranslations(currentLang);
 ---
 
 <div class="language-switcher">
+  <span class="lang-current">{currentLang.toUpperCase()}</span>
+  <span class="lang-sep">/</span>
   <a
     href={alternateUrl}
     aria-label={alternateLang === 'es' ? t('lang.switch.toSpanish') : t('lang.switch.toEnglish')}
     class="lang-link"
   >
-    <span class="lang-code">{alternateLang.toUpperCase()}</span>
+    {alternateLang.toUpperCase()}
   </a>
 </div>
 
@@ -22,27 +23,27 @@ const t = useTranslations(currentLang);
   .language-switcher {
     display: flex;
     align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .lang-current {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  .lang-sep {
+    color: var(--color-text-dim);
   }
 
   .lang-link {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--color-text);
+    color: var(--color-text-muted);
     text-decoration: none;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
-    border: 1px solid var(--color-text);
   }
 
   .lang-link:hover {
-    background-color: var(--color-accent);
-    border-color: var(--color-accent);
-    color: white;
-  }
-
-  .lang-code {
-    font-weight: 700;
+    color: var(--color-accent);
   }
 </style>

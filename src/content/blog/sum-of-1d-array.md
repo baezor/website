@@ -1,6 +1,7 @@
 ---
 title: "Array Problems: Running Sum and Maximum Wealth"
 description: "Solving Sum of 1d Array and Richest Customer Wealth problems on Leetcode."
+heroImage: "../../assets/og/sum-of-1d-array.png"
 pubDate: 2024-07-04T11:00:00.000Z
 categories:
   - leetcode

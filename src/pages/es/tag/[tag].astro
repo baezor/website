@@ -1,17 +1,15 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
+import BlogPostCard from "@/components/BlogPostCard.astro";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema.astro";
 import { SITE_TITLE } from "@/const";
 import { getLangFromUrl, useTranslations } from "@/i18n/utils";
-import { locales } from "@/i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
-// Generate static paths for all tags
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => data.lang === 'es');
 
-  // Collect all unique tags
   const tags = new Set<string>();
   posts.forEach((post) => {
     if (post.data.tags) {
@@ -19,7 +17,6 @@ export async function getStaticPaths() {
     }
   });
 
-  // Generate a path for each tag
   return Array.from(tags).map((tag) => {
     const tagPosts = posts
       .filter((post) => post.data.tags?.includes(tag))
@@ -36,9 +33,7 @@ const { posts, tag } = Astro.props;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const locale = locales[lang];
 
-// Format tag for display (capitalize first letter of each word)
 const formatTag = (t: string) => {
   return t
     .split("-")
@@ -47,10 +42,9 @@ const formatTag = (t: string) => {
 };
 
 const displayTag = formatTag(tag);
-const pageTitle = `${displayTag} Posts | ${SITE_TITLE[lang]}`;
-const description = `All blog posts tagged with ${displayTag}`;
+const pageTitle = `${displayTag} | ${SITE_TITLE[lang]}`;
+const description = `Todas las publicaciones con la etiqueta ${displayTag}`;
 
-// Build breadcrumb items for structured data
 const breadcrumbItems = [
   { name: t('nav.home'), url: getRelativeLocaleUrl(lang, '/') },
   { name: t('nav.blog'), url: getRelativeLocaleUrl(lang, 'blog') },
@@ -60,66 +54,15 @@ const breadcrumbItems = [
 
 <Layout title={pageTitle} description={description}>
   <main class="tag-archive">
-    <div class="archive-header">
-      <nav class="breadcrumb">
-        <a href={getRelativeLocaleUrl(lang, 'blog')}>{t('breadcrumb.blog')}</a>
-        <span class="separator">{t('breadcrumb.separator')}</span>
-        <span class="current">{t('tag.title', { tag: displayTag })}</span>
-      </nav>
-      <h1>{t('tag.title', { tag: displayTag })}</h1>
-      <p class="post-count">{posts.length} {posts.length === 1 ? t('blog.post') : t('blog.posts')}</p>
-    </div>
+    <a href={getRelativeLocaleUrl(lang, 'blog')} class="back-link">← {t('breadcrumb.blog').toUpperCase()}</a>
+    <span class="page-label">// ETIQUETA</span>
+    <h1 data-scramble={`#${displayTag.toUpperCase()}`}>#{displayTag.toUpperCase()}</h1>
+    <span class="entry-count">{posts.length} {posts.length === 1 ? 'ENTRADA' : 'ENTRADAS'}</span>
 
     <section class="blog-posts">
-      {
-        posts.map((post) => (
-          <article class="post-card">
-            {post.data.heroImage && (
-              <div class="post-image">
-                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>
-                  <img src={post.data.heroImage} alt={post.data.title} />
-                </a>
-              </div>
-            )}
-            <div class="post-content">
-              <time datetime={post.data.pubDate.toISOString()}>
-                {post.data.pubDate.toLocaleDateString(locale, {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </time>
-              <h2 class="post-title">
-                <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)}>{post.data.title}</a>
-              </h2>
-              <div class="post-meta">
-                {post.data.categories && post.data.categories.length > 0 && (
-                  <div class="post-categories">
-                    {post.data.categories.map((cat) => (
-                      <a href={getRelativeLocaleUrl(lang, `category/${cat}`)} class="category-badge">
-                        {cat}
-                      </a>
-                    ))}
-                  </div>
-                )}
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <div class="post-tags">
-                    {post.data.tags.map((t) => (
-                      <a href={getRelativeLocaleUrl(lang, `tag/${t}`)} class="tag-badge">
-                        #{t}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <p class="post-description">{post.data.description}</p>
-              <a href={getRelativeLocaleUrl(lang, `blog/${post.slug}`)} class="read-more">
-                {t('blog.readMore')}
-              </a>
-            </div>
-          </article>
-        ))
-      }
+      {posts.map((post) => (
+        <BlogPostCard post={post} lang={lang} />
+      ))}
     </section>
   </main>
   <BreadcrumbSchema items={breadcrumbItems} />
@@ -127,171 +70,51 @@ const breadcrumbItems = [
 
 <style>
   .tag-archive {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 6rem 1rem 4rem 1rem;
+    max-width: var(--max-width);
+    width: 100%;
   }
 
-  .archive-header {
-    margin-bottom: 3rem;
-  }
-
-  .breadcrumb {
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-    color: var(--color-text-muted);
-  }
-
-  .breadcrumb a {
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
     color: var(--color-accent);
     text-decoration: none;
+    margin-bottom: var(--space-6);
   }
 
-  .breadcrumb a:hover {
-    text-decoration: underline;
+  .back-link:hover {
+    color: var(--color-accent-hover);
   }
 
-  .breadcrumb .separator {
-    margin: 0 0.5rem;
-  }
-
-  .breadcrumb .current {
-    color: var(--color-text);
+  .page-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
   }
 
   h1 {
-    margin-bottom: 0.5rem;
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.02em;
   }
 
-  .post-count {
-    color: var(--color-text-muted);
-    font-size: 1rem;
+  .entry-count {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-8);
   }
 
   .blog-posts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .post-card {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    height: 100%;
-  }
-
-  .post-card:hover {
-    transform: translateY(-4px);
-  }
-
-  .post-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .post-content {
-    padding: 1.5rem 0;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  time {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-  }
-
-  .post-title {
-    margin: 0.5rem 0;
-    font-size: 1.5rem;
-  }
-
-  .post-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .post-title a:hover {
-    text-decoration: underline;
-  }
-
-  .post-description {
-    margin: 0.5rem 0 1.5rem;
-    flex-grow: 1;
-  }
-
-  .read-more {
-    display: inline-block;
-    font-family: var(--font-heading);
-    color: var(--color-accent);
-    text-decoration: none;
-    font-weight: 600;
-    align-self: flex-start;
-  }
-
-  .read-more:hover {
-    text-decoration: underline;
-  }
-
-  .post-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 0.75rem 0;
-  }
-
-  .post-categories,
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .category-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
-    color: var(--color-accent);
-    border-radius: 1rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-
-  .category-badge:hover {
-    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
-  }
-
-  .tag-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
-    color: var(--color-text);
-    border-radius: 0.25rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-
-  .tag-badge:hover {
-    background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2rem;
-    }
-
-    .blog-posts {
-      grid-template-columns: 1fr;
-    }
   }
 </style>

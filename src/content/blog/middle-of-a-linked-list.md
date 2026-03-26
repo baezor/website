@@ -1,6 +1,7 @@
 ---
 title: "Middle of the Linked List: Two-Pointer Technique"
 description: "Solving the middle of the linked list problem on Leetcode"
+heroImage: "../../assets/og/middle-of-a-linked-list.png"
 pubDate: 2024-07-07T11:00:00.000Z
 categories:
   - leetcode

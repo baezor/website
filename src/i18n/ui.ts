@@ -71,8 +71,8 @@ export const ui = {
     es: 'Últimos Artículos',
   },
   'home.posts.viewAll': {
-    en: 'View all posts →',
-    es: 'Ver todos los artículos →',
+    en: 'View all posts',
+    es: 'Ver todos los artículos',
   },
   'home.contact.heading': {
     en: 'Let\'s Work Together',
@@ -103,8 +103,8 @@ export const ui = {
     es: 'Leer más sobre {title}',
   },
   'blog.backToAll': {
-    en: '← Back to all posts',
-    es: '← Volver a todos los artículos',
+    en: 'Back to all posts',
+    es: 'Volver a todos los artículos',
   },
   'blog.updated': {
     en: 'Updated:',

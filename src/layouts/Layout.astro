@@ -1,14 +1,17 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from "../const";
-import "@fontsource/geist-sans/400.css";
-import "@fontsource/geist-sans/500.css";
-import "@fontsource/geist-sans/600.css";
-import "@fontsource/geist-sans/700.css";
-import "@fontsource/geist-mono/400.css";
+import "@fontsource/archivo-black/400.css";
+import "@fontsource/space-mono/400.css";
+import "@fontsource/space-mono/700.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
 import "@/css/styles.css";
 import BaseHead from "@/components/BaseHead.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import ScrambleText from "@/components/ScrambleText.astro";
+import { ViewTransitions } from "astro:transitions";
 import { getLangFromUrl } from "@/i18n/utils";
 import type { ImageMetadata } from "astro";
 
@@ -38,14 +41,15 @@ const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords
     <!-- Meta theme color for mobile browsers -->
     <meta
       name="theme-color"
-      content="#141413"
+      content="#0a0a0a"
       media="(prefers-color-scheme: dark)"
     />
     <meta
       name="theme-color"
-      content="#faf9f5"
+      content="#f2f0ed"
       media="(prefers-color-scheme: light)"
     />
+    <ViewTransitions />
   </head>
   <body>
     <div class="site-wrapper">
@@ -55,6 +59,7 @@ const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords
 
       <Footer />
     </div>
+    <ScrambleText />
   </body>
 </html>
 
@@ -67,5 +72,23 @@ const { title = SITE_TITLE[lang], description = SITE_DESCRIPTION[lang], keywords
 
   main {
     flex: 1;
+  }
+
+  /* Page transition: quick fade */
+  ::view-transition-old(root) {
+    animation: fade-out 0.15s ease-in forwards;
+  }
+
+  ::view-transition-new(root) {
+    animation: fade-in 0.2s ease-out 0.05s both;
+  }
+
+  @keyframes fade-out {
+    to { opacity: 0; }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>

@@ -1,6 +1,7 @@
 ---
 title: "WordPress Security Best Practices for Developers"
 description: "Essential security practices for WordPress development and maintenance"
+heroImage: "../../assets/og/wordpress-development-best-security-practices.png"
 pubDate: 2024-07-16T10:00:00.000Z
 categories:
   - wordpress

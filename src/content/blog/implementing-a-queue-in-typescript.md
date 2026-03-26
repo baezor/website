@@ -1,6 +1,7 @@
 ---
 title: "Implementing a Queue in TypeScript"
 description: "Implementing a queue in TypeScript"
+heroImage: "../../assets/og/implementing-a-queue-in-typescript.png"
 pubDate: 2024-07-14T10:00:00.000Z
 categories:
   - typescript

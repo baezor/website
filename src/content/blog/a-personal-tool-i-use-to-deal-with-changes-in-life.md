@@ -1,6 +1,7 @@
 ---
 title: "A Tool for Dealing with Life Changes"
 description: "A personal tool I use to deal with changes in life"
+heroImage: "../../assets/og/a-personal-tool-i-use-to-deal-with-changes-in-life.png"
 pubDate: 2024-07-12T10:00:00.000Z
 categories:
   - personal

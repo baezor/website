@@ -1,6 +1,7 @@
 ---
 title: "Implementing Confetti Animation with Vanilla JavaScript"
 description: "Creating a confetti animation effect using vanilla JavaScript."
+heroImage: "../../assets/og/implementing-confeti-animation-with-vanilla-javascript.png"
 pubDate: 2024-07-08T10:00:00.000Z
 categories:
   - javascript
