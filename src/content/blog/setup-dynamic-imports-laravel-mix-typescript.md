@@ -1,6 +1,7 @@
 ---
 title: "How to Set Up Dynamic Imports in Laravel Mix and TypeScript"
 description: "This tutorial guides you on how to set up dynamic imports in Laravel Mix and handle them with TypeScript"
+heroImage: "../../assets/og/setup-dynamic-imports-laravel-mix-typescript.png"
 pubDate: 2024-07-03T11:00:00.000Z
 categories:
   - webpack

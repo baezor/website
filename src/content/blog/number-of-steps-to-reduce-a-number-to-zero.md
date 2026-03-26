@@ -1,6 +1,7 @@
 ---
 title: "Number of Steps to Reduce a Number to Zero"
 description: "Solving the Number of Steps to Reduce a Number to Zero problem on Leetcode."
+heroImage: "../../assets/og/number-of-steps-to-reduce-a-number-to-zero.png"
 pubDate: 2024-07-06T11:00:00.000Z
 categories:
   - leetcode

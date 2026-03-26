@@ -16,7 +16,7 @@ const t = useTranslations(lang);
 const posts = await getCollection("blog", ({ data }) => data.lang === lang);
 const recentPosts = posts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+  .slice(0, 5);
 ---
 
 <main id="main-content">
@@ -28,22 +28,20 @@ const recentPosts = posts
       text={t('home.about.text')}
       ctaText={t('home.about.cta')}
       ctaHref={getRelativeLocaleUrl(lang, 'about')}
-      elevated
     />
 
     {recentPosts.length > 0 && (
       <section class="latest-posts" aria-labelledby="posts-heading">
-        <h2 id="posts-heading">{t('home.posts.heading')}</h2>
-        <div class="posts-grid">
+        <span class="section-label">// {t('home.posts.heading').toUpperCase()}</span>
+        <h2 id="posts-heading" class="sr-only">{t('home.posts.heading')}</h2>
+        <div class="posts-list">
           {recentPosts.map((post) => (
             <BlogPostCard post={post} lang={lang} />
           ))}
         </div>
-        <div class="view-all">
-          <a href={getRelativeLocaleUrl(lang, 'blog')} class="view-all-link">
-            {t('home.posts.viewAll')}
-          </a>
-        </div>
+        <a href={getRelativeLocaleUrl(lang, 'blog')} class="view-all-link">
+          {t('home.posts.viewAll')} <span class="arrow" aria-hidden="true">→</span>
+        </a>
       </section>
     )}
 
@@ -52,7 +50,6 @@ const recentPosts = posts
       text={t('home.contact.text')}
       ctaText={t('home.contact.cta')}
       ctaHref={getRelativeLocaleUrl(lang, 'contact')}
-      elevated
     />
   </div>
 </main>
@@ -64,51 +61,63 @@ const recentPosts = posts
   }
 
   .homepage {
-    max-width: 900px;
+    max-width: var(--max-width);
     margin: 0 auto;
     width: 100%;
-    padding: 0 1rem;
+    padding: 0 var(--gutter);
   }
 
   .latest-posts {
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-12);
   }
 
-  .latest-posts h2 {
-    font-size: 1.75rem;
-    margin-bottom: 1.5rem;
+  .section-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
   }
 
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 2rem;
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 
-  .view-all {
-    text-align: center;
-    margin-top: 2rem;
+  .posts-list {
+    display: flex;
+    flex-direction: column;
   }
 
   .view-all-link {
-    font-family: var(--font-heading);
-    font-weight: 600;
+    display: inline-block;
+    margin-top: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.03em;
     color: var(--color-accent);
     text-decoration: none;
-    font-size: 1rem;
   }
 
   .view-all-link:hover {
-    text-decoration: underline;
+    color: var(--color-accent-hover);
   }
 
-  @media (max-width: 768px) {
-    .posts-grid {
-      grid-template-columns: 1fr;
-    }
+  .view-all-link .arrow {
+    display: inline-block;
+    transition: transform 0.15s linear;
+  }
 
-    .latest-posts h2 {
-      font-size: 1.5rem;
-    }
+  .view-all-link:hover .arrow {
+    transform: translateX(4px);
   }
 </style>

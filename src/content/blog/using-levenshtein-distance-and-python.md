@@ -1,6 +1,7 @@
 ---
 title: "Using Levenshtein Distance and Python to Find Similar Names"
 description: "A Python script to find similar names using the Levenshtein distance algorithm."
+heroImage: "../../assets/og/using-levenshtein-distance-and-python.png"
 pubDate: 2024-07-09T10:00:00.000Z
 categories:
   - python

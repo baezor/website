@@ -1,6 +1,7 @@
 ---
 title: "Progress is Not Linear"
 description: "I learned to be compassionate with myself and that progress is not always linear."
+heroImage: "../../assets/og/progress-is-not-linear.png"
 pubDate: 2024-07-13T10:00:00.000Z
 categories:
   - personal
